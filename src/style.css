@@ -1,0 +1,15 @@
+body {
+  margin: 0;
+  display: flex;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: #ffffff;
+  align-items: center;
+  justify-content: center;
+}
+
+#app {
+  margin: 0 ;
+  text-align: center;
+  flex: 1;
+}
