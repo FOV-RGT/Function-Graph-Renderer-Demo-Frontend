@@ -1,3 +1,22 @@
+@font-face {
+  font-family: 'deYiHei';
+  src: url('./assets/deYiHei.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@media (min-width: 1200px) {
+  html {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 600px) {
+  html {
+    font-size: 12px;
+  }
+}
+
 body {
   margin: 0;
   display: flex;
@@ -6,10 +25,11 @@ body {
   background-color: #ffffff;
   align-items: center;
   justify-content: center;
+  font-family: 'deYiHei', sans-serif;
 }
 
 #app {
-  margin: 0 ;
+  margin: 0;
   text-align: center;
   flex: 1;
 }

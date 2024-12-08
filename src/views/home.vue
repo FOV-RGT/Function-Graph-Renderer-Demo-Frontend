@@ -1,10 +1,15 @@
 <template>
 <div class="home">
-    <h1 style="margin-bottom: 0;">Home Page</h1>
-    <nav>
-        <router-link to="/demo/2dplot">二维函数图形绘制</router-link>
-        <router-link to="/demo/3dplot">三维函数图形绘制</router-link>
-    </nav>
+    <h1 style="margin-bottom: 0;">函数图形渲染程序<sub>demo</sub></h1>
+    <div class="button">
+        <var-button color="linear-gradient(to right bottom, #6750A4, #D0BCFF)"
+        text-color="#fff">
+            <router-link to="/demo/2dplot">二维函数图形绘制</router-link>
+        </var-button>
+        <var-button type="primary">
+            <router-link to="/demo/3dplot">三维函数图形绘制</router-link>
+        </var-button>
+    </div>
     <router-view></router-view>
 </div>
 </template>
@@ -22,15 +27,16 @@ export default {
     margin: 0;
     left: 50%;
     transform: translateX(-50%);
+    letter-spacing: 0.1em;
 }
 
-nav a {
-    margin-right: 10px;
+.button {
+    margin: 0.8em;
+    letter-spacing: 0.05em;
     text-decoration: none;
-    color: #42b983;
 }
 
-nav a.router-link-active {
+.button .router-link-active {
     font-weight: bold;
 }
 </style>
