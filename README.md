@@ -16,15 +16,19 @@
 ---
 ## <center> 项目运行
 1.前置条件
-- **Node.js 20 LTS** 及以上版本
-  - 运行`nvm list`查看当前拥有的node.js版本，`nvm use (版本号，括号省略)`切换**node.js**版本,`nvm install (版本号)`安装对应版本**node.js**
+- **Node.js 16** 及以上版本
 - npm包管理器
 
 2.安装依赖
-- 终端运行`npm i`
+```sh
+npm i
+```
 
 3.启动项目
-- 终端运行`npm run dev`或者直接使用npm脚本里的dev
-- 启动后端服务器
+```sh
+npm run dev
+```
+或直接运行NPM脚本`dev`
+- 启动[后端服务器](https://github.com/FOV-RGT/Function-Graph-Renderer-Demo-Backend)
 
 <center> <img src="./public/IMG_4007.PNG" width="300" height="450" title> </center>
