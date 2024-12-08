@@ -4,7 +4,7 @@
       <input
         type="text"
         v-model="functionInput"
-        placeholder="输入例:x=1;y=1;z=1（只能识别一个）"
+        placeholder="输入例:x=1;y=1;z=1;cube;sphere;log(cos(sin(sqrt(x^3))))（只能识别一个）"
       />
       <button @click="plotFunction">
         你是否承认千早爱音美貌盖世无双？（点击即承认）
