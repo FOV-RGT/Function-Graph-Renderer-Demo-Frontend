@@ -1,7 +1,9 @@
 <template>
   <div class="input">
+    <!-- 为输入框绑定变量functionInput -->
     <var-input variant="outlined" placeholder="输入例:x=1;y=1;z=1;cube;sphere;log(cos(sin(sqrt(x^3))))（只能识别一个）" clearable
       focus-color="rgb(48,135,185)" v-model="functionInput" style="width: 50em; " spellcheck="false" />
+    <!-- 为按钮绑定点击事件，运行函数plotFunction() -->
     <var-button text outline type="primary" @click="plotFunction" style="height: auto;" text-color="rgb(48,135,185)"
       v-ripple>
       <span style="font-size: 1.4em;">渲染</span>
@@ -56,70 +58,94 @@ export default {
   methods: {
     init() {
       console.log('omg');
+      // 初始化透视摄像机
       this.camera = new THREE.PerspectiveCamera(
         90, // 摄像机视野
         window.innerWidth / window.innerHeight,
         0.1, // 与摄像机距离小于该单位部分将不会被渲染
         400 // 摄像机最大可视距离
       );
+      // 使用WebGL渲染3D对象并开启抗锯齿
       this.renderer = new THREE.WebGLRenderer({ antialias: true });
+      // 将场景大小设定为容器大小
       this.renderer.setSize(
         this.$refs.threeContainer.clientWidth,
         this.$refs.threeContainer.clientHeight
       );
+      // 将场景添加到容器'threeContainer'中
       this.$refs.threeContainer.appendChild(this.renderer.domElement);
+      // 设置控制对象为当前场景的摄像机
       this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+      // 接受函数返回的3D对象
       this.axes = this.createCustomAxes();
+      // 将对象添加到场景
       this.scene.add(this.axes);
+      // 初始化摄像机坐标
       this.camera.position.set(6, 3, 10);
+      this.controls.update();
       this.animate();
     },
     createCustomAxes() {
+      // 创建一个新的3D对象'axes'作为坐标轴
       const axes = new THREE.Object3D();
+      // 长度为200单位
       const length = 200;
+      // 创建一个红色实线基础材质作为X轴正半轴
       const positiveXAxisMaterial = new THREE.LineBasicMaterial({
         color: 0xff0000,
       });
+      // 创建一个红色虚线基础材质作为X轴负半轴
       const negativeXAxisMaterial = new THREE.LineDashedMaterial({
         color: 0xff0000,
         dashSize: 0.1,
         gapSize: 0.1,
       });
+      // 蓝色实线基础材质 Y正
       const positiveYAxisMaterial = new THREE.LineBasicMaterial({
         color: 0x0000ff,
       });
+      // 蓝色虚线基础材质 Y负
       const negativeYAxisMaterial = new THREE.LineDashedMaterial({
         color: 0x0000ff,
         dashSize: 0.1,
         gapSize: 0.1,
       });
+      // 蓝色实线基础材质 Z正
       const positiveZAxisMaterial = new THREE.LineBasicMaterial({
         color: 0x00ff00,
       });
+      // 蓝色实线基础材质 Z负
       const negativeZAxisMaterial = new THREE.LineDashedMaterial({
         color: 0x00ff00,
         dashSize: 0.1,
         gapSize: 0.1,
       });
+      // 以点创建实线结构作为X轴正半轴
       const xAxisPositiveGeometry = new THREE.BufferGeometry().setFromPoints([
         new THREE.Vector3(0, 0, 0),
         new THREE.Vector3(length, 0, 0),
       ]);
+      // 以点创建实线结构作为X轴负半轴
       const xAxisNegativeGeometry = new THREE.BufferGeometry().setFromPoints([
         new THREE.Vector3(0, 0, 0),
         new THREE.Vector3(-length, 0, 0),
       ]);
+      // 以对应结构与材质创建3D对象作为X轴正半轴
       const xAxisPositive = new THREE.Line(
         xAxisPositiveGeometry,
         positiveXAxisMaterial
       );
+      // 以对应结构与材质创建3D对象作为X轴负半轴
       const xAxisNegative = new THREE.Line(
         xAxisNegativeGeometry,
         negativeXAxisMaterial
       );
+      // 计算线段上每个顶点的距离以正确渲染对象
       xAxisNegative.computeLineDistances();
+      // 将对象添加到场景
       axes.add(xAxisPositive);
       axes.add(xAxisNegative);
+      // 下同
       const yAxisPositiveGeometry = new THREE.BufferGeometry().setFromPoints([
         new THREE.Vector3(0, 0, 0),
         new THREE.Vector3(0, length, 0),
@@ -158,44 +184,50 @@ export default {
       zAxisNegative.computeLineDistances();
       axes.add(zAxisPositive);
       axes.add(zAxisNegative);
+      // 调用addAxisLabels(axes, length)并传入对象与长度为坐标轴添加刻度
       this.addAxisLabels(axes, length);
+      // 返回3D对象
       return axes;
     },
     addAxisLabels(axes, length) {
       const loader = new FontLoader(); // 创建新的字体加载器
       loader.load(
         "https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", // 从指定url加载字体
+        // 传入获取的font对象作为数字渲染的参考字体
         (font) => {
+          // 遍历坐标轴上每个坐标为整数的点
           for (let i = -length; i <= length; i++) {
-            // 遍历坐标轴上每个坐标为整数的点
             if (i !== 0) {
+              // 调用'createAxisLabel()'函数并传参以创建坐标数字标记
               this.createAxisLabel(
-                // 向创建坐标标记的函数传参
-                font,
-                new THREE.Vector3(i, -0.5, 0), // 创建新的三维向量
-                i,
-                0xff0000,
-                axes,
-                0,
-                "x"
+                font,// 字体
+                new THREE.Vector3(i, -0.5, 0), // 以当前对象坐标轴（X轴）创建新的三维向量用以定义数字标记位置（y轴偏移量-0.5）
+                i,// 当前坐标
+                0xff0000,// 红色
+                axes,// 添加标记的对象（即坐标轴）
+                0,// 数字旋转偏移量
+                "x"// 当前指向的坐标轴
               );
+              // 调用'creatTickMark()'函数并传参以创建坐标刻度标记
               this.createTickMark(
-                // 向创建坐标轴刻度的函数传参
+                // 定义刻度长度
                 new THREE.Vector3(i, 0, 0),
                 new THREE.Vector3(i, -0.2, 0),
-                0xff0000,
-                axes
+                0xff0000,// 红色
+                axes// 添加的对象
               );
+              // 同上
               this.createAxisLabel(
                 font,
-                new THREE.Vector3(-0.8, i, 0),
+                new THREE.Vector3(-0.8, i, 0),// 当前对象坐标轴为y轴（x轴偏移量-0.8）
                 i,
-                0x0000ff,
+                0x0000ff,// 蓝色
                 axes,
                 0,
                 "y"
               );
               this.createTickMark(
+                // 同上
                 new THREE.Vector3(0, i, 0),
                 new THREE.Vector3(-0.2, i, 0),
                 0x0000ff,
@@ -203,11 +235,11 @@ export default {
               );
               this.createAxisLabel(
                 font,
-                new THREE.Vector3(0, -0.5, i),
+                new THREE.Vector3(0, -0.5, i),// 当前对象坐标轴
                 i,
-                0x00ff00,
+                0x00ff00,// 绿色
                 axes,
-                Math.PI / 2,
+                Math.PI / 2,// 旋转偏移量为90°
                 "z"
               );
               this.createTickMark(
@@ -227,15 +259,18 @@ export default {
       text,
       color,
       parent,
-      rotation = 0,
-      axis = "x"
+      rotation = 0,// 初始化旋转偏移量为0
+      axis
     ) {
+      // 使用'new TextGeometry()'创建数字结构
       const textGeo = new TextGeometry(text.toString(), {
-        font: font,
-        size: 0.35,
-        depth: 0.05,
+        font: font,// 字体
+        size: 0.35,// 字体大小
+        depth: 0.05,// 字体厚度
       });
+      // 使用'new THREE.MeshBasicMaterial'创建基础材质
       const textMaterial = new THREE.MeshBasicMaterial({ color: color });
+      // 使用结构与材质创建3D对象
       const textMesh = new THREE.Mesh(textGeo, textMaterial);
       textMesh.position.copy(position);
       if (axis === "x" || axis === "z") {
@@ -252,10 +287,11 @@ export default {
       parent.add(line);
     },
     animate() {
+      // 每帧更新前回调'animate()'函数
       requestAnimationFrame(() => this.animate());
-      this.controls.update();
+      // 使用'toRaw'获取响应式对象的原始版本用以渲染场景。
+      // Vue3的代理机制会影响Three.js的某些库，使用'toRaw'获取响应式对象的原始版本可以避免这个影响。
       this.renderer.render(toRaw(this.scene), toRaw(this.camera));
-      // 获取响应式对象的原始版本。Vue3的代理机制会影响Three.js的某些库，使用toRaw可以避免这个影响。
     },
     plotFunction() {
       const functionInput = this.functionInput.replace(/\s+/g, "");
@@ -291,7 +327,6 @@ export default {
         const chunkSize = range / workerCount;
         const exprString = functionInput;
         let chunksReceived = 0;
-        // 使用 TypedArray 存储点数据
         // 计算每个分块中的总点数
         const totalPointsPerChunk =
           // 计算每行的点数，并将其向上取整
