@@ -1,15 +1,13 @@
 <template>
-  <div>
-    <div id="input-container">
-      <input
-        type="text"
-        v-model="functionInput"
-        placeholder="输入例:x=1;y=1;z=1;cube;sphere;log(cos(sin(sqrt(x^3))))（只能识别一个）"
-      />
-      <button @click="plotFunction">
-        你是否承认千早爱音美貌盖世无双？（点击即承认）
-      </button>
-    </div>
+  <div class="input">
+    <var-input variant="outlined" placeholder="输入例:x=1;y=1;z=1;cube;sphere;log(cos(sin(sqrt(x^3))))（只能识别一个）" clearable
+      focus-color="rgb(48,135,185)" v-model="functionInput" style="width: 50em; " spellcheck="false" />
+    <var-button text outline type="primary" @click="plotFunction" style="height: auto;" text-color="rgb(48,135,185)"
+      v-ripple>
+      <span style="font-size: 1.4em;">渲染</span>
+    </var-button>
+  </div>
+  <div style="display: flex; width: 100%;height: 100%;">
     <div class="renderer" ref="threeContainer"></div>
   </div>
 </template>
@@ -320,7 +318,7 @@ export default {
               console.log("Adding surface to scene");
               this.scene.add(surface);
               let elapsedTime = performance.now() - startTime;
-              console.log("生成完成，耗时",elapsedTime / 1000,"秒");
+              console.log("生成完成，耗时", elapsedTime / 1000, "秒");
             }
           };
           workers.push(worker);
@@ -396,7 +394,7 @@ export default {
           this.scene.add(line);
           // 将线条添加到场景中
           let elapsedTime = performance.now() - startTime;
-          console.log("生成完成，耗时",elapsedTime,"毫秒");
+          console.log("生成完成，耗时", elapsedTime, "毫秒");
         } else {
           try {
             // 使用 math.js 库解析输入函数
@@ -434,7 +432,7 @@ export default {
                 const line = createLineFromPoints(points);
                 this.scene.add(line);
                 let elapsedTime = performance.now() - startTime;
-                console.log("生成完成，耗时",elapsedTime,"毫秒");
+                console.log("生成完成，耗时", elapsedTime, "毫秒");
               }
             } else {
               const target = "y";
@@ -457,7 +455,7 @@ export default {
           this.scene.add(line);
           // 将线条添加到场景中
           let elapsedTime = performance.now() - startTime;
-          console.log("生成完成，耗时",elapsedTime,"毫秒");
+          console.log("生成完成，耗时", elapsedTime, "毫秒");
         } else {
           try {
             // 使用 math.js 库解析输入函数
@@ -579,7 +577,7 @@ export default {
           const line = createLineFromPoints(points);
           this.scene.add(line);
           let elapsedTime = performance.now() - startTime;
-          console.log("生成完成，耗时",elapsedTime,"毫秒");
+          console.log("生成完成，耗时", elapsedTime, "毫秒");
         } catch (error) {
           alert("不受支持的输入");
         }
@@ -590,9 +588,14 @@ export default {
 </script>
 
 <style scoped>
+.input {
+  display: flex;
+  justify-content: center;
+  margin: 0.4em 0;
+}
+
 .renderer {
   position: relative;
-  width: 100vw;
-  height: 80vh;
+  flex: 1;
 }
 </style>

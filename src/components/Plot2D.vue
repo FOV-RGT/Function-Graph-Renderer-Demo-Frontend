@@ -1,16 +1,22 @@
 <template>
   <div>
     <!-- 输入框，用户可以输入函数 -->
-    <input
-      v-model="functionInput"
-      placeholder="输入例:sin(x),cos(x)"
-    />
+    <div class="input">
+      <var-input variant="outlined" placeholder="输入例:sin(x),cos(log(x)),log(sqrt(x^3)),..." clearable focus-color="rgb(48,135,185)"
+        v-model="functionInput" style="width: 50em; " spellcheck="false" elevation="24"/>
+      <var-button text outline type="primary" @click="handlePlot" style="height: auto;" text-color="rgb(48,135,185)" v-ripple>
+        <span style="font-size: 1.4em;">渲染</span>
+      </var-button>
+    </div>
+    <!-- <input v-model="functionInput" placeholder="输入例:sin(x),cos(x)" /> -->
     <!-- 按钮，用于触发绘图功能 -->
-    <button @click="handlePlot">你是否承认千早爱音美貌盖世无双？（点击即承认）</button>
+
     <!-- 容器，用于显示绘制的图像 -->
-    <div class="image-container" @wheel="throttledZoomImage" @mousedown="startDrag" @mousemove="drag" @mouseup="endDrag" @mouseleave="endDrag" @contextmenu.prevent>
+    <div class="image-container" @wheel="throttledZoomImage" @mousedown="startDrag" @mousemove="drag" @mouseup="endDrag"
+      @mouseleave="endDrag" @contextmenu.prevent>
       <!-- 图像，使用v-if指令控制是否显示 -->
-      <img v-if="imageSrc" :src="imageSrc" alt="Function Plot" ref="plotImage" @dragstart.prevent @selectstart.prevent style="width: 1000px;height: 700px;"/>
+      <img v-if="imageSrc" :src="imageSrc" alt="Function Plot" ref="plotImage" @dragstart.prevent @selectstart.prevent
+        style="width: 82em;height: 62em;" />
     </div>
   </div>
 </template>
@@ -139,15 +145,24 @@ export default {
 </script>
 
 <style>
+.input {
+  display: flex;
+  justify-content: center;
+  margin: 0.4em 0;
+}
+
 .image-container {
   overflow: hidden;
   display: inline-block;
   border: 1px solid #ccc;
-  cursor: grab;  /* 添加抓手光标 */
-  user-select: none;  /* 禁用选择 */
+  cursor: grab;
+  /* 添加抓手光标 */
+  user-select: none;
+  /* 禁用选择 */
 }
 
 .image-container:active {
-  cursor: grabbing;  /* 鼠标按下时的光标 */
+  cursor: grabbing;
+  /* 鼠标按下时的光标 */
 }
 </style>
