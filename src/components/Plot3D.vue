@@ -1,12 +1,13 @@
 <template>
-  <div>
-    <div id="input-container">
-      <input type="text" v-model="functionInput"
-        placeholder="输入例:x=1;y=1;z=1;cube;sphere;log(cos(sin(sqrt(x^3))))（只能识别一个）" />
-      <button @click="plotFunction">
-        <Span style="font-family: 'deYiHei', sans-serif;">你是否承认千早爱音美貌盖世无双？（点击即承认）</Span>
-      </button>
-    </div>
+  <div class="input">
+    <var-input variant="outlined" placeholder="输入例:x=1;y=1;z=1;cube;sphere;log(cos(sin(sqrt(x^3))))（只能识别一个）" clearable
+      focus-color="rgb(48,135,185)" v-model="functionInput" style="width: 50em; " spellcheck="false" />
+    <var-button text outline type="primary" @click="plotFunction" style="height: auto;" text-color="rgb(48,135,185)"
+      v-ripple>
+      <span style="font-size: 1.4em;">渲染</span>
+    </var-button>
+  </div>
+  <div style="display: flex; width: 100%;height: 100%;">
     <div class="renderer" ref="threeContainer"></div>
   </div>
 </template>
@@ -587,13 +588,14 @@ export default {
 </script>
 
 <style scoped>
-body {
-  margin: 0;
+.input {
+  display: flex;
+  justify-content: center;
+  margin: 0.4em 0;
 }
 
 .renderer {
   position: relative;
-  width: 100vw;
-  height: 80vh;
+  flex: 1;
 }
 </style>
