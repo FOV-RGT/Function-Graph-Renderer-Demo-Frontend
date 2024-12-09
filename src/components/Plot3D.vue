@@ -20,8 +20,10 @@ import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
 import * as math from "mathjs";
 import { parse } from "mathjs";
+import { mapState } from "vuex";
 
 export default {
+  name: 'Plot3D',
   data() {
     return {
       functionInput: "y=x^2-z^2",
@@ -30,13 +32,30 @@ export default {
       renderer: null,
       controls: null,
       axes: null,
+      firstinit: false,
     };
   },
+  // computed: {
+  //   ...mapState(['initialized']),
+  // },
+  // watch:{
+  //   initialized(newVal) {
+  //     if (newVal) {
+  //       this.init();
+  //       console.log('666');
+  //     }
+  //   }
+  // },
   mounted() {
-    this.init();
+    if (!this.firstinit) {
+      this.init();
+      this.firstinit = true;
+      console.log('666');
+    }
   },
   methods: {
     init() {
+      console.log('omg');
       this.camera = new THREE.PerspectiveCamera(
         90, // 摄像机视野
         window.innerWidth / window.innerHeight,
