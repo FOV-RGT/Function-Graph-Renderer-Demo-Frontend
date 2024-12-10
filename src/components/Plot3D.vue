@@ -39,22 +39,22 @@ export default {
       firstinit: false,
     };
   },
-  // computed: {
-  //   ...mapState(['initialized']),
-  // },
-  // watch:{
-  //   initialized(newVal) {
-  //     if (newVal) {
-  //       this.init();
-  //       console.log('666');
-  //     }
-  //   }
-  // },
+  computed: {
+    ...mapState(['initialized']),
+  },
+  watch:{
+    initialized(newVal) {
+      if (newVal) {
+        this.init();
+        console.log('666');
+      }
+    }
+  },
   mounted() {
     if (!this.firstinit) {
       this.init();
       this.firstinit = true;
-      console.log('666');
+      console.log('man!');
     }
   },
   methods: {
