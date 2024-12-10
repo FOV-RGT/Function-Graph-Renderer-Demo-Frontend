@@ -1,9 +1,11 @@
 <template>
   <div class="input">
+
     <!-- 为输入框绑定变量functionInput -->
     <var-input variant="outlined" placeholder="输入例:x=1;y=1;z=1;cube;sphere;log(cos(sin(sqrt(x^3))))（只能识别一个）" clearable
       focus-color="rgb(48,135,185)" v-model="functionInput" style="width: 50em; " spellcheck="false" />
     <!-- 为按钮绑定点击事件，运行函数plotFunction() -->
+
     <var-button text outline type="primary" @click="plotFunction" style="height: auto;" text-color="rgb(48,135,185)"
       v-ripple>
       <span style="font-size: 1.4em;">渲染</span>
