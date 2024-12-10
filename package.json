@@ -1,7 +1,9 @@
 {
   "name": "demo",
   "private": true,
-  "version": "0.7.6",
+
+  "version": "0.7.9",
+
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,9 +14,13 @@
     "@varlet/ui": "^3.7.2",
     "axios": "^1.7.7",
     "mathjs": "^14.0.0",
+    "mitt": "^3.0.1",
     "three": "^0.170.0",
     "vue": "^3.5.12",
     "vue-router": "^4.4.5",
+
+    "vuex": "^4.1.0",
+
     "yarn": "^1.22.22"
   },
   "devDependencies": {

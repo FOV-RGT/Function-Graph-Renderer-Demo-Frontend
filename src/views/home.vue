@@ -1,6 +1,8 @@
 <template>
     <div class="home">
-        <h1 style="margin-bottom: 0;">函数图形渲染程序<sub style="font-size: 0.6em;">demo v0.7.6</sub></h1>
+
+        <h1 style="margin-bottom: 0;">函数图形渲染程序<sub style="font-size: 0.6em;">demo v{{ packageVersion }}</sub></h1>
+
         <div class="buttonGroup">
             <var-button text outline type="primary">
                 <router-link to="/demo/2dplot" class="link">二维函数图形绘制
@@ -11,25 +13,60 @@
                 </router-link>
             </var-button>
         </div>
-        <router-view></router-view>
+
+        <router-view v-slot="{ Component }">
+            <keep-alive>
+                <component :is="Component" />
+            </keep-alive>
+        </router-view>
+        <!-- 隐藏B子路由的DOM树 -->
+        <div v-if="loadChildB" style="display: none;">
+            <ChildBComponent />
+        </div>
+
     </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+import packageJson from '../../package.json';
+import ChildBComponent from '../components/Plot3D.vue';  // 引入B子路由的组件
+
 export default {
-    name: 'home'
+    name: 'home',
+    data() {
+        return {
+            packageVersion: packageJson.version, // 获取特定键的值，例如版本号
+            loadChildB: false  // 控制B子路由的渲染
+        };
+    },
+    mounted() {
+        this.preloadChildB();
+    },
+    methods: {
+        preloadChildB() {
+            // 预加载B子路由的组件
+            import('../components/Plot3D.vue').then(() => {
+                this.loadChildB = true;
+            });
+        }
+    },
+    components: {
+        ChildBComponent
+    }
 };
 </script>
 
 <style scoped>
+
+/* 样式代码保持不变 */
 h1 {
     background: linear-gradient(60deg, #2b2e4a, #423268, #623080, #842790, #a51d96, #c11b8f, #d72c78, #e84545);
-    /* made at https://learnui.design/tools/gradient-generator.html */
+
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
-
 
 .home {
     position: absolute;
@@ -47,7 +84,9 @@ h1 {
     margin: auto;
     justify-content: space-evenly;
     align-items: center;
-    width: 25em;
+
+    width: 22em;
+
     height: 2em;
 }
 
@@ -66,6 +105,8 @@ h1 {
 
 .buttonGroup .var-button .router-link-active {
     font-weight: bold;
-    font-size: 1.4em !important;
+
+    font-size: 1.4em;
+
 }
 </style>
