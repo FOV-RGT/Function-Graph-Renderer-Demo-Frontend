@@ -41,12 +41,12 @@ export default {
     ...mapState(['initialized']),
   },
   watch: {
-    initialized(newVal) {
-      if (newVal) {
-        this.init();
-        console.log('666');
-      }
-    }
+    // initialized(newVal) {
+    //   if (newVal) {
+    //     this.init();
+    //     console.log('666');
+    //   }
+    // }
   },
   mounted() {
     if (!this.firstinit) {
