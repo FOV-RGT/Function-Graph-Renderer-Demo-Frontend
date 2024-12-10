@@ -9,8 +9,6 @@
       </var-button>
     </div>
     <!-- <input v-model="functionInput" placeholder="输入例:sin(x),cos(x)" /> -->
-    <!-- 按钮，用于触发绘图功能 -->
-
     <!-- 容器，用于显示绘制的图像 -->
     <div class="image-container" @wheel="throttledZoomImage" @mousedown="startDrag" @mousemove="drag" @mouseup="endDrag"
       @mouseleave="endDrag" @contextmenu.prevent>
