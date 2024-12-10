@@ -30,7 +30,6 @@
 <script>
 import { mapActions } from 'vuex';
 import packageJson from '../../package.json';
-import ChildBComponent from '../components/Plot3D.vue';  // 引入B子路由的组件
 
 export default {
     name: 'home',
@@ -41,18 +40,10 @@ export default {
         };
     },
     mounted() {
-        this.preloadChildB();
+        this.init();
     },
     methods: {
-        preloadChildB() {
-            // 预加载B子路由的组件
-            import('../components/Plot3D.vue').then(() => {
-                this.loadChildB = true;
-            });
-        }
-    },
-    components: {
-        ChildBComponent
+        ...mapActions(['init'])
     }
 };
 </script>

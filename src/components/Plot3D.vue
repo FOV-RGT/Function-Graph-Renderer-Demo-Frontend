@@ -39,22 +39,22 @@ export default {
       firstinit: false,
     };
   },
-  // computed: {
-  //   ...mapState(['initialized']),
-  // },
-  // watch:{
-  //   initialized(newVal) {
-  //     if (newVal) {
-  //       this.init();
-  //       console.log('666');
-  //     }
-  //   }
-  // },
+  computed: {
+    ...mapState(['initialized']),
+  },
+  watch: {
+    initialized(newVal) {
+      if (newVal) {
+        this.init();
+        console.log('666');
+      }
+    }
+  },
   mounted() {
     if (!this.firstinit) {
       this.init();
       this.firstinit = true;
-      console.log('666');
+      console.log('man!');
     }
   },
   methods: {
@@ -303,8 +303,8 @@ export default {
       requestAnimationFrame(() => this.animate());
     },
     formatInput() {
-      // 以正则表达式匹配一个或多个连续空白字符替换为空字符，并将输入以','分割为数组，从而格式化用户输入
-      const functionInputs = this.functionInput.replace(/\s+/g, "").split(',');
+      // 以正则表达式匹配一个或多个连续空白字符替换为空字符，并将输入以';'分割为数组，从而格式化用户输入
+      const functionInputs = this.functionInput.replace(/\s+/g, "").split(';');
       // 遍历数组逐一传递元素到'plotFunction()'
       functionInputs.forEach(input => this.plotFunction(input));
     },
@@ -384,7 +384,7 @@ export default {
           // 创建主线程事件监听器，将计算线程发送的数据进行解析
           worker.onmessage = (event) => {
             // 使用'Float32Array'管理顶点坐标集
-            const chunkPoints = new Float32Array(event.data); 
+            const chunkPoints = new Float32Array(event.data);
             console.log(
               `Received chunk points from worker ${i}:`,
               chunkPoints.length
@@ -590,25 +590,42 @@ export default {
             alert("不受支持的输入");
           }
         }
-      } else if (input.startsWith("sphere")) {
-        const params = input.split(",");
-        let radius = 1;
-        let segments = 32;
-        let rings = 16;
+      }// 若输入以'sphere'开头
+      else if (input.startsWith("sphere")) {
+        const params = input.split(",");// 将输入以','分割为数组
+        let radius = 1;// 初始化半径为1
+        let segments = 32;// 初始化垂直细分度
+        let rings = 32;// 初始化水平细分度
+        // 遍历数组中的元素
         params.forEach((param) => {
+          // 解构赋值语法
+          // 将当前指向元素以'='分割为数组，依次赋值给'key'和'value'
           const [key, value] = param.split("=");
+          // 若'key'为'radius'
           if (key === "radius") {
+            // 将'value'转换为浮点数并赋值给变量'radius'
             radius = parseFloat(value);
           } else if (key === "segments") {
+            // 同上
             segments = parseInt(value, 10);
           } else if (key === "rings") {
             rings = parseInt(value, 10);
           }
         });
+        // 以'new THREE.SphereGeometry()'与对应变量创建球形结构
         geometry = new THREE.SphereGeometry(radius, segments, rings);
+        // 创建基础网格材质
+        material = new THREE.MeshBasicMaterial({
+          color: 0xff0000,
+          wireframe: true,
+          side: THREE.DoubleSide
+        });
+        // 创建球形3D对象
         const sphere = new THREE.Mesh(geometry, material);
+        // 将3D对象添加到场景
         this.scene.add(sphere);
-      } else if (input.startsWith("cube")) {
+      }// 同上
+      else if (input.startsWith("cube")) {
         const params = input.split(",");
         let width = 1;
         let height = 1;
@@ -625,33 +642,16 @@ export default {
         });
         // 创建立方体几何体
         geometry = new THREE.BoxGeometry(width, height, depth);
-        // 创建网格材质
-        const wireframeMaterial = new THREE.MeshBasicMaterial({
+        material = new THREE.MeshBasicMaterial({
           color: 0xff0000,
           wireframe: true,
+          side: THREE.DoubleSide
         });
         // 创建立方体网格并添加到场景
-        const cube = new THREE.Mesh(geometry, wireframeMaterial);
+        const cube = new THREE.Mesh(geometry, material);
         this.scene.add(cube);
       }
-      // else if (input.startsWith("surface")) {
-      //   const params = input.split(",");
-      //   let func = params[0].replace("surface=", "");
-      //   const expr = parse(func);
-      //   const vertices = [];
-      //   const width = 2000;
-      //   const height = 2000;
-      //   for (let i = 0; i <= width; i++) {
-      //     for (let j = 0; j <= height; j++) {
-      //       const x = (i / width) * 400 - 200;
-      //       const y = (j / height) * 400 - 200;
-      //       const z = expr.evaluate({ x, y });
-      //       vertices.push(x, y, z);
-      //     }
-      //   }
-      //   const mesh = createSurfaceFromPoints(vertices);
-      //   this.scene.add(mesh);
-      // }
+      // 这个else将来应该不会保留
       else {
         try {
           const expr = parse(input);
