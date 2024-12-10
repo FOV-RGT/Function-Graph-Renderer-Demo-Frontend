@@ -6,7 +6,7 @@
       focus-color="rgb(48,135,185)" v-model="functionInput" style="width: 50em; " spellcheck="false" />
     <!-- 为按钮绑定点击事件，运行函数plotFunction() -->
 
-    <var-button text outline type="primary" @click="plotFunction" style="height: auto;" text-color="rgb(48,135,185)"
+    <var-button text outline type="primary" @click="formatInput" style="height: auto;" text-color="rgb(48,135,185)"
       v-ripple>
       <span style="font-size: 1.4em;">渲染</span>
     </var-button>
@@ -274,83 +274,106 @@ export default {
       const textMaterial = new THREE.MeshBasicMaterial({ color: color });
       // 使用结构与材质创建3D对象
       const textMesh = new THREE.Mesh(textGeo, textMaterial);
+      // 对象应用传入的坐标
       textMesh.position.copy(position);
+      // 标准化刻度旋转偏移量
       if (axis === "x" || axis === "z") {
         textMesh.rotation.y = rotation;
-      } else if (axis === "y") {
+      } else {
         textMesh.rotation.x = rotation;
       }
+      // 向坐标轴添加刻度
       parent.add(textMesh);
     },
     createTickMark(start, end, color, parent) {
+      // 以传入参数创建刻度结构
       const geometry = new THREE.BufferGeometry().setFromPoints([start, end]);
+      // 以传入参数创建基础线条材质
       const material = new THREE.LineBasicMaterial({ color: color });
+      // 以结构与材质创建3D对象
       const line = new THREE.Line(geometry, material);
+      // 将对象添加到坐标轴
       parent.add(line);
     },
     animate() {
-      // 每帧更新前回调'animate()'函数
-      requestAnimationFrame(() => this.animate());
       // 使用'toRaw'获取响应式对象的原始版本用以渲染场景。
       // Vue3的代理机制会影响Three.js的某些库，使用'toRaw'获取响应式对象的原始版本可以避免这个影响。
       this.renderer.render(toRaw(this.scene), toRaw(this.camera));
+      // 每帧更新前回调'animate()'函数
+      requestAnimationFrame(() => this.animate());
     },
-    plotFunction() {
-      const functionInput = this.functionInput.replace(/\s+/g, "");
-      const allNumbers = /^\d+(\.\d+)?$/.test(functionInput.slice(2));
+    formatInput() {
+      // 以正则表达式匹配一个或多个连续空白字符替换为空字符，并将输入以','分割为数组，从而格式化用户输入
+      const functionInputs = this.functionInput.replace(/\s+/g, "").split(',');
+      // 遍历数组逐一传递元素到'plotFunction()'
+      functionInputs.forEach(input => this.plotFunction(input));
+    },
+    plotFunction(input) {
+      const allNumbers = /^\d+(\.\d+)?$/.test(input.slice(2));
       let startTime = performance.now();
-      while (this.scene.children.length > 1) {
-        this.scene.remove(this.scene.children[1]);
-      } // 每次渲染图像时，删除上一次渲染的图像
+      // while (this.scene.children.length > 1) {
+      //   this.scene.remove(this.scene.children[1]);
+      // } // 每次渲染图像时，删除上一次渲染的图像
       let geometry;
+      // 创建基础线条材质
       let material = new THREE.LineBasicMaterial({ color: 0xff0000 });
       const createLineFromPoints = (points) => {
+        // 创建几何结构并以传入参数定义顶点
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        // 创建线条3D对象并返回
         return new THREE.Line(geometry, material);
       };
       const createSurfaceFromPoints = (points) => {
+        // 创建几何结构
         geometry = new THREE.BufferGeometry();
+        // 定义几何结构顶点
         geometry.setAttribute(
           "position",
+          // 以'new THREE.Float32BufferAttribute()'创建和管理几何体顶点数据
           new THREE.Float32BufferAttribute(points, 3)
         );
+        // 创建基础材质
         const material = new THREE.MeshBasicMaterial({
-          color: 0xff0000,
-          side: THREE.DoubleSide,
-          wireframe: true,
+          color: 0xff0000,// 红色
+          side: THREE.DoubleSide,// 背面可见
+          wireframe: true,// 以线框模式渲染
         });
+        // 返回3D对象
         return new THREE.Mesh(geometry, material);
       };
       const spatialCoordinateCalculation = (target) => {
-        const step = 0.26;
-        const workers = [];
-        const workerCount = 10;
-        const range = 400;
-        const chunkSize = range / workerCount;
-        const exprString = functionInput;
-        let chunksReceived = 0;
-        // 计算每个分块中的总点数
+        const step = 0.26;// 计算步长
+        const workerCount = 10;// 创建的计算线程数
+        const range = 400;// 总计算范围
+        const chunkSize = range / workerCount;// 计算分块大小
+        const exprString = input;// 获取函数输入
+        let chunksReceived = 0;// 初始化已接收的线程数为0
+        // 计算每个线程中需要计算的总点数
         const totalPointsPerChunk =
           // 计算每行的点数，并将其向上取整
           Math.ceil(chunkSize / step + 1) *
           // 计算每列的点数，并将其向上取整
           Math.ceil(400 / step + 1) *
-          // 每个点有 3 个坐标值 (x, y, z)
-          3;
-        // 创建一个 Float32Array 来存储所有点的坐标
+          3;// 每个点有 3 个坐标值 (x, y, z)
+        // 创建一个'Float32Array'来存储所有点的坐标
         const points = new Float32Array(
-          // 数组的总长度是 worker 的数量乘以每个分块的总点数
+          // 数组的总长度是线程的数量乘以每个分块的总点数
           workerCount * totalPointsPerChunk
         );
+        // 使用for循环创建线程
         for (let i = 0; i < workerCount; i++) {
+          // 定义当前创建的线程计算分块起点
           const start = -200 + i * chunkSize;
+          // 定义当前创建的线程计算分块终点
           const end = start + chunkSize;
+          // 创建线程
           const worker = new Worker(
             new URL("../assets/workers.js", import.meta.url),
             {
               type: "module",
             }
           );
+          // 以'postMessage'向线程发送数据
           worker.postMessage({
             start,
             end,
@@ -358,47 +381,56 @@ export default {
             exprString,
             target,
           });
+          // 创建主线程事件监听器，将计算线程发送的数据进行解析
           worker.onmessage = (event) => {
-            const chunkPoints = new Float32Array(event.data); // 使用 TypedArray 处理数据
+            // 使用'Float32Array'管理顶点坐标集
+            const chunkPoints = new Float32Array(event.data); 
             console.log(
               `Received chunk points from worker ${i}:`,
               chunkPoints.length
             );
-            points.set(chunkPoints, i * totalPointsPerChunk); // 使用 TypedArray 的 set 方法
+            // 使用set方法将接收到的顶点坐标集添加到'points'数组里并定义该数据的起点
+            points.set(chunkPoints, i * totalPointsPerChunk);
             console.log("Total points so far:", points.length);
             chunksReceived++;
             console.log(`Chunks received: ${chunksReceived}/${workerCount}`);
+            // 若已接收到所有线程的返回数据
             if (chunksReceived === workerCount) {
               console.log("All chunks received");
+              // 调用'createSurfaceFromPoints()'并将顶点坐标集传入到该函数，并接收返回的3D对象
               const surface = createSurfaceFromPoints(points);
               console.log("Adding surface to scene");
+              // 将返回的3D对象添加到场景
               this.scene.add(surface);
               let elapsedTime = performance.now() - startTime;
               console.log("生成完成，耗时", elapsedTime / 1000, "秒");
             }
           };
-          workers.push(worker);
         }
       };
-      if (functionInput.startsWith("x=")) {
+      // 若因变量为坐标轴
+      if (input.startsWith("x=")) {
+        // 若该因变量已被数字定义
         if (allNumbers) {
-          const xValue = parseFloat(functionInput.slice(2));
-          // 获取等号后面的值并转换为浮点数
-          // 创建一个基础的线条材质，颜色为红色
+          // 将字符串（数字）转换为浮点数
+          const xValue = parseFloat(input.slice(2));
+          // 创建点集
           const points = [
             new THREE.Vector3(xValue, -200, 0),
             new THREE.Vector3(xValue, 200, 0),
           ];
+          // 调用'createLineFromPoints()'，传入点集，并接收返回的3D对象
           const line = createLineFromPoints(points);
+          // 将3D对象添加到场景
           this.scene.add(line);
-          // 将线条添加到场景中
         } else {
           try {
-            // 使用 math.js 库解析输入函数
-            const expr = parse(functionInput);
-            const points = [];
-            const vals = [];
+            // 使用 math.js 库解析输入函数，得到一个表达式树
+            const expr = parse(input);
+            const points = [];// 创建顶点坐标集
+            const vals = [];// 创建变量栈
             let a = 0; // 设置一个标志变量
+            // 遍历表达式树节点，将自变量复制到变量栈
             expr.traverse((node) => {
               if (a < 2) {
                 a += 1;
@@ -413,23 +445,33 @@ export default {
                 console.log(node.name);
               }
             });
+            // 若变量栈仅有一个元素
             if (vals.length === 1) {
+              // 提取栈顶元素
               const valName = vals.pop();
+              // 判断元素是否为'y'或'z'
               if (valName === "y" || valName === "z") {
+                // 遍历坐标轴，步长0.001
                 for (let i = -200; i <= 200; i += 0.001) {
+                  // 为自变量赋值
                   const scope = { [valName]: i };
-                  // 评估表达式并生成点
+                  // 评估表达式以计算因变量
                   const x = expr.evaluate(scope);
+                  // 判断因变量类型，以定义不同的点
                   if (valName === "y") {
                     points.push(new THREE.Vector3(x, i, 0));
                   } else {
                     points.push(new THREE.Vector3(x, 0, i));
                   }
                 }
+                // 调用'createLineFromPoints()'，传入点集，并接收返回的3D对象
                 const line = createLineFromPoints(points);
+                // 将3D对象添加到场景
                 this.scene.add(line);
               }
-            } else {
+            } // 若变量栈不止一个元素
+            else {
+              // 传入当前因变量以区分不同点的创建
               const target = "x";
               spatialCoordinateCalculation(target);
             }
@@ -437,27 +479,24 @@ export default {
             alert("不受支持的输入");
           }
         }
-      } else if (functionInput.startsWith("y=")) {
+      } // 同上
+      else if (input.startsWith("y=")) {
         if (allNumbers) {
-          const yValue = parseFloat(functionInput.slice(2));
-          // 获取等号后面的值并转换为浮点数
-          // 创建一个基础的线条材质，颜色为红色
+          const yValue = parseFloat(input.slice(2));
           const points = [
             new THREE.Vector3(0, yValue, -200),
             new THREE.Vector3(0, yValue, 200),
           ];
           const line = createLineFromPoints(points);
           this.scene.add(line);
-          // 将线条添加到场景中
           let elapsedTime = performance.now() - startTime;
           console.log("生成完成，耗时", elapsedTime, "毫秒");
         } else {
           try {
-            // 使用 math.js 库解析输入函数
-            const expr = parse(functionInput);
+            const expr = parse(input);
             const points = [];
             const vals = [];
-            let a = 0; // 设置一个标志变量
+            let a = 0;
             expr.traverse((node) => {
               if (a < 2) {
                 a += 1;
@@ -477,7 +516,6 @@ export default {
               if (valName === "x" || valName === "z") {
                 for (let i = -200; i <= 200; i += 0.001) {
                   const scope = { [valName]: i };
-                  // 评估表达式并生成点
                   const y = expr.evaluate(scope);
                   if (valName === "x") {
                     points.push(new THREE.Vector3(i, y, 0));
@@ -498,27 +536,23 @@ export default {
             alert("不受支持的输入");
           }
         }
-      } else if (functionInput.startsWith("z=")) {
+      } else if (input.startsWith("z=")) {
         if (allNumbers) {
-          const zValue = parseFloat(functionInput.slice(2));
-          // 获取等号后面的值并转换为浮点数
-          // 创建一个基础的线条材质，颜色为红色
+          const zValue = parseFloat(input.slice(2));
           const points = [
             new THREE.Vector3(-200, 0, zValue),
             new THREE.Vector3(200, 0, zValue),
           ];
           const line = createLineFromPoints(points);
           this.scene.add(line);
-          // 将线条添加到场景中
           let elapsedTime = performance.now() - startTime;
           console.log("生成完成，耗时", elapsedTime, "毫秒");
         } else {
           try {
-            // 使用 math.js 库解析输入函数
-            const expr = parse(functionInput);
+            const expr = parse(input);
             const points = [];
             const vals = [];
-            let a = 0; // 设置一个标志变量
+            let a = 0;
             expr.traverse((node) => {
               if (a < 2) {
                 a += 1;
@@ -538,7 +572,6 @@ export default {
               if (valName === "x" || valName === "y") {
                 for (let i = -200; i <= 200; i += 0.001) {
                   const scope = { [valName]: i };
-                  // 评估表达式并生成点
                   const z = expr.evaluate(scope);
                   if (valName === "x") {
                     points.push(new THREE.Vector3(i, 0, z));
@@ -557,8 +590,8 @@ export default {
             alert("不受支持的输入");
           }
         }
-      } else if (functionInput.startsWith("sphere")) {
-        const params = functionInput.split(",");
+      } else if (input.startsWith("sphere")) {
+        const params = input.split(",");
         let radius = 1;
         let segments = 32;
         let rings = 16;
@@ -575,8 +608,8 @@ export default {
         geometry = new THREE.SphereGeometry(radius, segments, rings);
         const sphere = new THREE.Mesh(geometry, material);
         this.scene.add(sphere);
-      } else if (functionInput.startsWith("cube")) {
-        const params = functionInput.split(",");
+      } else if (input.startsWith("cube")) {
+        const params = input.split(",");
         let width = 1;
         let height = 1;
         let depth = 1;
@@ -601,8 +634,8 @@ export default {
         const cube = new THREE.Mesh(geometry, wireframeMaterial);
         this.scene.add(cube);
       }
-      // else if (functionInput.startsWith("surface")) {
-      //   const params = functionInput.split(",");
+      // else if (input.startsWith("surface")) {
+      //   const params = input.split(",");
       //   let func = params[0].replace("surface=", "");
       //   const expr = parse(func);
       //   const vertices = [];
@@ -621,12 +654,10 @@ export default {
       // }
       else {
         try {
-          // 使用 math.js 库解析输入函数
-          const expr = parse(functionInput);
+          const expr = parse(input);
           const points = [];
           for (let x = -200; x <= 200; x += 0.001) {
             const scope = { x: x };
-            // 评估表达式并生成点
             const y = expr.evaluate(scope);
             points.push(new THREE.Vector3(x, y, 0));
           }
