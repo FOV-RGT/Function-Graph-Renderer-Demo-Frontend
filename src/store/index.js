@@ -1,5 +1,4 @@
 import { createStore } from 'vuex';
-// import { EventBus } from '../eventBus.js'; // 引入事件总线
 
 const store = createStore({
     state: {

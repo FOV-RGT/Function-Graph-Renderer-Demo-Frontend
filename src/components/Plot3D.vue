@@ -37,9 +37,10 @@ export default {
     };
   },
   computed: {
-    ...mapState(['switch3D']),
+    ...mapState(['switch3D']),// 映射属性'switch3D'到'computed'
   },
   watch: {
+    // 监听属性'switch3D'
     switch3D(newVal) {
       if (newVal) {
         this.$nextTick(() => {
@@ -302,17 +303,18 @@ export default {
       requestAnimationFrame(() => this.animate());
     },
     formatInput() {
-      // 以正则表达式匹配一个或多个连续空白字符替换为空字符，并将输入以';'分割为数组，从而格式化用户输入
-      const functionInputs = this.functionInput.replace(/\s+/g, "").split(';');
+      // 每次用户输入函数，删除上一次渲染的图像
+      while (this.scene.children.length > 1) {
+        this.scene.remove(this.scene.children[1]);
+      }
+      // 以正则表达式匹配一个或多个连续空白字符替换为空字符，并将输入以';'或'；'分割为数组，从而格式化用户输入
+      const functionInputs = this.functionInput.replace(/\s+/g, "").split(/[;；]/);
       // 遍历数组逐一传递元素到'plotFunction()'
       functionInputs.forEach(input => this.plotFunction(input));
     },
     plotFunction(input) {
       const allNumbers = /^\d+(\.\d+)?$/.test(input.slice(2));
       let startTime = performance.now();
-      // while (this.scene.children.length > 1) {
-      //   this.scene.remove(this.scene.children[1]);
-      // } // 每次渲染图像时，删除上一次渲染的图像
       let geometry;
       // 创建基础线条材质
       let material = new THREE.LineBasicMaterial({ color: 0xff0000 });

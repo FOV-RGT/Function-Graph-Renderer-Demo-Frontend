@@ -1,4 +1,13 @@
-# <center> FunctionPlotter-demo
+# <center> Function-Graph-Renderer-Demo-Frontend
+
+## 版权声明
+
+版权所有 (C) 2024 TechOTaKu-Team
+
+## 许可证
+
+该项目使用 GNU 通用公共许可证第三版 (GPL-3.0)。详情请参见 LICENSE 文件。
+
 <center> <img src="./public/486.1-done.png" width="100" height="100"> </center>
 
 ---
