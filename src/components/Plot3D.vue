@@ -40,7 +40,7 @@ export default {
     ...mapState(['switch3D']),// 映射属性'switch3D'到'computed'
   },
   watch: {
-    // 监听属性'switch3D'
+    // 监听属性'switch3D'，当值改变时运行'switch3D(newVal) {...}'
     switch3D(newVal) {
       if (newVal) {
         this.$nextTick(() => {
@@ -55,6 +55,7 @@ export default {
     }
   },
   mounted() {
+    // 组件被挂载时进行初始化
     this.init();
   },
   methods: {
