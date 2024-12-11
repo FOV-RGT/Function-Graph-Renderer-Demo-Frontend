@@ -4,9 +4,7 @@ import router from './router';
 import './style.css'
 import Varlet from '@varlet/ui'
 import '@varlet/ui/es/style'
-
 import store from './store';
-
 
 const app = createApp(App);
 app.use(router);

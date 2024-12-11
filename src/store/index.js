@@ -3,21 +3,16 @@ import { createStore } from 'vuex';
 
 const store = createStore({
     state: {
-        initialized: false,
+        switch3D: false
     },
     mutations: {
-        setInitialized(state, value) {
-            state.initialized = value;
-            console.log(state.initialized);
-            // if (state.initialized) {
-            //     EventBus.emit('initializedUpdated'); // 广播初始化事件
-            // }
+        resetRenderer(state, value) {
+            state.switch3D = value;
         }
     },
     actions: {
-        init({ commit }) {
-            commit('setInitialized', true);
-            console.log('111');
+        resetRenderer({ commit }) {
+            commit('resetRenderer', true);
         }
     }
 });

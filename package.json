@@ -1,7 +1,7 @@
 {
   "name": "demo",
   "private": true,
-  "version": "0.8.0",
+  "version": "0.8.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -22,6 +22,7 @@
   "devDependencies": {
     "@types/three": "^0.170.0",
     "@vitejs/plugin-vue": "^5.1.4",
+    "daisyui": "^4.12.20",
     "vite": "^6.0.3"
   },
   "engines": {

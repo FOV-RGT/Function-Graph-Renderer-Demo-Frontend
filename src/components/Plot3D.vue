@@ -1,7 +1,8 @@
 <template>
   <div class="input">
     <!-- 为输入框绑定变量functionInput -->
-    <var-input variant="outlined" placeholder="输入例:x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10" clearable
+    <var-input variant="outlined"
+      placeholder="输入例:x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10" clearable
       focus-color="rgb(48,135,185)" v-model="functionInput" style="width: 50em; " spellcheck="false" />
     <!-- 为按钮绑定点击事件，运行函数plotFunction() -->
     <var-button text outline type="primary" @click="formatInput" style="height: auto;" text-color="rgb(48,135,185)"
@@ -9,8 +10,7 @@
       <span style="font-size: 1.4em;">渲染</span>
     </var-button>
   </div>
-  <div style="display: flex; width: 100%;height: 100%;">
-    <div class="renderer" ref="threeContainer"></div>
+  <div class="renderer" ref="threeContainer">
   </div>
 </template>
 
@@ -34,30 +34,31 @@ export default {
       renderer: null,
       controls: null,
       axes: null,
-      firstinit: false,
     };
   },
   computed: {
-    ...mapState(['initialized']),
+    ...mapState(['switch3D']),
   },
   watch: {
-    // initialized(newVal) {
-    //   if (newVal) {
-    //     this.init();
-    //     console.log('666');
-    //   }
-    // }
+    switch3D(newVal) {
+      if (newVal) {
+        this.$nextTick(() => {
+          const width = this.$refs.threeContainer.clientWidth;
+          const height = this.$refs.threeContainer.clientHeight;
+          this.renderer.setSize(width, height);
+          this.camera.aspect = width / height;
+          this.camera.updateProjectionMatrix();
+          console.log('damn');
+        })
+      }
+    }
   },
   mounted() {
-    if (!this.firstinit) {
-      this.init();
-      this.firstinit = true;
-      console.log('man!');
-    }
+    this.init();
   },
   methods: {
     init() {
-      console.log('omg');
+      console.log('666');
       // 初始化透视摄像机
       this.camera = new THREE.PerspectiveCamera(
         90, // 摄像机视野
@@ -676,11 +677,12 @@ export default {
 .input {
   display: flex;
   justify-content: center;
-  margin: 0.4em 0;
+  margin: 0;
 }
 
 .renderer {
-  position: relative;
-  flex: 1;
+  display: block;
+  width: 100%;
+  height: 95%;
 }
 </style>

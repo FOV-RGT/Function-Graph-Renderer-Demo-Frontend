@@ -3,14 +3,13 @@
     <!-- 输入框，用户可以输入函数 -->
     <div class="input">
       <var-input variant="outlined" placeholder="输入例:sin(x),cos(log(x)),log(sqrt(x^3)),..." clearable focus-color="rgb(48,135,185)"
-        v-model="functionInput" style="width: 50em; " spellcheck="false" elevation="24"/>
+        v-model="functionInput" style="width: 50em; " spellcheck="false"/>
       <var-button text outline type="primary" @click="handlePlot" style="height: auto;" text-color="rgb(48,135,185)" v-ripple>
         <span style="font-size: 1.4em;">渲染</span>
       </var-button>
     </div>
-    <!-- <input v-model="functionInput" placeholder="输入例:sin(x),cos(x)" /> -->
     <!-- 容器，用于显示绘制的图像 -->
-    <div class="image-container" @wheel="throttledZoomImage" @mousedown="startDrag" @mousemove="drag" @mouseup="endDrag"
+    <div v-if="imageSrc" class="image-container" @wheel="throttledZoomImage" @mousedown="startDrag" @mousemove="drag" @mouseup="endDrag"
       @mouseleave="endDrag" @contextmenu.prevent>
       <!-- 图像，使用v-if指令控制是否显示 -->
       <img v-if="imageSrc" :src="imageSrc" alt="Function Plot" ref="plotImage" @dragstart.prevent @selectstart.prevent
@@ -146,7 +145,7 @@ export default {
 .input {
   display: flex;
   justify-content: center;
-  margin: 0.4em 0;
+  margin: 0;
 }
 
 .image-container {
