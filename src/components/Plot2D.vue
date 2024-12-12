@@ -1,13 +1,13 @@
 <template>
   <div>
     <!-- 输入框，用户可以输入函数 -->
-    <div class="input">
+    <!-- <div class="input">
       <var-input variant="outlined" placeholder="输入例:sin(x),cos(log(x)),log(sqrt(x^3)),..." clearable focus-color="rgb(48,135,185)"
         v-model="functionInput" style="width: 50em; " spellcheck="false"/>
       <var-button text outline type="primary" @click="handlePlot" style="height: auto;" text-color="rgb(48,135,185)" v-ripple>
         <span style="font-size: 1.4em;">渲染</span>
       </var-button>
-    </div>
+    </div> -->
     <!-- 容器，用于显示绘制的图像 -->
     <div v-if="imageSrc" class="image-container" @wheel="throttledZoomImage" @mousedown="startDrag" @mousemove="drag" @mouseup="endDrag"
       @mouseleave="endDrag" @contextmenu.prevent>
@@ -20,6 +20,7 @@
 
 <script>
 import axios from 'axios';
+import { mapState } from 'vuex';
 
 // 生成随机颜色的函数
 function randomColor() {
@@ -29,7 +30,6 @@ function randomColor() {
 export default {
   data() {
     return {
-      functionInput: 'sin(x),sin(x^2),cos(x),tan(x),sqrt(x),log(x),2/x,x*2,x^2',  // 默认函数
       imageSrc: '',  // 用于存储返回的图像数据
       xmin: -10,
       xmax: 10,
@@ -43,13 +43,20 @@ export default {
       dragStartY: 0,  // 鼠标拖动的起始位置 y
       isZooming: false,  // 标记是否正在缩放
       isOpening: false,
+      input: '',
     };
+  },
+  computed: {
+    ...mapState(['input2D']),
+  },
+  watch: {
+    
   },
   methods: {
     // 异步函数，用于请求绘图数据
     async plotFunction() {
-      console.log(`Function input: ${this.functionInput}`);
-      const response = await axios.get(`http://localhost:8000/plot/?function=${encodeURIComponent(this.functionInput)}&xmin=${this.xmin}&xmax=${this.xmax}&ymin=${this.ymin}&ymax=${this.ymax}&colors=${encodeURIComponent(this.colors.join(','))}`);
+      console.log(`Function input: ${this.input}`);
+      const response = await axios.get(`http://localhost:8000/plot/?function=${encodeURIComponent(this.input)}&xmin=${this.xmin}&xmax=${this.xmax}&ymin=${this.ymin}&ymax=${this.ymax}&colors=${encodeURIComponent(this.colors.join(','))}`);
       console.log(response.data);
       if (response.data.image) {
         this.imageSrc = `data:image/png;base64,${response.data.image}`;  // 设置图像来源
@@ -58,9 +65,10 @@ export default {
       }
     },
     // 处理绘图按钮点击事件
-    handlePlot() {
+    handlePlot(input) {
       // 为每个函数生成新的随机颜色
-      this.colors = this.functionInput.split(',').map(() => randomColor());
+      this.input = input;
+      this.colors = this.input.split(',').map(() => randomColor());
       // 绘制函数
       this.plotFunction();
     },
@@ -142,12 +150,6 @@ export default {
 </script>
 
 <style>
-.input {
-  display: flex;
-  justify-content: center;
-  margin: 0;
-}
-
 .image-container {
   overflow: hidden;
   display: inline-block;

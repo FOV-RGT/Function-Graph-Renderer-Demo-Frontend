@@ -1,16 +1,14 @@
 <template>
-  <div class="input">
-    <!-- 为输入框绑定变量functionInput -->
+  <!-- <div class="input">
     <var-input variant="outlined"
       placeholder="输入例:x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10" clearable
       focus-color="rgb(48,135,185)" v-model="functionInput" style="width: 50em; " spellcheck="false" />
-    <!-- 为按钮绑定点击事件，运行函数plotFunction() -->
     <var-button text outline type="primary" @click="formatInput" style="height: auto;" text-color="rgb(48,135,185)"
       v-ripple>
       <span style="font-size: 1.4em;">渲染</span>
     </var-button>
-  </div>
-  <div class="renderer" ref="threeContainer">
+  </div> -->
+  <div style="width: 100%;height: 100%;" ref="threeContainer">
   </div>
 </template>
 
@@ -49,10 +47,9 @@ export default {
           this.renderer.setSize(width, height);
           this.camera.aspect = width / height;
           this.camera.updateProjectionMatrix();
-          console.log('damn');
         })
       }
-    }
+    },
   },
   mounted() {
     // 组件被挂载时进行初始化
@@ -303,13 +300,13 @@ export default {
       // 每帧更新前回调'animate()'函数
       requestAnimationFrame(() => this.animate());
     },
-    formatInput() {
+    formatInput(input) {
       // 每次用户输入函数，删除上一次渲染的图像
       while (this.scene.children.length > 1) {
         this.scene.remove(this.scene.children[1]);
       }
       // 以正则表达式匹配一个或多个连续空白字符替换为空字符，并将输入以';'或'；'分割为数组，从而格式化用户输入
-      const functionInputs = this.functionInput.replace(/\s+/g, "").split(/[;；]/);
+      const functionInputs = input.replace(/\s+/g, "").split(/[;；]/);
       // 遍历数组逐一传递元素到'plotFunction()'
       functionInputs.forEach(input => this.plotFunction(input));
     },
@@ -677,15 +674,4 @@ export default {
 </script>
 
 <style scoped>
-.input {
-  display: flex;
-  justify-content: center;
-  margin: 0;
-}
-
-.renderer {
-  display: block;
-  width: 100%;
-  height: 95%;
-}
 </style>
