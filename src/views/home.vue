@@ -26,7 +26,6 @@
 import packageJson from '../../package.json';
 import TwoDPlotComponent from '../components/Plot2D.vue';
 import ThreeDPlotComponent from '../components/Plot3D.vue';
-import { mapActions } from "vuex";
 
 export default {
     name: 'home',
@@ -50,9 +49,8 @@ export default {
         },
         showThreeDPlot() {
             this.showTwoD = false;
-            this.resetRenderer();
+            this.$store.commit('resetRenderer');
         },
-        ...mapActions(['resetRenderer']),
     }
 };
 </script>

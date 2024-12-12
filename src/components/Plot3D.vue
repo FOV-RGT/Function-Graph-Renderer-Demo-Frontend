@@ -379,7 +379,7 @@ export default {
           worker.postMessage({
             start,
             end,
-            step,
+            initStep: step,
             exprString,
             target,
           });
@@ -458,7 +458,7 @@ export default {
                   // 为自变量赋值
                   const scope = { [valName]: i };
                   // 评估表达式以计算因变量
-                  const x = expr.evaluate(scope);
+                  const x = THREE.MathUtils.clamp(expr.evaluate(scope), -7, 7);
                   // 判断因变量类型，以定义不同的点
                   if (valName === "y") {
                     points.push(new THREE.Vector3(x, i, 0));
