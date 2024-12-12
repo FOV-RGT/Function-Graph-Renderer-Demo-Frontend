@@ -315,7 +315,7 @@ export default {
     },
     plotFunction(input) {
       const allNumbers = /^\d+(\.\d+)?$/.test(input.slice(2));
-      let startTime = performance.now();
+      const startTime = performance.now();
       let geometry;
       // 创建基础线条材质
       let material = new THREE.LineBasicMaterial({ color: 0xff0000 });
@@ -404,7 +404,7 @@ export default {
               console.log("Adding surface to scene");
               // 将返回的3D对象添加到场景
               this.scene.add(surface);
-              let elapsedTime = performance.now() - startTime;
+              const elapsedTime = performance.now() - startTime;
               console.log("生成完成，耗时", elapsedTime / 1000, "秒");
             }
           };

@@ -46,6 +46,7 @@ export default {
     methods: {
         showTwoDPlot() {
             this.showTwoD = true;
+            this.$store.commit('toggleSwitch3D');
         },
         showThreeDPlot() {
             this.showTwoD = false;
