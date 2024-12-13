@@ -63,5 +63,5 @@ self.onmessage = function (event) {
     const elapsedTime = performance.now() - startTime;
     console.log("计算完成，耗时", elapsedTime, "毫秒");
     // 关闭线程
-    self.close();    
+    self.close();
 };

@@ -1,15 +1,5 @@
 <template>
-  <!-- <div class="input">
-    <var-input variant="outlined"
-      placeholder="输入例:x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10" clearable
-      focus-color="rgb(48,135,185)" v-model="functionInput" style="width: 50em; " spellcheck="false" />
-    <var-button text outline type="primary" @click="formatInput" style="height: auto;" text-color="rgb(48,135,185)"
-      v-ripple>
-      <span style="font-size: 1.4em;">渲染</span>
-    </var-button>
-  </div> -->
-  <div style="width: 100%;height: 100%;" ref="threeContainer">
-  </div>
+  <div style="width: 100%;height: 100%;" ref="canvas3D"></div>
 </template>
 
 <script>
@@ -26,7 +16,6 @@ export default {
   name: 'Plot3D',
   data() {
     return {
-      functionInput: "x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10",
       scene: new THREE.Scene(),
       camera: null,
       renderer: null,
@@ -42,8 +31,8 @@ export default {
     switch3D(newVal) {
       if (newVal) {
         this.$nextTick(() => {
-          const width = this.$refs.threeContainer.clientWidth;
-          const height = this.$refs.threeContainer.clientHeight;
+          const width = this.$refs.canvas3D.clientWidth;
+          const height = this.$refs.canvas3D.clientHeight;
           this.renderer.setSize(width, height);
           this.camera.aspect = width / height;
           this.camera.updateProjectionMatrix();
@@ -69,11 +58,11 @@ export default {
       this.renderer = new THREE.WebGLRenderer({ antialias: true });
       // 将场景大小设定为容器大小
       this.renderer.setSize(
-        this.$refs.threeContainer.clientWidth,
-        this.$refs.threeContainer.clientHeight
+        this.$refs.canvas3D.clientWidth,
+        this.$refs.canvas3D.clientHeight
       );
-      // 将场景添加到容器'threeContainer'中
-      this.$refs.threeContainer.appendChild(this.renderer.domElement);
+      // 将场景添加到容器'canvas3D'中
+      this.$refs.canvas3D.appendChild(this.renderer.domElement);
       // 设置控制对象为当前场景的摄像机
       this.controls = new OrbitControls(this.camera, this.renderer.domElement);
       // 接受函数返回的3D对象
@@ -300,13 +289,13 @@ export default {
       // 每帧更新前回调'animate()'函数
       requestAnimationFrame(() => this.animate());
     },
-    formatInput(input) {
+    formatInput(inputs) {
       // 每次用户输入函数，删除上一次渲染的图像
       while (this.scene.children.length > 1) {
         this.scene.remove(this.scene.children[1]);
       }
       // 以正则表达式匹配一个或多个连续空白字符替换为空字符，并将输入以';'或'；'分割为数组，从而格式化用户输入
-      const functionInputs = input.replace(/\s+/g, "").split(/[;；]/);
+      const functionInputs = inputs.replace(/\s+/g, "").split(/[;；]/);
       // 遍历数组逐一传递元素到'plotFunction()'
       functionInputs.forEach(input => this.plotFunction(input));
     },
@@ -367,10 +356,7 @@ export default {
           const end = start + chunkSize;
           // 创建线程
           const worker = new Worker(
-            new URL("../assets/workers.js", import.meta.url),
-            {
-              type: "module",
-            }
+            new URL("../assets/workers.js", import.meta.url), { type: "module", }
           );
           // 以'postMessage'向线程发送数据
           worker.postMessage({
@@ -673,5 +659,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

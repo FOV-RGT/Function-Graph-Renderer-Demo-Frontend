@@ -1,167 +1,141 @@
 <template>
-  <div>
-    <!-- 输入框，用户可以输入函数 -->
-    <!-- <div class="input">
-      <var-input variant="outlined" placeholder="输入例:sin(x),cos(log(x)),log(sqrt(x^3)),..." clearable focus-color="rgb(48,135,185)"
-        v-model="functionInput" style="width: 50em; " spellcheck="false"/>
-      <var-button text outline type="primary" @click="handlePlot" style="height: auto;" text-color="rgb(48,135,185)" v-ripple>
-        <span style="font-size: 1.4em;">渲染</span>
-      </var-button>
-    </div> -->
-    <!-- 容器，用于显示绘制的图像 -->
-    <div v-if="imageSrc" class="image-container" @wheel="throttledZoomImage" @mousedown="startDrag" @mousemove="drag" @mouseup="endDrag"
-      @mouseleave="endDrag" @contextmenu.prevent>
-      <!-- 图像，使用v-if指令控制是否显示 -->
-      <img v-if="imageSrc" :src="imageSrc" alt="Function Plot" ref="plotImage" @dragstart.prevent @selectstart.prevent
-        style="width: 82em;height: 62em;" />
-    </div>
-  </div>
+  <div style="width: 100%;height: 100%;" ref="canvas2D"></div>
 </template>
 
 <script>
-import axios from 'axios';
-import { mapState } from 'vuex';
-
-// 生成随机颜色的函数
-function randomColor() {
-  return '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
-}
+import Plotly from 'plotly.js-dist';
 
 export default {
   data() {
     return {
-      imageSrc: '',  // 用于存储返回的图像数据
-      xmin: -10,
-      xmax: 10,
-      ymin: -10,
-      ymax: 10,
-      scaleFactor: 1.2,  // 缩放因子
-      throttleTimeout: null,  // 节流计时器
-      colors: [],  // 存储每个函数的颜色
-      isDragging: false,  // 用于标记是否正在拖动
-      dragStartX: 0,  // 鼠标拖动的起始位置 x
-      dragStartY: 0,  // 鼠标拖动的起始位置 y
-      isZooming: false,  // 标记是否正在缩放
-      isOpening: false,
-      input: '',
+      width: 0,
+      height: 0,
+      firstRender: true,
     };
   },
   computed: {
-    ...mapState(['input2D']),
   },
   watch: {
-    
+  },
+  mounted() {
+    window.addEventListener('resize', this.updateDimensions);
+    this.$nextTick(() => {
+      this.width = this.$refs.canvas2D.clientWidth;
+      this.height = this.$refs.canvas2D.clientHeight;
+    });
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.updateDimensions);
   },
   methods: {
-    // 异步函数，用于请求绘图数据
-    async plotFunction() {
-      console.log(`Function input: ${this.input}`);
-      const response = await axios.get(`http://localhost:8000/plot/?function=${encodeURIComponent(this.input)}&xmin=${this.xmin}&xmax=${this.xmax}&ymin=${this.ymin}&ymax=${this.ymax}&colors=${encodeURIComponent(this.colors.join(','))}`);
-      console.log(response.data);
-      if (response.data.image) {
-        this.imageSrc = `data:image/png;base64,${response.data.image}`;  // 设置图像来源
-      } else {
-        console.error(response.data.error);
-      }
+    formatInput(inputs) {
+      // 以正则表达式匹配一个或多个连续空白字符替换为空字符，并将输入以';'或'；'分割为数组，从而格式化用户输入
+      const functionInputs = inputs.replace(/\s+/g, "").split(/[;；]/);
+      // 遍历数组逐一传递元素到'plotFunction()'
+      functionInputs.forEach(input => this.plotFunction(input));
     },
-    // 处理绘图按钮点击事件
-    handlePlot(input) {
+    updateDimensions() {
+      this.$nextTick(() => {
+        if (this.$refs.canvas2D) {
+          this.width = this.$refs.canvas2D.clientWidth;
+          this.height = this.$refs.canvas2D.clientHeight;
+          console.log('man!');
+        }
+      });
+    },
+    async calculateCoordinates(input) {
+      const width = this.width;
+      const height = this.height;
+      const workerCount = 6;
+      const calculatePromises = [];
+      for (let i = 0; i < workerCount; i++) {
+        const promise = new Promise((resolve) => {
+          const worker = new Worker(
+            new URL("../assets/calculateCoordinates.js", import.meta.url), { type: "module", }
+          );
+          const start = -1800 + i * 600;
+          const end = start + 600;
+          worker.postMessage({ start, end, index: i, input, });
+          worker.onmessage = (event) => {
+            resolve(event.data)
+          };
+        });
+        calculatePromises.push(promise);
+      }
+      return Promise.all(calculatePromises).then(results => {
+        results.sort((a, b) => a.index - b.index);
+        const xVals = results.flatMap(result => result.xVals);
+        const yVals = results.flatMap(result => result.yVals);
+        const vals = { xVals, yVals }
+        return vals;
+      });
+    },
+    async plotFunction(input) {
       // 为每个函数生成新的随机颜色
-      this.input = input;
-      this.colors = this.input.split(',').map(() => randomColor());
-      // 绘制函数
-      this.plotFunction();
-    },
-    // 处理缩放图像的事件
-    zoomImage(event) {
-      event.preventDefault();
-
-      const rect = event.target.getBoundingClientRect();  // 获取图像的边界框
-      const offsetX = event.clientX - rect.left;  // 获取光标在图像中的 x 位置
-      const offsetY = event.clientY - rect.top;  // 获取光标在图像中的 y 位置
-
-      const xRatio = offsetX / rect.width;
-      const yRatio = offsetY / rect.height;
-
-      const centerX = this.xmin + xRatio * (this.xmax - this.xmin);
-      const centerY = this.ymin + yRatio * (this.ymax - this.ymin);
-
-      const rangeX = (this.xmax - this.xmin);
-      const rangeY = (this.ymax - this.ymin);
-
-      if (event.deltaY < 0) {
-        // 放大
-        this.xmin = centerX - (rangeX / this.scaleFactor) * xRatio;
-        this.xmax = centerX + (rangeX / this.scaleFactor) * (1 - xRatio);
-        this.ymin = centerY - (rangeY / this.scaleFactor) * yRatio;
-        this.ymax = centerY + (rangeY / this.scaleFactor) * (1 - yRatio);
+      const color = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
+      const { xVals, yVals } = await this.calculateCoordinates(input);
+      if (this.firstRender) {
+        this.firstRender = !this.firstRender;
+        const trace = {
+          x: xVals,
+          y: yVals,
+          mode: 'lines',  // 绘制线图
+          name: input,    // 图例名称
+          line: {         // 线条样式
+            color: color,  // 线条颜色
+            width: 2        // 线条宽度
+          }
+        };
+        // 配置图表布局
+        const layout = {
+          xaxis: {
+            zeroline: true,
+            range: [-10, 10],
+          },
+          yaxis: {
+            zeroline: true,
+            range: [-5, 5],
+          },
+          dragmode: 'pan',// 启用拖动缩放
+          showlegend: true,// 显示图例
+          legend: {
+            x: 1,
+            y: 1,
+            traceorder: 'normal',
+            font: {
+              family: 'sans-serif',
+              size: 12,
+              color: 'black'
+            },
+            bgcolor: 'rgba(255, 255, 255, 0.5)',
+            bordercolor: 'rgba(0, 0, 0, 0.5)',
+            borderwidth: 2
+          },
+        };
+        const config = {
+          displayModeBar: false,   // 隐藏工具栏控件
+          scrollZoom: true,       // 启用滚轮缩放
+          responsive: true,       // 响应用户拖动
+          displaylogo: false,     // 隐藏 Plotly 标志和通知
+        };
+        // 使用 Plotly 绘制图表
+        Plotly.newPlot(this.$refs.canvas2D, [trace], layout, config);
       } else {
-        // 缩小
-        this.xmin = centerX - (rangeX * this.scaleFactor) * xRatio;
-        this.xmax = centerX + (rangeX * this.scaleFactor) * (1 - xRatio);
-        this.ymin = centerY - (rangeY * this.scaleFactor) * yRatio;
-        this.ymax = centerY + (rangeY * this.scaleFactor) * (1 - yRatio);
+        const trace = {
+          x: xVals,
+          y: yVals,
+          mode: 'lines',  // 绘制线图
+          name: input,    // 图例名称
+          line: {         // 线条样式
+            color: color,  // 线条颜色
+            width: 2        // 线条宽度
+          }
+        };
+        Plotly.addTraces(this.$refs.canvas2D, trace);
       }
-
-      this.isZooming = true;
-      setTimeout(() => {
-        // 保持原有颜色并正确传递参数
-        this.plotFunction();
-        this.isZooming = false;
-      }, 50);  // 调整节流时间为50ms
-    },
-    // 节流缩放图像的事件
-    throttledZoomImage(event) {
-      if (this.isZooming) return;
-      this.zoomImage(event);
-    },
-    // 处理鼠标开始拖动的事件
-    startDrag(event) {
-      this.isDragging = true;
-      this.isOpening = true;
-      this.dragStartX = event.clientX;
-      this.dragStartY = event.clientY;
-    },
-    // 处理鼠标拖动的事件
-    drag(event) {
-      if (!this.isOpening || !this.isDragging) return;
-      this.isOpening = false;
-      const deltaX = (event.clientX - this.dragStartX) / 40;  // 调整系数以控制拖动灵敏度
-      const deltaY = (event.clientY - this.dragStartY) / 40;
-      this.xmin -= deltaX;
-      this.xmax -= deltaX;
-      this.ymin += deltaY;
-      this.ymax += deltaY;
-      this.dragStartX = event.clientX;
-      this.dragStartY = event.clientY;
-      setTimeout(() => {
-        // 保持原有颜色并正确传递参数
-        this.plotFunction();
-        this.isOpening = true;
-      }, 50);  // 调整节流时间为50ms
-    },
-    // 处理鼠标停止拖动的事件
-    endDrag() {
-      this.isDragging = false;
-      this.isOpening = false;
     }
   }
 };
 </script>
 
-<style>
-.image-container {
-  overflow: hidden;
-  display: inline-block;
-  border: 1px solid #ccc;
-  cursor: grab;
-  /* 添加抓手光标 */
-  user-select: none;
-  /* 禁用选择 */
-}
-
-.image-container:active {
-  cursor: grabbing;
-  /* 鼠标按下时的光标 */
-}
-</style>
+<style scoped></style>
