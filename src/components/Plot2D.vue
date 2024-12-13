@@ -22,6 +22,7 @@ export default {
   watch: {
   },
   mounted() {
+    console.log('222');
     this.canvas = this.$refs.canvas2D;
     window.addEventListener('resize', this.updateDimensions);
     this.$nextTick(() => {
@@ -60,20 +61,8 @@ export default {
     };
     // 使用 Plotly 绘制图表
     Plotly.newPlot(this.canvas, [], layout, config);
-  },
-  beforeDestroy() {
-    window.removeEventListener('resize', this.updateDimensions);
-  },
-  computed: {
-  },
-  watch: {
-  },
-  mounted() {
-    window.addEventListener('resize', this.updateDimensions);
-    this.$nextTick(() => {
-      this.width = this.$refs.canvas2D.clientWidth;
-      this.height = this.$refs.canvas2D.clientHeight;
-    });
+    console.log('111');
+    
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.updateDimensions);
