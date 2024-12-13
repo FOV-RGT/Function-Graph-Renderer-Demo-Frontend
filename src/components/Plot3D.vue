@@ -46,7 +46,6 @@ export default {
   },
   methods: {
     init() {
-      console.log('666');
       // 初始化透视摄像机
       this.camera = new THREE.PerspectiveCamera(
         90, // 摄像机视野

@@ -47,8 +47,8 @@ export default {
         return {
             packageVersion: packageJson.version,
             showTwoD: true,
-            functionInput: 'sin(x);cos(log(x));log(sqrt(x^3))',
-            inputExample: '输入例:sin(x);cos(log(x));log(sqrt(x^3));...',
+            functionInput: 'sin(x);cos(log(x));log(cos(sin(sqrt(x^3))))',
+            inputExample: '输入例:sin(x);cos(log(x));log(cos(sin(sqrt(x^3))))...',
             inputTemp1: '',
             inputTemp2: 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10',
         };
@@ -60,7 +60,7 @@ export default {
         showTwoDPlot() {
             this.showTwoD = true;
             this.$store.commit('toggleSwitch3D');
-            this.inputExample = '输入例:sin(x);cos(log(x));log(sqrt(x^3));...';
+            this.inputExample = '输入例:sin(x);cos(log(x));log(cos(sin(sqrt(x^3))))...';
             this.inputTemp2 = this.functionInput;
             this.functionInput = this.inputTemp1;
         },
