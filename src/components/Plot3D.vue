@@ -1,17 +1,5 @@
 <template>
-  <div class="input">
-    <!-- 为输入框绑定变量functionInput -->
-    <var-input variant="outlined" placeholder="输入例:x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10" clearable
-      focus-color="rgb(48,135,185)" v-model="functionInput" style="width: 50em; " spellcheck="false" />
-    <!-- 为按钮绑定点击事件，运行函数plotFunction() -->
-    <var-button text outline type="primary" @click="formatInput" style="height: auto;" text-color="rgb(48,135,185)"
-      v-ripple>
-      <span style="font-size: 1.4em;">渲染</span>
-    </var-button>
-  </div>
-  <div style="display: flex; width: 100%;height: 100%;">
-    <div class="renderer" ref="threeContainer"></div>
-  </div>
+  <div style="width: 100%;height: 100%;" ref="canvas3D"></div>
 </template>
 
 <script>
@@ -28,36 +16,37 @@ export default {
   name: 'Plot3D',
   data() {
     return {
-      functionInput: "x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10",
       scene: new THREE.Scene(),
       camera: null,
       renderer: null,
       controls: null,
       axes: null,
-      firstinit: false,
     };
   },
   computed: {
-    ...mapState(['initialized']),
+    ...mapState(['switch3D']),// 映射属性'switch3D'到'computed'
   },
   watch: {
-    // initialized(newVal) {
-    //   if (newVal) {
-    //     this.init();
-    //     console.log('666');
-    //   }
-    // }
+    // 监听属性'switch3D'，当值改变时运行'switch3D(newVal) {...}'
+    switch3D(newVal) {
+      if (newVal) {
+        this.$nextTick(() => {
+          const width = this.$refs.canvas3D.clientWidth;
+          const height = this.$refs.canvas3D.clientHeight;
+          this.renderer.setSize(width, height);
+          this.camera.aspect = width / height;
+          this.camera.updateProjectionMatrix();
+        })
+      }
+    },
   },
   mounted() {
-    if (!this.firstinit) {
-      this.init();
-      this.firstinit = true;
-      console.log('man!');
-    }
+    // 组件被挂载时进行初始化
+    this.init();
   },
   methods: {
     init() {
-      console.log('omg');
+      console.log('666');
       // 初始化透视摄像机
       this.camera = new THREE.PerspectiveCamera(
         90, // 摄像机视野
@@ -69,11 +58,11 @@ export default {
       this.renderer = new THREE.WebGLRenderer({ antialias: true });
       // 将场景大小设定为容器大小
       this.renderer.setSize(
-        this.$refs.threeContainer.clientWidth,
-        this.$refs.threeContainer.clientHeight
+        this.$refs.canvas3D.clientWidth,
+        this.$refs.canvas3D.clientHeight
       );
-      // 将场景添加到容器'threeContainer'中
-      this.$refs.threeContainer.appendChild(this.renderer.domElement);
+      // 将场景添加到容器'canvas3D'中
+      this.$refs.canvas3D.appendChild(this.renderer.domElement);
       // 设置控制对象为当前场景的摄像机
       this.controls = new OrbitControls(this.camera, this.renderer.domElement);
       // 接受函数返回的3D对象
@@ -300,18 +289,19 @@ export default {
       // 每帧更新前回调'animate()'函数
       requestAnimationFrame(() => this.animate());
     },
-    formatInput() {
-      // 以正则表达式匹配一个或多个连续空白字符替换为空字符，并将输入以';'分割为数组，从而格式化用户输入
-      const functionInputs = this.functionInput.replace(/\s+/g, "").split(';');
+    formatInput(inputs) {
+      // 每次用户输入函数，删除上一次渲染的图像
+      while (this.scene.children.length > 1) {
+        this.scene.remove(this.scene.children[1]);
+      }
+      // 以正则表达式匹配一个或多个连续空白字符替换为空字符，并将输入以';'或'；'分割为数组，从而格式化用户输入
+      const functionInputs = inputs.replace(/\s+/g, "").split(/[;；]/);
       // 遍历数组逐一传递元素到'plotFunction()'
       functionInputs.forEach(input => this.plotFunction(input));
     },
     plotFunction(input) {
       const allNumbers = /^\d+(\.\d+)?$/.test(input.slice(2));
-      let startTime = performance.now();
-      // while (this.scene.children.length > 1) {
-      //   this.scene.remove(this.scene.children[1]);
-      // } // 每次渲染图像时，删除上一次渲染的图像
+      const startTime = performance.now();
       let geometry;
       // 创建基础线条材质
       let material = new THREE.LineBasicMaterial({ color: 0xff0000 });
@@ -366,16 +356,13 @@ export default {
           const end = start + chunkSize;
           // 创建线程
           const worker = new Worker(
-            new URL("../assets/workers.js", import.meta.url),
-            {
-              type: "module",
-            }
+            new URL("../assets/workers.js", import.meta.url), { type: "module", }
           );
           // 以'postMessage'向线程发送数据
           worker.postMessage({
             start,
             end,
-            step,
+            initStep: step,
             exprString,
             target,
           });
@@ -400,7 +387,7 @@ export default {
               console.log("Adding surface to scene");
               // 将返回的3D对象添加到场景
               this.scene.add(surface);
-              let elapsedTime = performance.now() - startTime;
+              const elapsedTime = performance.now() - startTime;
               console.log("生成完成，耗时", elapsedTime / 1000, "秒");
             }
           };
@@ -454,7 +441,7 @@ export default {
                   // 为自变量赋值
                   const scope = { [valName]: i };
                   // 评估表达式以计算因变量
-                  const x = expr.evaluate(scope);
+                  const x = THREE.MathUtils.clamp(expr.evaluate(scope), -7, 7);
                   // 判断因变量类型，以定义不同的点
                   if (valName === "y") {
                     points.push(new THREE.Vector3(x, i, 0));
@@ -672,15 +659,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.input {
-  display: flex;
-  justify-content: center;
-  margin: 0.4em 0;
-}
-
-.renderer {
-  position: relative;
-  flex: 1;
-}
-</style>
+<style scoped></style>

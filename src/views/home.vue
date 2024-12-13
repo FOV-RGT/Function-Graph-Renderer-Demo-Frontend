@@ -1,90 +1,88 @@
 <template>
     <div class="home">
-        <h1 style="margin-bottom: 0;">函数图形渲染程序<sub style="font-size: 0.6em;">demo v{{ packageVersion }}</sub></h1>
-        <div class="buttonGroup">
-            <var-button text outline type="primary">
-                <router-link to="/demo/2dplot" class="link">二维函数图形绘制
-                </router-link>
-            </var-button>
-            <var-button text outline type="primary">
-                <router-link to="/demo/3dplot" class="link">三维函数图形绘制
-                </router-link>
-            </var-button>
+        <div class="top">
+            <div class="head">
+                <h1>函数图形渲染程序<sub style="font-size: 0.6em;">demo v{{ packageVersion }}</sub></h1>
+            </div>
+            <div class="buttonGroup">
+                <var-button @click="showTwoDPlot" text outline type="primary">
+                    <span>二维函数图形绘制</span>
+                </var-button>
+                <var-button @click="showThreeDPlot" text outline type="primary">
+                    <span>三维函数图形绘制</span>
+                </var-button>
+            </div>
+            <div class="input">
+                <var-input variant="outlined" :placeholder = inputExample clearable
+                    focus-color="rgb(48,135,185)" v-model= "functionInput" style="width: 50em; " spellcheck="false" />
+                <var-button text outline type="primary" @click="render" style="height: auto;"
+                    text-color="rgb(48,135,185)" v-ripple>
+                    <span style="font-size: 1.4em;">渲染</span>
+                </var-button>
+            </div>
         </div>
-        <router-view v-slot="{ Component }">
-            <keep-alive>
-                <component :is="Component" />
-            </keep-alive>
-        </router-view>
+    </div>
+    <div class="plotCompoents">
+        <div v-show="showTwoD" class="component-container">
+            <TwoDPlotCom ref="TwoDPlotCom"/>
+        </div>
+        <div v-show="!showTwoD" class="component-container">
+            <ThreeDPlotCom ref="ThreeDPlotCom"/>
+        </div>
     </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
 import packageJson from '../../package.json';
+import TwoDPlotCom from '../components/Plot2D.vue';
+import ThreeDPlotCom from '../components/Plot3D.vue';
 
 export default {
     name: 'home',
+    components: {
+        TwoDPlotCom,
+        ThreeDPlotCom
+    },
     data() {
         return {
-            packageVersion: packageJson.version, // 获取版本号
-            loadChildB: false  // 控制B子路由的渲染
+            packageVersion: packageJson.version,
+            showTwoD: true,
+            functionInput: 'sin(x);cos(log(x));log(sqrt(x^3))',
+            inputExample: '输入例:sin(x);cos(log(x));log(sqrt(x^3));...',
+            inputTemp1: '',
+            inputTemp2: 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10',
         };
     },
     mounted() {
-        this.init();
+        
     },
     methods: {
-        ...mapActions(['init'])
+        showTwoDPlot() {
+            this.showTwoD = true;
+            this.$store.commit('toggleSwitch3D');
+            this.inputExample = '输入例:sin(x);cos(log(x));log(sqrt(x^3));...';
+            this.inputTemp2 = this.functionInput;
+            this.functionInput = this.inputTemp1;
+        },
+        showThreeDPlot() {
+            this.showTwoD = false;
+            this.$store.commit('toggleSwitch3D');
+            this.inputExample = '输入例:x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10';
+            this.inputTemp1 = this.functionInput;
+            this.functionInput = this.inputTemp2;
+        },
+        render() {
+            if (this.showTwoD) {
+                this.$refs.TwoDPlotCom.formatInput(this.functionInput);
+            } else {
+                this.$refs.ThreeDPlotCom.formatInput(this.functionInput);
+            }
+        }
     }
 };
 </script>
 
 <style scoped>
+@import url('../assets/home.css');
 
-/* 样式代码保持不变 */
-h1 {
-    background: linear-gradient(60deg, #2b2e4a, #423268, #623080, #842790, #a51d96, #c11b8f, #d72c78, #e84545);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.home {
-    position: absolute;
-    top: 0;
-    margin: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    letter-spacing: 0.1em;
-    width: 100%;
-    height: 100%;
-}
-
-.buttonGroup {
-    display: flex;
-    margin: auto;
-    justify-content: space-evenly;
-    align-items: center;
-    width: 22em;
-    height: 2em;
-}
-
-.buttonGroup .var-button {
-    user-select: none;
-    border-radius: 0.5em;
-    border: rgb(48, 135, 185) solid 0.1em;
-}
-
-.buttonGroup .var-button .link {
-    letter-spacing: 0.05em;
-    text-decoration: none;
-    font-size: 1.2em;
-    color: rgb(48, 135, 185);
-}
-
-.buttonGroup .var-button .router-link-active {
-    font-weight: bold;
-    font-size: 1.4em;
-}
 </style>

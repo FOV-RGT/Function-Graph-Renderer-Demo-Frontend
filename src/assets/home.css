@@ -1,0 +1,81 @@
+.home {
+    position: absolute;
+    display: flex;
+    margin: 0;
+    letter-spacing: 0.1em;
+    width: 100%;
+    height: 15%;
+}
+
+.home .top {
+    position: relative;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.top .head {
+    display: flex;
+}
+
+.head h1 {
+    background: linear-gradient(60deg, #2b2e4a, #423268, #623080, #842790, #a51d96, #c11b8f, #d72c78, #e84545);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+}
+
+.top .buttonGroup {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 1em;
+    height: 25%;
+}
+
+.buttonGroup .var-button {
+    user-select: none;
+    position: relative;
+    border-radius: 0.5em;
+    border: rgb(48, 135, 185) solid 0.1em;
+    height: 100%;
+    width: 14em;
+}
+
+.buttonGroup .var-button span {
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    font-size: 1.2em;
+    color: rgb(48, 135, 185);
+}
+
+.buttonGroup .var-button .active {
+    font-weight: bold;
+    font-size: 1.4em;
+}
+
+.top .input {
+    display: flex;
+    justify-content: center;
+    margin: 0;
+}
+
+
+.plotCompoents {
+    position: absolute;
+    height: 85%;
+    width: 100%;
+    top: 15%;
+}
+
+.plotCompoents .component-container {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}

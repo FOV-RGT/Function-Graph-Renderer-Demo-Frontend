@@ -1,24 +1,25 @@
 import { createStore } from 'vuex';
-// import { EventBus } from '../eventBus.js'; // 引入事件总线
 
 const store = createStore({
     state: {
-        initialized: false,
+        switch3D: false,
+        input2D: '',
+        input3D: '',
     },
     mutations: {
-        setInitialized(state, value) {
-            state.initialized = value;
-            console.log(state.initialized);
-            // if (state.initialized) {
-            //     EventBus.emit('initializedUpdated'); // 广播初始化事件
-            // }
+        toggleSwitch3D(state) {
+            state.switch3D = !state.switch3D;
+        },
+        render(state, input) {
+            if (state.switch3D) {
+                state.input3D = input;
+            } else {
+                state.input2D = input;
+            }
         }
     },
     actions: {
-        init({ commit }) {
-            commit('setInitialized', true);
-            console.log('111');
-        }
+        
     }
 });
 
