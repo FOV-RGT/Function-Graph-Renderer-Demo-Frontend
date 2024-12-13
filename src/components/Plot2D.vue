@@ -64,6 +64,20 @@ export default {
   beforeDestroy() {
     window.removeEventListener('resize', this.updateDimensions);
   },
+  computed: {
+  },
+  watch: {
+  },
+  mounted() {
+    window.addEventListener('resize', this.updateDimensions);
+    this.$nextTick(() => {
+      this.width = this.$refs.canvas2D.clientWidth;
+      this.height = this.$refs.canvas2D.clientHeight;
+    });
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.updateDimensions);
+  },
   methods: {
     formatInput(inputs) {
       if (this.rendering) return;
