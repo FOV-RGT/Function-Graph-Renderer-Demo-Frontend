@@ -20,7 +20,7 @@
 
 未来的参赛作品，我希望能有足够美观的交互界面、简单易上手的图像绘制程序、功能丰富的三维图形渲染，不过这些都得等所有基础功能完善再说。
 
-另附[Three.js官方文档](https://threejs.org/docs/index.html#manual/zh/introduction/Creating-a-scene)、[plotly.js官方文档](https://plotly.com/javascript/getting-started/)bbbbb
+另附[Three.js官方文档](https://threejs.org/docs/index.html#manual/zh/introduction/Creating-a-scene)、[plotly.js官方文档](https://plotly.com/javascript/getting-started/)
 
 ---
 ## <center> 项目运行
@@ -42,3 +42,9 @@ npm run dev
 
 <center> <img src="./public/IMG_4007.PNG" width="300" height="450" title> </center>
 
+## <center> 已知Bug
+
+- 渲染按钮点击过快会导致线程创建过多大量占用内存
+- 三维的部分函数渲染会阻塞主线程
+- 无法识别诸如'sin(y)'等因变量不明的函数（因变量默认为'y'，'sin(y)'会产生冲突）
+- 无法识别诸如'x^2 + y^2 + z^2 = 10等函数
