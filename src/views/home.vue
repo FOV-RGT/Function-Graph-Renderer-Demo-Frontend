@@ -34,8 +34,8 @@
 
 <script>
 import packageJson from '../../package.json';
-import TwoDPlotCom from '../components/Plot2D.vue';
-import ThreeDPlotCom from '../components/Plot3D.vue';
+import TwoDPlotCom from '../components/render2D.vue';
+import ThreeDPlotCom from '../components/render3D.vue';
 
 export default {
     name: 'home',

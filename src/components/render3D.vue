@@ -11,6 +11,7 @@ import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
 import * as math from "mathjs";
 import { parse } from "mathjs";
 import { mapState } from "vuex";
+import DelaunayFast from 'delaunay-fast';
 
 export default {
   name: 'Plot3D',
@@ -21,6 +22,7 @@ export default {
       renderer: null,
       controls: null,
       axes: null,
+      directionalLight: null,
     };
   },
   computed: {
@@ -46,15 +48,8 @@ export default {
   },
   methods: {
     init() {
-      // 初始化透视摄像机
-      this.camera = new THREE.PerspectiveCamera(
-        90, // 摄像机视野
-        window.innerWidth / window.innerHeight,
-        0.1, // 与摄像机距离小于该单位部分将不会被渲染
-        400 // 摄像机最大可视距离
-      );
       // 使用WebGL渲染3D对象并开启抗锯齿
-      this.renderer = new THREE.WebGLRenderer({ antialias: true });
+      this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, logarithmicDepthBuffer: true });
       // 将场景大小设定为容器大小
       this.renderer.setSize(
         this.$refs.canvas3D.clientWidth,
@@ -62,16 +57,36 @@ export default {
       );
       // 将场景添加到容器'canvas3D'中
       this.$refs.canvas3D.appendChild(this.renderer.domElement);
+      // 初始化透视摄像机
+      this.camera = new THREE.PerspectiveCamera(
+        90, // 摄像机视野
+        window.innerWidth / window.innerHeight,
+        0.1, // 与摄像机距离小于该单位部分将不会被渲染
+        1600 // 摄像机最大可视距离
+      );
+      // 初始化摄像机坐标
+      this.camera.position.set(6, 3, 10);
       // 设置控制对象为当前场景的摄像机
       this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+      this.controls.addEventListener('change', this.updateLight);
       // 接受函数返回的3D对象
       this.axes = this.createCustomAxes();
       // 将对象添加到场景
       this.scene.add(this.axes);
-      // 初始化摄像机坐标
-      this.camera.position.set(6, 3, 10);
-      this.controls.update();
+      this.renderer.setClearColor(0x000000, 0);
+      const ambientLight = new THREE.AmbientLight(0xffff00, 0.8); // 环境光
+      this.scene.add(ambientLight);
+      this.directionalLight = new THREE.DirectionalLight(0xfffff0, 0.4);// 平行光
+      this.scene.add(this.directionalLight);
+      this.updateLight();
       this.animate();
+    },
+    updateLight() {
+      this.directionalLight.position.copy(this.camera.position);
+      // 将平行光的方向设置为和摄像机朝向相同
+      const direction = new THREE.Vector3();
+      this.camera.getWorldDirection(direction)
+      this.directionalLight.lookAt(direction);
     },
     createCustomAxes() {
       // 创建一个新的3D对象'axes'作为坐标轴
@@ -256,8 +271,12 @@ export default {
         size: 0.35,// 字体大小
         depth: 0.05,// 字体厚度
       });
-      // 使用'new THREE.MeshBasicMaterial'创建基础材质
-      const textMaterial = new THREE.MeshBasicMaterial({ color: color });
+      // 使用'new THREE.MeshBasicMaterial'创建基础材质  //（材质改为冯氏反射）
+      const textMaterial = new THREE.MeshPhongMaterial({
+        color: color,
+        specular: 0xffffc0,
+        shininess: 20,
+      });
       // 使用结构与材质创建3D对象
       const textMesh = new THREE.Mesh(textGeo, textMaterial);
       // 对象应用传入的坐标
@@ -286,7 +305,7 @@ export default {
       // Vue3的代理机制会影响Three.js的某些库，使用'toRaw'获取响应式对象的原始版本可以避免这个影响。
       this.renderer.render(toRaw(this.scene), toRaw(this.camera));
       // 每帧更新前回调'animate()'函数
-      requestAnimationFrame(() => this.animate());
+      requestAnimationFrame(this.animate.bind(this));
     },
     formatInput(inputs) {
       // 每次用户输入函数，删除上一次渲染的图像
@@ -303,7 +322,12 @@ export default {
       const startTime = performance.now();
       let geometry;
       // 创建基础线条材质
-      let material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+      let material = new THREE.MeshBasicMaterial({
+        color: 0x3087b9,
+        side: THREE.DoubleSide,
+        wireframe: true,
+        wireframeLinewidth: 2,
+      });
       const createLineFromPoints = (points) => {
         // 创建几何结构并以传入参数定义顶点
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
@@ -311,19 +335,31 @@ export default {
         return new THREE.Line(geometry, material);
       };
       const createSurfaceFromPoints = (points) => {
-        // 创建几何结构
+        // let indexsArray = [];
+        // const sampleStep = 5;
+        // for (let i = 0; i < points.length; i += 3 * sampleStep) {
+        //   indexsArray.push([points[i], points[i + 1], points[i + 2]]);
+        // }
+        // const triangles = DelaunayFast.triangulate(indexsArray);
         geometry = new THREE.BufferGeometry();
-        // 定义几何结构顶点
         geometry.setAttribute(
           "position",
           // 以'new THREE.Float32BufferAttribute()'创建和管理几何体顶点数据
           new THREE.Float32BufferAttribute(points, 3)
         );
+        // const indices = new Uint16Array(triangles);
+        // geometry.setIndex(new THREE.BufferAttribute(points, 3));
         // 创建基础材质
+        // const material = new THREE.MeshPhongMaterial({
+        //   color: 0xfff000,
+        //   specular: 0xffffc0,
+        //   shininess: 20,
+        // });
         const material = new THREE.MeshBasicMaterial({
-          color: 0xff0000,// 红色
-          side: THREE.DoubleSide,// 背面可见
-          wireframe: true,// 以线框模式渲染
+          color: 0x3087b9,
+          side: THREE.DoubleSide,
+          wireframe: true,
+          wireframeLinewidth: 2,
         });
         // 返回3D对象
         return new THREE.Mesh(geometry, material);
