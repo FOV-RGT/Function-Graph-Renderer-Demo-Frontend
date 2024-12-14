@@ -41,28 +41,27 @@ export default {
       dragmode: 'pan',  // 启用拖动缩放
       showlegend: true,  // 显示图例
       legend: {
-        x: 1,
+        x: 0.95,
         y: 1,
         traceorder: 'normal',
         font: {
-          family: 'sans-serif',
-          size: 12,
-          color: 'black'
+          family: 'deYiHei',
+          size: 16,
+          color: 'black',
         },
         bgcolor: 'rgba(255, 255, 255, 0.5)',
         bordercolor: 'rgba(0, 0, 0, 0.5)',
-        borderwidth: 2
+        borderwidth: 1
       },
     };
     const config = {
       displayModeBar: false,  // 隐藏工具栏控件
       scrollZoom: true,  // 启用滚轮缩放
-      responsive: true,  // 响应用户拖动
+      responsive: true,  // 响应式布局
+      displaylogo: false
     };
     // 使用 Plotly 绘制图表
     Plotly.newPlot(this.canvas, [], layout, config);
-    console.log('111');
-    
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.updateDimensions);
@@ -72,7 +71,7 @@ export default {
       if (this.rendering) return;
       this.rendering = true;
       this.deleteTraces(this.names);
-      // 以正则表达式匹配一个或多个连续空白字符替换为空字符，并将输入以';'或'；'分割为数组，从而格式化用户输入
+      // 以正则表达式匹配整个输入流中一个或多个连续空白字符替换为空字符，并将输入以';'或'；'分割为数组，从而格式化用户输入
       const functionInputs = inputs.replace(/\s+/g, "").split(/[;；]/);
       // 遍历数组逐一传递元素到'plotFunction()'
       functionInputs.forEach(input => this.plotFunction(input));
@@ -90,12 +89,12 @@ export default {
       if (input.startsWith('x=')) {
         target = 'x'
       }
-      const width = this.width;
+      const width = this.width; // 暂时用不到
       const height = this.height;
       const workerCount = 6;
       const calculatePromises = [];
       for (let i = 0; i < workerCount; i++) {
-        const promise = new Promise((resolve) => {
+        const promise = new Promise((resolve, reject) => {
           const worker = new Worker(
             new URL("../assets/calculateCoordinates.js", import.meta.url), { type: "module", }
           );
@@ -104,6 +103,9 @@ export default {
           worker.postMessage({ start, end, index: i, input, target });
           worker.onmessage = (event) => {
             resolve(event.data);
+          };
+          worker.onerror = (error) => {
+            reject(error);  // 当Worker出现错误时，调用reject将错误传递出去
           };
         });
         calculatePromises.push(promise);
@@ -114,6 +116,9 @@ export default {
         const yVals = results.flatMap(result => result.yVals);
         const vals = { xVals, yVals }
         return vals;
+      }).catch(() => {
+        alert('不受支持的输入');
+        return { xVals: [], yVals: [] };  // 返回空值对象
       });
     },
     async plotFunction(input) {

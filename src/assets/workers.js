@@ -21,18 +21,23 @@ self.onmessage = function (event) {
             for (let j = -200; j <= 200; j += step) {
                 // 传参评估因变量
                 const x = expr.evaluate({ y: i, z: j });
-                // 判断x值是否正常，若正常则存储坐标
                 points[offset++] = x;// 将x坐标存储在当前'offset'位置后'offset'+1
                 points[offset++] = i;
                 points[offset++] = j;
-                // if (offset >= 5) {
-                //     const previousX = points[offset - 5];
-                //     const jump = Math.abs(x - previousX);
-                //     if (jump > threshold) {
-                //         step /= 2;
-                //     } else if (jump < threshold / 2 && step < initStep) {
-                //         step *= 2;
-                //     }
+                // 判断x值是否正常，若正常则存储坐标
+                // if (x <= 200 && x >= -200) {
+                //     points[offset++] = x;// 将x坐标存储在当前'offset'位置后'offset'+1
+                //     points[offset++] = i;
+                //     points[offset++] = j;
+                //     // if (offset >= 5) {
+                //     //     const previousX = points[offset - 5];
+                //     //     const jump = Math.abs(x - previousX);
+                //     //     if (jump > threshold) {
+                //     //         step /= 2;
+                //     //     } else if (jump < threshold / 2 && step < initStep) {
+                //     //         step *= 2;
+                //     //     }
+                //     //     
                 // }
             }
         }
