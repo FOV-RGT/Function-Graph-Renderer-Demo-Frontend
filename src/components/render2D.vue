@@ -44,6 +44,7 @@ export default {
         x: 0.95,
         y: 1,
         traceorder: 'normal',
+        uirevision: 'hide tooltip',
         font: {
           family: 'deYiHei',
           size: 16,
@@ -58,7 +59,8 @@ export default {
       displayModeBar: false,  // 隐藏工具栏控件
       scrollZoom: true,  // 启用滚轮缩放
       responsive: true,  // 响应式布局
-      displaylogo: false
+      displaylogo: false,
+      showTips: false
     };
     // 使用 Plotly 绘制图表
     Plotly.newPlot(this.canvas, [], layout, config);
