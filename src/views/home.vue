@@ -47,8 +47,8 @@ export default {
         return {
             packageVersion: packageJson.version,
             showTwoD: true,
-            functionInput: 'sin(x);cos(log(x));x=log(cos(sin(sqrt(y^3))));x=2;y=-1',
-            inputExample: '输入例:sin(x);cos(log(x));x=log(cos(sin(sqrt(y^3))));x=2;y=-1...',
+            functionInput: '2sin(x);cos(log(x));log(cos(sin(sqrt(-x^3))));x=5;x=-5',
+            inputExample: '输入例:sin(x);cos(log(x));log(cos(sin(sqrt(-x^3))));x=5;x=-5...',
             inputTemp1: '',
             inputTemp2: 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10',
         };
@@ -60,7 +60,7 @@ export default {
         showTwoDPlot() {
             this.showTwoD = true;
             this.$store.commit('toggleSwitch3D');
-            this.inputExample = '输入例:sin(x);cos(log(x));x=log(cos(sin(sqrt(y^3))));x=2;y=-1...';
+            this.inputExample = '输入例:sin(x);cos(log(x));log(cos(sin(sqrt(-x^3))));x=5;x=-5...';
             this.inputTemp2 = this.functionInput;
             this.functionInput = this.inputTemp1;
         },
@@ -73,7 +73,7 @@ export default {
         },
         render() {
             if (this.showTwoD) {
-                this.$refs.TwoDPlotCom.formatInput(this.functionInput);
+                this.$refs.TwoDPlotCom.input(this.functionInput);
             } else {
                 this.$refs.ThreeDPlotCom.formatInput(this.functionInput);
             }
