@@ -1,3 +1,7 @@
+/**
+ * 已弃用
+ */
+
 import { parse } from "mathjs";
 
 // 自适应采样算法

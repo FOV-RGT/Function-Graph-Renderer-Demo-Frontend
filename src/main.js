@@ -10,5 +10,5 @@ const app = createApp(App);
 app.use(router);
 app.use(Varlet);
 app.use(store);
-app.mount('#app');
 app.use(Varlet);
+app.mount('#app');
