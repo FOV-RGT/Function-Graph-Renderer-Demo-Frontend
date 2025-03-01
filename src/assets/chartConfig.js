@@ -8,13 +8,16 @@ export const defaultConfig = (target) => ({
     // width: 800,
     // height: 500,
     xAxis: {
-        domain: [-10, 10]
+        domain: [-10, 10],
+        // label: "x",
     },
     yAxis: {
-        domain: [-5, 5]
+        domain: [-5, 5],
+        // label: "y",
     },
     grid: true,
     disableZoom: false,
     data: [],
-});
+})
+
 

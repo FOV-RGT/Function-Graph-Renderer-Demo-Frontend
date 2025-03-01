@@ -14,7 +14,7 @@
             </div>
             <div class="input">
                 <var-input variant="outlined" :placeholder = inputExample clearable
-                    focus-color="rgb(48,135,185)" v-model= "functionInput" style="width: 50em; " spellcheck="false" />
+                    focus-color="rgb(48,135,185)" v-model= functionInput style="width: 50em; " spellcheck="false" />
                 <var-button text outline type="primary" @click="render" style="height: auto;"
                     text-color="rgb(48,135,185)" v-ripple>
                     <span style="font-size: 1.4em;">渲染</span>
@@ -23,10 +23,10 @@
         </div>
     </div>
     <div class="plotCompoents">
-        <div v-show="showTwoD" class="component-container">
+        <div v-show="show_2D" class="component-container">
             <TwoDPlotCom ref="TwoDPlotCom"/>
         </div>
-        <div v-show="!showTwoD" class="component-container">
+        <div v-show="!show_2D" class="component-container">
             <ThreeDPlotCom ref="ThreeDPlotCom"/>
         </div>
     </div>
@@ -46,34 +46,46 @@ export default {
     data() {
         return {
             packageVersion: packageJson.version,
-            showTwoD: true,
-            functionInput: '2sin(x);cos(log(x));log(cos(sin(sqrt(-x^3))));x=5;x=-5',
+            show_2D: true,
             inputExample: '输入例:sin(x);cos(log(x));log(cos(sin(sqrt(-x^3))));x=5;x=-5...',
-            inputTemp1: '',
-            inputTemp2: 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10',
         };
     },
     mounted() {
         
     },
+    computed: {
+        functionInput: {
+            get() {
+                if (this.show_2D) {
+                    return this.$store.state.userInput_2D
+                }
+                else {
+                    return this.$store.state.userInput_3D
+                }
+            },
+            set(input) {
+                const playload = {
+                    input,
+                    is2D: this.show_2D
+                };
+                this.$store.commit('userInput', playload);
+            }
+        }
+    },
     methods: {
         showTwoDPlot() {
-            this.showTwoD = true;
-            this.$store.commit('toggleSwitch3D');
+            this.show_2D = true;
+            this.$store.commit('switch3D');
             this.inputExample = '输入例:sin(x);cos(log(x));log(cos(sin(sqrt(-x^3))));x=5;x=-5...';
-            this.inputTemp2 = this.functionInput;
-            this.functionInput = this.inputTemp1;
         },
         showThreeDPlot() {
-            this.showTwoD = false;
-            this.$store.commit('toggleSwitch3D');
+            this.show_2D = false;
+            this.$store.commit('switch3D');
             this.inputExample = '输入例:x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10';
-            this.inputTemp1 = this.functionInput;
-            this.functionInput = this.inputTemp2;
         },
         render() {
-            if (this.showTwoD) {
-                this.$refs.TwoDPlotCom.input(this.functionInput);
+            if (this.show_2D) {
+                this.$refs.TwoDPlotCom.userInput(this.functionInput);
             } else {
                 this.$refs.ThreeDPlotCom.formatInput(this.functionInput);
             }

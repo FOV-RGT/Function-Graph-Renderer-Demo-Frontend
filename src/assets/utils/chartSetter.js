@@ -1,4 +1,4 @@
-import { defaultConfig } from '../chartConfig';
+import * as chartConfig from '../chartConfig';
 import plot from 'function-plot';
 import * as utils from './componentUtils';
 
@@ -7,7 +7,7 @@ import * as utils from './componentUtils';
 export class Chart {
     constructor(target) {
         this.target = target;
-        this.config = defaultConfig(target);
+        this.config = chartConfig.defaultConfig(target);
         this.chart = plot(this.config);
     }
 
@@ -22,22 +22,14 @@ export class Chart {
         const functionInputs = inputs.replace(/\s+/g, "").split(/[;；]/);
         const data = [];
         for (const input of functionInputs) {
-            const hash = await this.sha256(input);
             data.push({
                 fn: input,
                 color: utils.randomColor(),
-                hash: hash
+                hash: await utils.sha256(input),
+                nSamples: 1024,
             });
         }
         return data;
-    }
-
-    async sha256(input) {
-        const encoder = new TextEncoder();
-        const data = encoder.encode(input);
-        const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
     }
 
     setFunction(data) {
@@ -50,4 +42,6 @@ export class Chart {
         const data = await this.createData(inputs);
         this.setFunction(data);
     }
+
+    
 }

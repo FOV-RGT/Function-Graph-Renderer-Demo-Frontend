@@ -1,6 +1,5 @@
 /**
  * 组件工具函数
- * 为应用程序提供通用工具函数
  */
 
 // 类型检查函数
@@ -112,4 +111,12 @@ export const rgbToHex = (r, g, b) => {
 export const randomColor = () => {
     return `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`;
 }; // 生成随机颜色
+
+export async function sha256(input) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(input);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+}
 

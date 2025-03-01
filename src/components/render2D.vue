@@ -6,24 +6,37 @@
 // import plot from 'function-plot';
 // import { select, selectAll } from 'd3';
 import { Chart } from '../assets/utils/chartSetter';
+import * as utils from '../assets/utils/componentUtils';
+import { mapState } from "vuex";
+
 
 export default {
   data() {
     return {
+      chart: null,
+      rendering: false,
     };
   },
 
   computed: {
-
+    ...mapState(["userInput_2D"]),
   },
 
   watch: {
-
+    userInput_2D: {
+      handler (newVal) {
+        // 防抖包装，传入图表的addInput方法并绑定当前this指向
+        const debounceInput = utils.debounce(this.chart.addInput.bind(this.chart), 600);
+        // 调用图表的addInput方法
+        debounceInput(newVal);
+      },
+    },
   },
 
   mounted() {
     // 绘制图表
     this.chart = new Chart(this.$refs.canvas2D);
+    this.chart.addInput(this.userInput_2D);
     //   setTimeout(() => {
     //   // 选择轴标签并设置样式
     //   selectAll('.function-plot .x.axis text, .function-plot .y.axis text')
@@ -36,7 +49,6 @@ export default {
     //     .style('stroke-dasharray', '3,3');
     // }, 100);
 
-
     // 监听图表的'plotly_relayout'事件，当图表的布局发生变化时触发
 
   },
@@ -45,14 +57,14 @@ export default {
 
   },
   methods: {
-    // 更新坐标范围
-
-    // 格式化用户输入
-
-    input(inputs) {
-      // 渲染图表
-      this.chart.addInput(inputs);
-      
+    // 接收父组件传递的输入
+    userInput(inputs) {
+      if (!this.rendering) {
+        this.rendering = true;
+        this.chart.addInput(inputs).then(() => {
+          this.rendering = false;
+        });
+      }
     },
 
   }
