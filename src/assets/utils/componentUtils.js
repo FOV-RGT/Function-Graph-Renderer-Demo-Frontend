@@ -43,7 +43,6 @@ export const deepClone = (obj) => {
 export const mergeObjects = (target, ...sources) => {
     if (!sources.length) return target;
     const source = sources.shift();
-
     if (isObject(target) && isObject(source)) {
         for (const key in source) {
             if (isObject(source[key])) {
@@ -54,7 +53,6 @@ export const mergeObjects = (target, ...sources) => {
             }
         }
     }
-
     return mergeObjects(target, ...sources);
 }; // 深度合并多个对象
 

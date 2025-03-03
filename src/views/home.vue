@@ -83,6 +83,25 @@ export default {
             }
         }
     },
+    computed: {
+        functionInput: {
+            get() {
+                if (this.show_2D) {
+                    return this.$store.state.userInput_2D
+                }
+                else {
+                    return this.$store.state.userInput_3D
+                }
+            },
+            set(input) {
+                const playload = {
+                    input,
+                    is2D: this.show_2D
+                };
+                this.$store.commit('userInput', playload);
+            }
+        }
+    },
     methods: {
         // 切换二维图形绘制
         showTwoDPlot() {
