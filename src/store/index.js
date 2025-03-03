@@ -7,8 +7,12 @@ const store = createStore({
         userInput_3D: 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10',
     },
     mutations: {
-        switch3D(state) {
-            state.switch3D = !state.switch3D;
+        switchRender(state, is2D) {
+            if (is2D) {
+                state.switch3D = false;
+            } else {
+                state.switch3D = true;
+            }
         },
         userInput(state, payload) {
             if (payload.is2D) {
