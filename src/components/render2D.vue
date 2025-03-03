@@ -28,7 +28,6 @@ export default {
     // 绘制图表
     console.log("图表实例开始挂载");
     this.chartInstance = new chartInstance(this.$refs.canvas2D);
-    this.legendSelection = select('.function-plot text');
     this.startResetCSS();
     this.chartInstance.addInput(this.userInput_2D).then(() => {
       console.log("图表实例初始化完成");
@@ -52,7 +51,8 @@ export default {
   methods: {
     startResetCSS() {
       const animate = () => {
-        this.legendSelection.text('');
+        select('.function-plot text')
+        .text('');
         selectAll('.function-plot .canvas .x .tick, .function-plot .canvas .y .tick')
         .style('font-size', 15);
         selectAll('.function-plot .canvas .tip .inner-tip text')
