@@ -8,10 +8,10 @@ export const defaultConfig = (target) => ({
     // width: 800,
     // height: 500,
     xAxis: {
-        domain: [-10, 10],
+        domain: [-20, 20],
     },
     yAxis: {
-        domain: [-5, 5],
+        domain: [-10, 10],
     },
     grid: true,
     data: [],

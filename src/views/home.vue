@@ -56,7 +56,7 @@ export default {
         return {
             packageVersion: packageJson.version,
             show_2D: true,
-            inputExample: '输入例:sin(x);cos(log(x));log(cos(sin(sqrt(-x^3))));x=5;x=-5...',
+            inputExample: '输入例:2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...',
         };
     },
     mounted() {
@@ -107,7 +107,7 @@ export default {
         showTwoDPlot() {
             this.show_2D = true;
             this.$store.commit('switchRender', this.show_2D);
-            this.inputExample = '输入例:sin(x);cos(log(x));log(cos(sin(sqrt(-x^3))));x=5;x=-5...';
+            this.inputExample = '输入例:2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...';
         },
         // 切换三维图形绘制
         showThreeDPlot() {

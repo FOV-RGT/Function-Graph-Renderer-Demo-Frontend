@@ -9,9 +9,10 @@ export class chartInstance {
     constructor(target) {
         this.target = target;
         this.config = chartConfig.defaultConfig(target); // 初始化图表配置
-        console.log("实例挂载：初始化配置完成");
+        console.log("实例挂载:初始化配置完成");
         this.instance = functionPlot(this.config);// 初始化图表实例
         console.log("图表实例成功挂载");
+        console.log(functionPlot.globals);
     }
 
     async createData(inputs) {
@@ -28,7 +29,7 @@ export class chartInstance {
                 fn: functionInputs[i], // 函数表达式
                 color: color, // 为每个函数生成唯一的颜色
                 hash: await utils.sha256(functionInputs[i]), // 为每个函数生成唯一的哈希值
-                nSamples: 1024, // 采样点数
+                nSamples: 2048, // 采样点数
             });
         }
         return data;
@@ -37,7 +38,7 @@ export class chartInstance {
     setFunction(data) {
         this.config.data = [...data];// 将data数组中的所有元素添加到config.data数组中
         this.instance.build();// 重绘图表
-        console.log("图表实例配置已更新：", this.config);
+        console.log("图表实例配置已更新:", this.config);
     }
 
     async addInput(inputs) {
@@ -70,7 +71,7 @@ export class chartInstance {
         this.destroyInstance();
         this.instance = functionPlot(currentConfig);
         this.config = currentConfig;
-        console.log("图表配置已更新：", this.config);
+        console.log("图表配置已更新:", this.config);
     }
 
     zoomView() {
@@ -86,7 +87,7 @@ export class chartInstance {
         this.destroyInstance();
         this.instance = functionPlot(currentConfig);
         this.config = currentConfig;
-        console.log("图表配置已更新：", this.config);
+        console.log("图表配置已更新:", this.config);
     }
 
     dragView() {
@@ -99,6 +100,6 @@ export class chartInstance {
         this.destroyInstance();
         this.instance = functionPlot(currentConfig);
         this.config = currentConfig;
-        console.log("图表配置已更新：", this.config);
+        console.log("图表配置已更新:", this.config);
     }
 }
