@@ -106,13 +106,13 @@ export default {
         // 切换二维图形绘制
         showTwoDPlot() {
             this.show_2D = true;
-            this.$store.commit('switch3D');
+            this.$store.commit('switchRender', this.show_2D);
             this.inputExample = '输入例:sin(x);cos(log(x));log(cos(sin(sqrt(-x^3))));x=5;x=-5...';
         },
         // 切换三维图形绘制
         showThreeDPlot() {
             this.show_2D = false;
-            this.$store.commit('switch3D');
+            this.$store.commit('switchRender', this.show_2D);
             this.inputExample = '输入例:x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10';
         },
         // 渲染函数图形
