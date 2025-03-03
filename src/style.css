@@ -1,8 +1,12 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: coffee --default, dark --prefersdark, cupcake;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-
 }
 
 @font-face {
@@ -12,27 +16,12 @@
   font-style: normal;
 }
 
-@media (min-width: 1200px) {
-  html {
-    font-size: 18px;
-  }
-}
-
-@media (max-width: 600px) {
-  html {
-    font-size: 12px;
-  }
-}
-
-body {
+html {
+  font-size: 18px;
+  font-weight: 500;
   min-width: 100vw;
   min-height: 100vh;
-  background-color: #ffffff;
   align-items: center;
   justify-content: center;
   font-family: 'deYiHei', sans-serif;
-}
-
-#app {
-  text-align: center;
 }
