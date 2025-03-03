@@ -71,22 +71,22 @@ export default {
           console.log("手动更新完成");
         });
       } else {
-        console.log("手动更新被阻止：正在渲染");
+        console.log("手动更新被阻止:正在渲染");
       }
     },
     // 重置视图
     setView(e) {
       switch (e) {
         case 'reset':
-          console.log("触发：重置视图");
+          console.log("触发:重置视图");
           this.chartInstance.resetView(this.chartInstance);
           break;
         case 'zoom':
-          console.log("触发：缩放视图");
+          console.log("触发:缩放视图");
           this.chartInstance.zoomView(this.chartInstance);
           break;
         case 'drag':
-          console.log("触发：平移视图");
+          console.log("触发:平移视图");
           this.chartInstance.dragView(this.chartInstance);
           break;
         default:
