@@ -79,7 +79,7 @@ export class chartInstance {
         const yDomain = currentConfig.yAxis.domain;
         const xRange = xDomain[1] - xDomain[0];
         const yRange = yDomain[1] - yDomain[0];
-        const zoomFactor = 0.1;
+        const zoomFactor = 0.5;
         currentConfig.xAxis.domain = [xDomain[0] - xRange * zoomFactor, xDomain[1] + xRange * zoomFactor];
         currentConfig.yAxis.domain = [yDomain[0] - yRange * zoomFactor, yDomain[1] + yRange * zoomFactor];
         currentConfig.id = '';
@@ -93,7 +93,7 @@ export class chartInstance {
         const currentConfig = this.config;
         const xDomain = currentConfig.xAxis.domain;
         const xRange = xDomain[1] - xDomain[0];
-        const dragFactor = 0.1;
+        const dragFactor = 0.2;
         currentConfig.xAxis.domain = [xDomain[0] + xRange * dragFactor, xDomain[1] + xRange * dragFactor];
         currentConfig.id = '';
         this.destroyInstance();
