@@ -2,35 +2,44 @@
     <div class="home">
         <div class="top">
             <div class="head">
-                <h1>函数图形渲染程序<sub style="font-size: 0.6em;">demo v{{ packageVersion }}</sub></h1>
+                <h1 style="font-size: 1.8em;" class="text-base-content">函数图形渲染程序<span style="font-size: 1rem;">demo-v{{ packageVersion }}</span>
+                </h1>
             </div>
             <div class="buttonGroup">
-                <var-button @click="showTwoDPlot" text outline type="primary">
-                    <span>二维函数图形绘制</span>
-                </var-button>
-                <var-button @click="showThreeDPlot" text outline type="primary">
-                    <span>三维函数图形绘制</span>
-                </var-button>
+                <button @click="showTwoDPlot" class="btn btn-soft btn-md btn-success w-42 ">
+                    <p>二维函数图形绘制</p>
+                </button>
+                <button @click="showThreeDPlot" class="btn btn-soft btn-md btn-success w-42 ">
+                    <p>三维函数图形绘制</p>
+                </button>
             </div>
-            <div class="input">
-                <var-input variant="outlined" :placeholder = inputExample clearable
-                    focus-color="rgb(48,135,185)" v-model= functionInput style="width: 50em; " spellcheck="false" />
-                <var-button text outline type="primary" @click="render" style="height: auto;"
-                    text-color="rgb(48,135,185)" v-ripple>
-                    <span style="font-size: 1.4em;">渲染</span>
-                </var-button>
+            <div class="inputContainer join">
+                <input v-model=functionInput spellcheck="false" type="text" :placeholder=inputExample
+                    class="input input-md w-2xl join-item">
+                <button class="btn btn-md btn-soft btn-primary 
+                    w-20 rounded-r-full join-item text-[1.2em]" @click=render>渲染
+                </button>
             </div>
         </div>
     </div>
-    <div class="plotCompoents">
-        <div v-show="show_2D" class="component-container">
-            <TwoDPlotCom ref="TwoDPlotCom"/>
-        </div>
-        <div v-show="!show_2D" class="component-container">
-            <ThreeDPlotCom ref="ThreeDPlotCom"/>
+    <div class="plotComponents">
+        <TwoDPlotCom ref="TwoDPlotCom" v-show="show_2D" class="renderComponent" />
+        <ThreeDPlotCom ref="ThreeDPlotCom" v-show="!show_2D" class="renderComponent" />
+        <div class="svgButtonsGroup join">
+            <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513.56 394.43" width="100px" height="100px">
+                <g id="_图层_1-2" data-name="图层 1">
+                    <polygon class="cls-1"
+                        points="225.69 5.23 505.11 271.11 284.52 389.29 19.81 359.74 5.11 182.48 93.34 20 225.69 5.23" />
+                    <polygon
+                        points="34.09 324.07 48.58 179.14 106.56 48.71 222.5 34.21 468.87 266.1 255.11 359.69 34.09 324.07" />
+                </g>
+            </svg> -->
+            <button class="btn btn-soft btn-primary btn-xl w-42 join-item" @click="setView('reset')">重置视窗范围</button>
+            <button class="btn btn-soft btn-primary btn-xl w-22 join-item" @click="setView('zoom')">缩放</button>
+            <button class="btn btn-soft btn-primary btn-xl w-22 join-item" @click="setView('drag')">平移</button>
         </div>
     </div>
-</template>
+</template> 
 
 <script>
 import packageJson from '../../package.json';
@@ -51,10 +60,11 @@ export default {
         };
     },
     mounted() {
-        
+
     },
     computed: {
         functionInput: {
+            // 通过getter获取store中的输入
             get() {
                 if (this.show_2D) {
                     return this.$store.state.userInput_2D
@@ -63,6 +73,7 @@ export default {
                     return this.$store.state.userInput_3D
                 }
             },
+            // 通过setter将输入传递给store
             set(input) {
                 const playload = {
                     input,
@@ -73,21 +84,45 @@ export default {
         }
     },
     methods: {
+        // 切换二维图形绘制
         showTwoDPlot() {
             this.show_2D = true;
             this.$store.commit('switch3D');
             this.inputExample = '输入例:sin(x);cos(log(x));log(cos(sin(sqrt(-x^3))));x=5;x=-5...';
         },
+        // 切换三维图形绘制
         showThreeDPlot() {
             this.show_2D = false;
             this.$store.commit('switch3D');
             this.inputExample = '输入例:x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10';
         },
+        // 渲染函数图形
         render() {
             if (this.show_2D) {
                 this.$refs.TwoDPlotCom.userInput(this.functionInput);
-            } else {
+            }
+            else {
                 this.$refs.ThreeDPlotCom.formatInput(this.functionInput);
+            }
+        },
+        setView(e) {
+            if (this.show_2D) {
+                switch (e) {
+                    case 'reset':
+                        this.$refs.TwoDPlotCom.setView('reset');
+                        break;
+                    case 'zoom':
+                        this.$refs.TwoDPlotCom.setView('zoom');
+                        break;
+                    case 'drag':
+                        this.$refs.TwoDPlotCom.setView('drag');
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else {
+                // this.$refs.ThreeDPlotCom.resetView();
             }
         }
     }
@@ -95,6 +130,6 @@ export default {
 </script>
 
 <style scoped>
-@import url('../assets/home.css');
-
+@import url('../assets/componentCss/home.css');
+@import url('../assets/componentCss/icon1.css');
 </style>
