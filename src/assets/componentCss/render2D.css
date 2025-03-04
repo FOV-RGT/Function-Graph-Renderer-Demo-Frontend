@@ -2,12 +2,16 @@
     display: none;
 }
 
-.function-plot .canvas .x .tick, .function-plot .canvas .y .tick {
+.function-plot .canvas .x, .function-plot .canvas .y {
     font-size: 0.8rem;
     user-select: none;
 }
 
-.function-plot .canvas .tip .inner-tip text {
+.function-plot .canvas .tip text {
     font-size: 2rem;
     user-select: none;
+}
+
+.function-plot .canvas .content .origin{
+    opacity: 0.6;
 }

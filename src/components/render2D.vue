@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100%;height: 100%;" ref="canvas2D"></div>
+  <div style="width: 100%;height: 100%;overflow: hidden;" ref="canvas2D"></div>
 </template>
 
 <script>

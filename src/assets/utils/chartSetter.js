@@ -2,6 +2,7 @@ import * as chartConfig from '../chartConfig';
 import functionPlot from 'function-plot';
 import * as utils from './componentUtils';
 import { select } from 'd3';
+import store from '../../store';
 
 
 
@@ -32,6 +33,7 @@ export class chartInstance {
                 nSamples: 2048, // 采样点数
             });
         }
+        store.commit('addData', data);
         return data;
     }
 
