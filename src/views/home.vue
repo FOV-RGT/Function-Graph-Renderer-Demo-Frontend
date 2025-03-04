@@ -2,7 +2,7 @@
     <div class="home">
         <div class="top">
             <div class="head">
-                <h1 style="font-size: 1.8em;" class="text-base-content">函数图形渲染程序<span style="font-size: 1rem;">demo-v{{ packageVersion }}</span>
+                <h1 class="text-primary text-[2rem]">函数图形渲染程序<span class="text-[1rem] text-orange-600">demo-v{{ packageVersion }}</span>
                 </h1>
             </div>
             <div class="buttonGroup">
@@ -15,7 +15,7 @@
             </div>
             <div class="inputContainer join">
                 <input v-model=functionInput spellcheck="false" type="text" :placeholder=inputExample
-                    class="input input-md w-2xl join-item">
+                    class="input input-md w-[60dvw] join-item text-teal-500">
                 <button class="btn btn-md btn-soft btn-primary 
                     w-20 rounded-r-full join-item text-[1.2em]" @click=render>渲染
                 </button>
