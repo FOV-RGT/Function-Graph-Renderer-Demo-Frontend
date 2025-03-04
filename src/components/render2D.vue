@@ -3,7 +3,6 @@
 </template>
 
 <script>
-import { select, selectAll } from 'd3';
 import { chartInstance } from '../assets/utils/chartSetter';
 import * as utils from '../assets/utils/componentUtils';
 import { mapState } from "vuex";
@@ -28,7 +27,6 @@ export default {
     // 绘制图表
     console.log("图表实例开始挂载");
     this.chartInstance = new chartInstance(this.$refs.canvas2D);
-    this.startResetCSS();
     this.chartInstance.addInput(this.userInput_2D).then(() => {
       console.log("图表实例初始化完成");
     });
@@ -36,7 +34,6 @@ export default {
   beforeDestroy() {
     // 释放资源
     this.chartInstance.destroyInstance();
-    cancelAnimationFrame(this.animationId);
   },
   computed: {
     ...mapState(["userInput_2D"]),// 通过vuex获取输入
@@ -49,18 +46,6 @@ export default {
     },
   },
   methods: {
-    startResetCSS() {
-      const animate = () => {
-        select('.function-plot text')
-        .text('');
-        selectAll('.function-plot .canvas .x .tick, .function-plot .canvas .y .tick')
-        .style('font-size', 15);
-        selectAll('.function-plot .canvas .tip .inner-tip text')
-        .style('font-size', 30);
-        this.animationId = requestAnimationFrame(animate);
-      };
-      animate();
-    },
     // 接收父组件传递的输入
     userInput(inputs) {
       if (!this.rendering) {
@@ -75,19 +60,27 @@ export default {
       }
     },
     // 重置视图
-    setView(e) {
-      switch (e) {
+    setView(evt) {
+      switch (evt) {
         case 'reset':
           console.log("触发:重置视图");
-          this.chartInstance.resetView(this.chartInstance);
+          this.chartInstance.resetView(this.$refs.canvas2D);
           break;
-        case 'zoom':
+        case 'zoomIn':
           console.log("触发:缩放视图");
-          this.chartInstance.zoomView(this.chartInstance);
+          this.chartInstance.zoomView(evt);
           break;
-        case 'drag':
+        case 'zoomOut':
+          console.log("触发:缩放视图");
+          this.chartInstance.zoomView(evt);
+          break;
+        case 'dragLeft':
           console.log("触发:平移视图");
-          this.chartInstance.dragView(this.chartInstance);
+          this.chartInstance.dragView(evt);
+          break;
+        case 'dragRight':
+          console.log("触发:平移视图");
+          this.chartInstance.dragView(evt);
           break;
         default:
           break;
@@ -97,4 +90,6 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style>
+@import url('../assets/componentCss/render2D.css');
+</style>

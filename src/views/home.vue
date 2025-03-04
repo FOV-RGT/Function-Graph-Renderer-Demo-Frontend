@@ -34,9 +34,21 @@
                         points="34.09 324.07 48.58 179.14 106.56 48.71 222.5 34.21 468.87 266.1 255.11 359.69 34.09 324.07" />
                 </g>
             </svg> -->
-            <button class="btn btn-soft btn-primary btn-xl w-42 join-item" @click="setView('reset')">重置视窗范围</button>
-            <button class="btn btn-soft btn-primary btn-xl w-22 join-item" @click="setView('zoom')">缩放</button>
-            <button class="btn btn-soft btn-primary btn-xl w-22 join-item" @click="setView('drag')">平移</button>
+            <button class="btn btn-soft btn-primary btn-xl w-[3em] join-item" @click="setView('reset')">
+                <icon type="aim" extraclass="icon"/>
+            </button>
+            <button class="btn btn-soft btn-primary btn-xl w-[3em] join-item" @click="setView('zoomIn')">
+                <icon type="compress" extraclass="icon"/>
+            </button>
+            <button class="btn btn-soft btn-primary btn-xl w-[3em] join-item" @click="setView('zoomOut')">
+                <icon type="expand" extraclass="icon"/>
+            </button>
+            <button class="btn btn-soft btn-primary btn-xl w-[3em] join-item" @click="setView('dragLeft')">
+                <icon type="arrowleft" extraclass="icon"/>
+            </button>
+            <button class="btn btn-soft btn-primary btn-xl w-[3em] join-item" @click="setView('dragRight')">
+                <icon type="arrowright" extraclass="icon"/>
+            </button>
         </div>
     </div>
 </template> 
@@ -45,12 +57,14 @@
 import packageJson from '../../package.json';
 import TwoDPlotCom from '../components/render2D.vue';
 import ThreeDPlotCom from '../components/render3D.vue';
+import icon from '../components/icon.vue';
 
 export default {
     name: 'home',
     components: {
         TwoDPlotCom,
-        ThreeDPlotCom
+        ThreeDPlotCom,
+        icon
     },
     data() {
         return {
@@ -124,23 +138,10 @@ export default {
                 this.$refs.ThreeDPlotCom.formatInput(this.functionInput);
             }
         },
-        setView(e) {
+        setView(evt) {
             if (this.show_2D) {
-                switch (e) {
-                    case 'reset':
-                        this.$refs.TwoDPlotCom.setView('reset');
-                        break;
-                    case 'zoom':
-                        this.$refs.TwoDPlotCom.setView('zoom');
-                        break;
-                    case 'drag':
-                        this.$refs.TwoDPlotCom.setView('drag');
-                        break;
-                    default:
-                        break;
-                }
-            }
-            else {
+                this.$refs.TwoDPlotCom.setView(evt);
+            } else {
                 // this.$refs.ThreeDPlotCom.resetView();
             }
         }
@@ -148,7 +149,11 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 @import url('../assets/componentCss/home.css');
 @import url('../assets/componentCss/icon1.css');
+
+.svgButtonsGroup .icon {
+    font-size: 1.5em;
+}
 </style>
