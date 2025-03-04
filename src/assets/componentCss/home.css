@@ -32,21 +32,11 @@
     height: 25%;
 }
 
-/* .buttonGroup button {
-    user-select: none;
-    position: relative;
-    border-radius: 0.5em;
-    border: rgb(48, 135, 185) solid 0.1em;
-    height: 100%;
-    width: 14em;
-} */
-
 .buttonGroup button p {
     letter-spacing: 0.05em;
     text-decoration: none;
     font-size: 1.2em;
     font-weight: 500;
-    /* color: rgb(48, 135, 185); */
 }
 
 .top .inputContainer {

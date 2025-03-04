@@ -1,0 +1,13 @@
+.function-plot .top-right-legend {
+    display: none;
+}
+
+.function-plot .canvas .x .tick, .function-plot .canvas .y .tick {
+    font-size: 0.8rem;
+    user-select: none;
+}
+
+.function-plot .canvas .tip .inner-tip text {
+    font-size: 2rem;
+    user-select: none;
+}

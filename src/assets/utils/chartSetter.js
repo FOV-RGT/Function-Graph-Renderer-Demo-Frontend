@@ -74,15 +74,18 @@ export class chartInstance {
         console.log("图表配置已更新:", this.config);
     }
 
-    zoomView() {
+    zoomView(evt) {
         const currentConfig = this.config;
         const xDomain = currentConfig.xAxis.domain;
         const yDomain = currentConfig.yAxis.domain;
         const xRange = xDomain[1] - xDomain[0];
         const yRange = yDomain[1] - yDomain[0];
-        const zoomFactor = 0.5;
-        currentConfig.xAxis.domain = [xDomain[0] - xRange * zoomFactor, xDomain[1] + xRange * zoomFactor];
-        currentConfig.yAxis.domain = [yDomain[0] - yRange * zoomFactor, yDomain[1] + yRange * zoomFactor];
+        const zoomFactor = evt === 'zoomIn' ? 0.5 : 2;
+        const center = [(xDomain[0] + xDomain[1])/2, (yDomain[0] + yDomain[1])/2];
+        const newXHalfWidth = (xDomain[1] - xDomain[0]) / (2 * zoomFactor);
+        const newYHalfWidth = (yDomain[1] - yDomain[0]) / (2 * zoomFactor);
+        currentConfig.xAxis.domain = [center[0] - newXHalfWidth, center[0] + newXHalfWidth];
+        currentConfig.yAxis.domain = [center[1] - newYHalfWidth, center[1] + newYHalfWidth];
         currentConfig.id = '';
         this.destroyInstance();
         this.instance = functionPlot(currentConfig);
@@ -90,12 +93,12 @@ export class chartInstance {
         console.log("图表配置已更新:", this.config);
     }
 
-    dragView() {
+    dragView(evt) {
         const currentConfig = this.config;
         const xDomain = currentConfig.xAxis.domain;
         const xRange = xDomain[1] - xDomain[0];
-        const dragFactor = 0.2;
-        currentConfig.xAxis.domain = [xDomain[0] + xRange * dragFactor, xDomain[1] + xRange * dragFactor];
+        const dragFactor = evt === 'dragLeft' ? 0.2 : -0.2;
+        currentConfig.xAxis.domain = [xDomain[0] - xRange * dragFactor, xDomain[1] - xRange * dragFactor];
         currentConfig.id = '';
         this.destroyInstance();
         this.instance = functionPlot(currentConfig);
