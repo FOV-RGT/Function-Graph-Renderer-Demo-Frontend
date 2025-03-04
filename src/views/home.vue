@@ -5,7 +5,7 @@
                 <h1 class="text-primary text-[2rem]">函数图形渲染程序<span class="text-[1rem] text-orange-600">demo-v{{ packageVersion }}</span>
                 </h1>
             </div>
-            <div class="buttonGroup">
+            <div class="topButtonGroup">
                 <button @click="showTwoDPlot" class="btn btn-soft btn-md btn-success w-42 ">
                     <p>二维函数图形绘制</p>
                 </button>
@@ -25,7 +25,7 @@
     <div class="plotComponents">
         <TwoDPlotCom ref="TwoDPlotCom" v-show="show_2D" class="renderComponent" />
         <ThreeDPlotCom ref="ThreeDPlotCom" v-show="!show_2D" class="renderComponent" />
-        <div class="svgButtonsGroup join">
+        <div class="buttonsGroup join">
             <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513.56 394.43" width="100px" height="100px">
                 <g id="_图层_1-2" data-name="图层 1">
                     <polygon class="cls-1"
@@ -142,7 +142,7 @@ export default {
             if (this.show_2D) {
                 this.$refs.TwoDPlotCom.setView(evt);
             } else {
-                // this.$refs.ThreeDPlotCom.resetView();
+                // this.$refs.ThreeDPlotCom.setView();
             }
         }
     }
@@ -153,7 +153,7 @@ export default {
 @import url('../assets/componentCss/home.css');
 @import url('../assets/componentCss/icon1.css');
 
-.svgButtonsGroup .icon {
+.buttonsGroup .icon {
     font-size: 1.5em;
 }
 </style>

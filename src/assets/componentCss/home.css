@@ -24,7 +24,7 @@
     display: flex;
 }
 
-.top .buttonGroup {
+.top .topButtonGroup {
     display: flex;
     justify-content: space-evenly;
     align-items: center;
@@ -32,7 +32,7 @@
     height: 25%;
 }
 
-.buttonGroup button p {
+.topButtonGroup button p {
     letter-spacing: 0.05em;
     text-decoration: none;
     font-size: 1.2em;
@@ -59,7 +59,7 @@
 }
 
 
-.plotComponents .svgButtonsGroup {
+.plotComponents .buttonsGroup {
     position: absolute;
     display: flex;
     justify-content: flex-end;
