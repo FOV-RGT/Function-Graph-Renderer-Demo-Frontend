@@ -34,19 +34,19 @@
                         points="34.09 324.07 48.58 179.14 106.56 48.71 222.5 34.21 468.87 266.1 255.11 359.69 34.09 324.07" />
                 </g>
             </svg> -->
-            <button class="btn btn-soft btn-primary btn-xl w-[3em] join-item" @click="setView('reset')">
+            <button class="btn btn-soft btn-primary btn-xl w-[2.5em] join-item" @click="setView('reset')">
                 <icon type="aim" extraclass="icon"/>
             </button>
-            <button class="btn btn-soft btn-primary btn-xl w-[3em] join-item" @click="setView('zoomIn')">
+            <button class="btn btn-soft btn-primary btn-xl w-[2.5em] join-item" @click="setView('zoomIn')">
                 <icon type="compress" extraclass="icon"/>
             </button>
-            <button class="btn btn-soft btn-primary btn-xl w-[3em] join-item" @click="setView('zoomOut')">
+            <button class="btn btn-soft btn-primary btn-xl w-[2.5em] join-item" @click="setView('zoomOut')">
                 <icon type="expand" extraclass="icon"/>
             </button>
-            <button class="btn btn-soft btn-primary btn-xl w-[3em] join-item" @click="setView('dragLeft')">
+            <button class="btn btn-soft btn-primary btn-xl w-[2.5em] join-item" @click="setView('dragLeft')">
                 <icon type="arrowleft" extraclass="icon"/>
             </button>
-            <button class="btn btn-soft btn-primary btn-xl w-[3em] join-item" @click="setView('dragRight')">
+            <button class="btn btn-soft btn-primary btn-xl w-[2.5em] join-item" @click="setView('dragRight')">
                 <icon type="arrowright" extraclass="icon"/>
             </button>
         </div>
