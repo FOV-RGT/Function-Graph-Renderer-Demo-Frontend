@@ -6,6 +6,8 @@ const store = createStore({
         userInput_2D: '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5',
         userInput_3D: 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10',
         functionData: [],
+        formatInput_2D: new Map,
+        formatInput_3D: []
     },
     mutations: {
         switchRender(state, is2D) {
@@ -25,6 +27,9 @@ const store = createStore({
         },
         addData(state, data) {
             state.functionData = data;
+        },
+        syncInput(state, fn) {
+            state.userInput_2D = fn;
         }
     },
     actions: {

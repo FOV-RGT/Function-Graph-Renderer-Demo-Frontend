@@ -320,89 +320,12 @@ export const generateHarmoniousColors = (count = 5, saturation = 30, schemeType 
     return colors;
 };
 
-/**
- * 基于颜色数组生成和谐颜色并添加到数组中
- * @param {Array} colorArray - rgba()颜色字符串数组
- * @returns {Array} - 添加了新和谐颜色的数组
- */
-export const generateHarmoniousColorFromArray = (colorArray) => {
-    // 提取每个rgba字符串中的RGB值
-    const rgbValues = colorArray.map(colorStr => {
-        const matches = colorStr.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*[\d.]+)?\)/);
-        if (matches) {
-            return {
-                r: parseInt(matches[1], 10),
-                g: parseInt(matches[2], 10),
-                b: parseInt(matches[3], 10)
-            };
-        }
-        return null;
-    }).filter(Boolean);
-    // 如果没有有效颜色，随机生成一个作为起点
-    if (rgbValues.length === 0) {
-        const randomHue = Math.floor(Math.random() * 360);
-        const rgb = hslToRgb(randomHue, 50, 60);
-        const newColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
-        colorArray.push(newColor);
-        return colorArray;
-    }
-    // 转换为HSL以便更好地操作
-    const hslValues = rgbValues.map(rgb => rgbToHsl(rgb.r, rgb.g, rgb.b));
-    // 计算所有现有颜色的色相角度，找到最大间隙
-    const sortedHues = hslValues.map(hsl => hsl.h).sort((a, b) => a - b);
-    // 找到色环上的最大空隙 
-    let maxGap = 0;
-    let gapStartHue = 0;
-    // 检查相邻色相之间的间隙
-    for (let i = 0; i < sortedHues.length; i++) {
-        const currentHue = sortedHues[i];
-        const nextHue = sortedHues[(i + 1) % sortedHues.length];
-        let gap = 0;
-        if (i === sortedHues.length - 1) {
-            // 处理首尾颜色之间的间隙（环状）
-            gap = (360 - currentHue) + nextHue;
-        } else {
-            gap = nextHue - currentHue;
-        }
-        if (gap > maxGap) {
-            maxGap = gap;
-            gapStartHue = currentHue;
-        }
-    }
-    // 在最大间隙中间生成新颜色
-    let newHue = 0;
-    if (sortedHues.length === 1) {
-        // 如果只有一个颜色，取互补色
-        newHue = (sortedHues[0] + 180) % 360;
-    } else {
-        // 在最大间隙的中间位置
-        const nextHueIndex = (sortedHues.indexOf(gapStartHue) + 1) % sortedHues.length;
-        const nextHue = sortedHues[nextHueIndex];
-        if (nextHue > gapStartHue) {
-            newHue = gapStartHue + (nextHue - gapStartHue) / 2;
-        } else {
-            // 处理跨越0度的情况
-            newHue = (gapStartHue + ((nextHue + 360) - gapStartHue) / 2) % 360;
-        }
-    }
-    // 计算饱和度和亮度，确保与现有颜色有区别
-    const avgSaturation = hslValues.reduce((sum, hsl) => sum + hsl.s, 0) / hslValues.length;
-    const avgLightness = hslValues.reduce((sum, hsl) => sum + hsl.l, 0) / hslValues.length;
-    // 朝相反方向调整饱和度和亮度以增加辨识度
-    const newSaturation = clamp(
-        avgSaturation < 50 ? avgSaturation + 20 : avgSaturation - 20, 
-        30, 70
-    );
-    const newLightness = clamp(
-        avgLightness < 50 ? avgLightness + 15 : avgLightness - 15, 
-        40, 70
-    );
-    // 转回RGB
-    const newRgb = hslToRgb(newHue, newSaturation, newLightness);
-    // 添加新颜色到数组
-    const newColor = `rgb(${newRgb.r}, ${newRgb.g}, ${newRgb.b})`;
-    colorArray.push(newColor);
-    return colorArray;
+export const generateRandomHarmoniousColor = () => {
+    const hue = Math.floor(Math.random() * 360);
+    const saturation = 20 + Math.floor(Math.random() * 60);
+    const lightness = 30 + Math.floor(Math.random() * 30);
+    const rgb = hslToRgb(hue, saturation, lightness);
+    return `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
 };
 
 // 加密哈希函数
