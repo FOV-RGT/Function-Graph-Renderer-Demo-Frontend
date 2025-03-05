@@ -16,6 +16,7 @@ export default {
     };
   },
   created() {
+    // 输入防抖
     this.debouncedAddInput = utils.debounce((val) => {
       console.log("自动更新输入");
       this.chartInstance.addInput(val).then(() => {
@@ -27,7 +28,7 @@ export default {
     // 绘制图表
     console.log("图表实例开始挂载");
     this.chartInstance = new chartInstance(this.$refs.canvas2D);
-    this.chartInstance.addInput(this.userInput_2D).then(() => {
+    this.chartInstance.addInput(this.userInput_2D.replace(/\s+/g, "").split(/[;；]/)).then(() => {
       console.log("图表实例初始化完成");
     });
   },
@@ -39,19 +40,20 @@ export default {
     ...mapState(["userInput_2D"]),// 通过vuex获取输入
   },
   watch: {
-    userInput_2D: {
-      handler(newVal) {
-        this.debouncedAddInput(newVal);
-      },
-    },
+    // userInput_2D: {
+    //   handler(newVal) {
+    //     const formatInputs = newVal.replace(/\s+/g, "").split(/[;；]/);
+    //     this.debouncedAddInput(formatInputs);
+    //   },
+    // },
   },
   methods: {
     // 接收父组件传递的输入
-    userInput(inputs) {
+    userInput(inputs, index) {
       if (!this.rendering) {
         this.rendering = true;
         console.log("手动更新输入");
-        this.chartInstance.addInput(inputs).then(() => {
+        this.chartInstance.addInput(inputs, index).then(() => {
           this.rendering = false;
           console.log("手动更新完成");
         });

@@ -2,7 +2,7 @@
     <div class="home">
         <div class="top">
             <div class="head">
-                <h1 class="text-primary text-[2rem]">函数图形渲染程序<span class="text-[1rem] text-orange-600">demo-v{{ packageVersion }}</span>
+                <h1 class="text-primary text-[2rem]">函数图形渲染程序<span class="text-[1rem] text-orange-600">demo-v{{ version }}</span>
                 </h1>
             </div>
             <div class="topButtonGroup">
@@ -14,10 +14,10 @@
                 </button>
             </div>
             <div class="inputContainer join">
-                <input v-model=functionInput spellcheck="false" type="text" :placeholder=inputExample
+                <input v-model="functionInput" spellcheck="false" type="text" :placeholder=inputExample
                     class="input input-md w-[60dvw] join-item text-teal-500">
                 <button class="btn btn-md btn-soft btn-primary 
-                    w-20 rounded-r-lg join-item text-[1.2em]" @click=render>渲染
+                    w-20 rounded-r-lg join-item text-[1.2em]" @click="render(functionInput)">渲染
                 </button>
             </div>
         </div>
@@ -32,7 +32,8 @@
                     <input v-model=item.fn spellcheck="false" type="text" :placeholder=inputExample
                         class="input input-lg w-[100rem] join-item text-teal-500 tracking-wider">
                     <button class="btn btn-lg btn-soft btn-primary 
-                        w-[4.5em] rounded-r-lg join-item text-[1.2em]" @click=render>渲染
+                        w-[4.5em] rounded-r-lg join-item text-[1.2em]"
+                        @click="render(item.fn, index)">渲染
                     </button>
                 </div>
             </li>
@@ -41,6 +42,11 @@
             <li class="list-row text-4xl text-sky-600">高松 灯</li>
             <li class="list-row text-4xl text-sky-600">椎名 立希</li>
             <li class="list-row text-4xl text-sky-600">要 乐奈</li>
+            <li class="list-row text-4xl text-pink-800">丰川 祥子</li>
+            <li class="list-row text-4xl text-pink-800">八幡 海铃</li>
+            <li class="list-row text-4xl text-pink-800">三角 初华</li>
+            <li class="list-row text-4xl text-pink-800">祐天寺 若麦</li>
+            <li class="list-row text-4xl text-pink-800">若叶 睦</li>
         </ul>
         <div class="plotComponents">
             <TwoDPlotCom ref="TwoDPlotCom" v-show="show_2D" class="renderComponent" />
@@ -90,7 +96,7 @@ export default {
     },
     data() {
         return {
-            packageVersion: packageJson.version,
+            version: packageJson.version,
             show_2D: true,
             inputExample: '输入例:2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...',
         };
@@ -115,7 +121,7 @@ export default {
                     input,
                     is2D: this.show_2D
                 };
-                this.$store.commit('userInput', playload);
+                // this.$store.commit('userInput', playload);
             }
         },
         ...mapState(["functionData"]),
@@ -141,9 +147,11 @@ export default {
             this.inputExample = '输入例:x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10';
         },
         // 渲染函数图形
-        render() {
+        render(inputs, index) {
+            const formatInputs = inputs.replace(/\s+/g, "").split(/[;；]/);
+            console.log(formatInputs);
             if (this.show_2D) {
-                this.$refs.TwoDPlotCom.userInput(this.functionInput);
+                this.$refs.TwoDPlotCom.userInput(formatInputs, index);
             }
             else {
                 this.$refs.ThreeDPlotCom.formatInput(this.functionInput);
@@ -164,7 +172,4 @@ export default {
 @import url('../assets/componentCss/home.css');
 @import url('../assets/componentCss/icon1.css');
 
-.buttonsGroup .icon {
-    font-size: 1.5em;
-}
 </style>
