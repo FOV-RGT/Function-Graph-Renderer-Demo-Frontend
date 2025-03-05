@@ -45,6 +45,10 @@
     user-select: none;
 }
 
+.main {
+    pointer-events:visibleFill;
+}
+
 .plotComponents {
     position: relative;
     height: 100%;
