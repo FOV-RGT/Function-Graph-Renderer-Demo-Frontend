@@ -9,6 +9,8 @@ var map = {
     aim: "icon-aim",
     compress: "icon-compress",
     expand: "icon-expend",
+    plus: "icon-plus",
+    minus: "icon-minus",
 };
 export default {
     props: {
@@ -30,5 +32,5 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://at.alicdn.com/t/c/font_4845730_vqxqlmqktee.css?spm=a313x.manage_type_myprojects.i1.9.5bfc3a819mjXLH&file=font_4845730_vqxqlmqktee.css');
+@import url('https://at.alicdn.com/t/c/font_4845730_xlqagx5qky.css?spm=a313x.manage_type_myprojects.i1.9.53833a81QBiF4c&file=font_4845730_xlqagx5qky.css');
 </style>

@@ -78,10 +78,28 @@
     font-size: 1.5em;
 }
 
+.left-li-plus .icon {
+    font-size: 1em;
+}
 
+.li-b .icon {
+    font-size: 2em;
+}
 
+.colorPicker {
+    flex: 1 !important;
+    display: flex;
+    align-items: center;
+    justify-items: center;
+}
 
+.colorPicker .vc-color-wrap {
+    flex: 1 !important;
+    margin-right: 0 !important;
+}
 
-
+.current-color {
+    user-select: none;
+}
 
 

@@ -4,7 +4,7 @@
 export const defaultConfig = (target) => ({
     target: target,
     width: target.clientWidth,
-    height: target.clientHeight - 4,
+    height: target.clientHeight,
     // width: 800,
     // height: 500,
     xAxis: {

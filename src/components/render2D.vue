@@ -4,8 +4,6 @@
 
 <script>
 import { chartInstance } from '../assets/utils/chartSetter';
-import * as utils from '../assets/utils/componentUtils';
-import { mapState } from "vuex";
 
 
 export default {
@@ -16,78 +14,80 @@ export default {
     };
   },
   created() {
-    // 输入防抖
-    this.debouncedAddInput = utils.debounce((val) => {
-      console.log("自动更新输入");
-      this.chartInstance.addInput(val).then(() => {
-        console.log("自动更新完成");
-      });
-    }, 500);
+    
   },
   mounted() {
     // 绘制图表
     console.log("图表实例开始挂载");
     this.chartInstance = new chartInstance(this.$refs.canvas2D);
-    this.chartInstance.addInput(this.userInput_2D.replace(/\s+/g, "").split(/[;；]/)).then(() => {
+    const currentData = this.$store.state.functionData_2D;
+    let fn = [];
+    if (currentData && currentData.length > 0) {
+      console.log(currentData);
+      fn = currentData.map(item => item.fn);
+      const payload = {
+        data: [],
+        is2D: true
+      }
+      this.$store.commit("syncData", payload);
+    }
+    this.chartInstance.addInput(fn, 0).then(() => {
       console.log("图表实例初始化完成");
     });
   },
-  beforeDestroy() {
-    // 释放资源
+  beforeUnmount() {
+    console.log("销毁图表实例");
     this.chartInstance.destroyInstance();
   },
   computed: {
-    ...mapState(["userInput_2D"]),// 通过vuex获取输入
+
   },
   watch: {
-    // userInput_2D: {
-    //   handler(newVal) {
-    //     const formatInputs = newVal.replace(/\s+/g, "").split(/[;；]/);
-    //     this.debouncedAddInput(formatInputs);
-    //   },
-    // },
+
   },
   methods: {
     // 接收父组件传递的输入
-    userInput(inputs, index) {
-      if (!this.rendering) {
-        this.rendering = true;
-        console.log("手动更新输入");
-        this.chartInstance.addInput(inputs, index).then(() => {
-          this.rendering = false;
-          console.log("手动更新完成");
-        });
-      } else {
-        console.log("手动更新被阻止:正在渲染");
-      }
+    userInput(inputs, index, num) {
+      this.rendering = true;
+      console.log("更新输入");
+      this.chartInstance.addInput(inputs, index, num).then(() => {
+        this.rendering = false;
+        console.log("更新完成");
+      });
     },
     // 重置视图
     setView(evt) {
       switch (evt) {
         case 'reset':
-          console.log("触发:重置视图");
+          console.log("触发:重置范围");
           this.chartInstance.resetView(this.$refs.canvas2D);
           break;
         case 'zoomIn':
-          console.log("触发:缩放视图");
+          console.log("触发:放大范围");
           this.chartInstance.zoomView(evt);
           break;
         case 'zoomOut':
-          console.log("触发:缩放视图");
+          console.log("触发:缩小范围");
           this.chartInstance.zoomView(evt);
           break;
         case 'dragLeft':
-          console.log("触发:平移视图");
+          console.log("触发:左移视图");
           this.chartInstance.dragView(evt);
           break;
         case 'dragRight':
-          console.log("触发:平移视图");
+          console.log("触发:右移视图");
           this.chartInstance.dragView(evt);
           break;
         default:
           break;
       }
     },
+    fuckRender(data) {
+      this.chartInstance.setFunction(data);
+    },
+    fuckResize() {
+      this.chartInstance.resize(this.$refs.canvas2D);
+    }
   }
 };
 </script>
