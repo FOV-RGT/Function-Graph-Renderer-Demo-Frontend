@@ -15,42 +15,44 @@ export class chartInstance {
         console.log("图表实例成功挂载");
     }
 
-    async createData(inputs, index = 0) {
+    async createData(inputs, index = 0, num = 1) {
         const updatedData = [];
-        let colors = this.config.data.length > 0 ? this.config.data.map(d => d.color) : [];
+        const rawData = toRaw(store.state.functionData_2D);
+        const newFunctionData = [...rawData];
+        console.log("原始数据:", newFunctionData);
         for (let i = 0; i < inputs.length; i++) {
             const color = utils.generateRandomHarmoniousColor();
             updatedData.push({
                 fn: inputs[i], // 函数表达式
-                color: color, // 为每个函数生成唯一的颜色
+                color: i == 0 && newFunctionData[index] && newFunctionData[index].color !== Boolean ? newFunctionData[index].color : color, // 为每个函数生成唯一的颜色
                 hash: await utils.sha256(`${Date.now()}${inputs[i]}`), // 为每个输入生成唯一的哈希值
                 nSamples: 2048, // 采样点数
             });
         };
-        console.log("当前颜色:", colors);
         console.log("将要插入数据:", updatedData);
-        const rawData = toRaw(store.state.functionData);
-        const newFunctionData = [
-            ...rawData.slice(0, index),
-            ...updatedData,
-            ...rawData.slice(index + 1),
-        ];
+        newFunctionData.splice(index, num, ...updatedData);
         console.log("新数据已生成:", newFunctionData);
-        const fn = newFunctionData.map(d => d.fn).join(';');
-        store.commit('syncInput', fn);
-        store.commit('addData', newFunctionData);
+        const payload = {
+            data: newFunctionData,
+            is2D: true
+        }
+        store.commit('syncData', payload);
         return newFunctionData;
     }
 
     setFunction(data) {
+        data = data.filter(d => d.fn !== '');
         this.config.data = [...data];// 将data数组中的所有元素添加到config.data数组中
-        this.instance.draw();// 重绘图表
-        console.log("图表实例配置已更新:", this.config);
+        try {
+            this.instance = functionPlot(this.config);// 重新绘制图表
+            console.log("图表实例已更新");
+        } catch (error) {
+            console.error('请检查输入');
+        }
     }
 
-    async addInput(inputs, index) {
-        console.log("更新输入");
-        await this.createData(inputs, index).then((data) => {
+    async addInput(inputs, index, num) {
+        await this.createData(inputs, index, num).then((data) => {
             console.log("数据已更新");
             this.setFunction(data);// 设置函数
         });
@@ -104,6 +106,17 @@ export class chartInstance {
         const xRange = xDomain[1] - xDomain[0];
         const dragFactor = evt === 'dragLeft' ? 0.2 : -0.2;
         currentConfig.xAxis.domain = [xDomain[0] - xRange * dragFactor, xDomain[1] - xRange * dragFactor];
+        currentConfig.id = '';
+        this.destroyInstance();
+        this.instance = functionPlot(currentConfig);
+        this.config = currentConfig;
+        console.log("图表配置已更新:", this.config);
+    }
+
+    resize(target) {
+        const currentConfig = this.config;
+        currentConfig.width = target.clientWidth;
+        currentConfig.height = target.clientHeight;
         currentConfig.id = '';
         this.destroyInstance();
         this.instance = functionPlot(currentConfig);

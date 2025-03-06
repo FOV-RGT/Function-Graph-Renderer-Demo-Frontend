@@ -307,15 +307,34 @@ export default {
       // 每帧更新前回调'animate()'函数
       requestAnimationFrame(this.animate.bind(this));
     },
-    formatInput(inputs) {
+    formatInput(inputs, index) {
       // 每次用户输入函数，删除上一次渲染的图像
       while (this.scene.children.length > 1) {
         this.scene.remove(this.scene.children[1]);
       }
       // 以正则表达式匹配一个或多个连续空白字符替换为空字符，并将输入以';'或'；'分割为数组，从而格式化用户输入
-      const functionInputs = inputs.replace(/\s+/g, "").split(/[;；]/);
+      const fn = inputs.map((evt) => {
+        return { fn: evt };
+      });
+      const rawData = toRaw(this.$store.state.functionData_3D);
+      const newFunctionData = [...rawData];
+      newFunctionData.splice(index, 1, ...fn);
+      console.log(newFunctionData);
+      
+      const playload = {
+        data: newFunctionData,
+        is2D: false,
+      };
+      this.$store.commit('syncData', playload);
       // 遍历数组逐一传递元素到'plotFunction()'
-      functionInputs.forEach(input => this.plotFunction(input));
+      newFunctionData.forEach(input => this.plotFunction(input.fn));
+    },
+    fuckResize() {
+      const width = this.$refs.canvas3D.clientWidth;
+      const height = this.$refs.canvas3D.clientHeight;
+      this.renderer.setSize(width, height);
+      this.camera.aspect = width / height;
+      this.camera.updateProjectionMatrix();
     },
     plotFunction(input) {
       const allNumbers = /^\d+(\.\d+)?$/.test(input.slice(2));
@@ -406,20 +425,19 @@ export default {
             // 使用'Float32Array'管理顶点坐标集
             const chunkPoints = new Float32Array(event.data);
             console.log(
-              `Received chunk points from worker ${i}:`,
+              `${i}号worker返回分块:`,
               chunkPoints.length
             );
             // 使用set方法将接收到的顶点坐标集添加到'points'数组里并定义该数据的起点
             points.set(chunkPoints, i * totalPointsPerChunk);
-            console.log("Total points so far:", points.length);
+            console.log("总点数:", points.length);
             chunksReceived++;
-            console.log(`Chunks received: ${chunksReceived}/${workerCount}`);
+            console.log(`当前进度: ${chunksReceived}/${workerCount}`);
             // 若已接收到所有线程的返回数据
             if (chunksReceived === workerCount) {
-              console.log("All chunks received");
+              console.log("分块收取完毕");
               // 调用'createSurfaceFromPoints()'并将顶点坐标集传入到该函数，并接收返回的3D对象
               const surface = createSurfaceFromPoints(points);
-              console.log("Adding surface to scene");
               // 将返回的3D对象添加到场景
               this.scene.add(surface);
               const elapsedTime = performance.now() - startTime;

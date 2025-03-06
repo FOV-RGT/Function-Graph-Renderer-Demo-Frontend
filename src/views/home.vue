@@ -2,7 +2,8 @@
     <div class="home">
         <div class="top">
             <div class="head">
-                <h1 class="text-primary text-[2rem]">函数图形渲染程序<span class="text-[1rem] text-orange-600">demo-v{{ version }}</span>
+                <h1 class="text-primary text-[2rem]">函数图形渲染程序<span class="text-[1rem] text-orange-600">demo-v{{ version
+                }}</span>
                 </h1>
             </div>
             <div class="topButtonGroup">
@@ -13,12 +14,9 @@
                     <p>三维函数图形绘制</p>
                 </button>
             </div>
-            <div class="inputContainer join">
-                <input v-model="functionInput" spellcheck="false" type="text" :placeholder=inputExample
+            <div class="inputContainer">
+                <input v-model="userInput" spellcheck="false" type="text" :placeholder=inputExample
                     class="input input-md w-[60dvw] join-item text-teal-500">
-                <button class="btn btn-md btn-soft btn-primary 
-                    w-20 rounded-r-lg join-item text-[1.2em]" @click="render(functionInput)">渲染
-                </button>
             </div>
         </div>
     </div>
@@ -27,14 +25,31 @@
             <li class="flex justify-center border-b-2">
                 <div class="p-2 pb-1 text-[2em] text-amber-600 tracking-widest self-center">函数列表</div>
             </li>
-            <li v-for="(item, index) in functionData" :key="index" class="list-row p-3">
-                <div class="join">
-                    <input v-model=item.fn spellcheck="false" type="text" :placeholder=inputExample
-                        class="input input-lg w-[100rem] join-item text-teal-500 tracking-wider">
-                    <button class="btn btn-lg btn-soft btn-primary 
-                        w-[4.5em] rounded-r-lg join-item text-[1.2em]"
-                        @click="render(item.fn, index)">渲染
-                    </button>
+            <li v-for="(item, index) in currentData" :key="index" class="list-row pl-1 pr-0 pb-0">
+                <div class="flex-col select-none">
+                    <div class="join flex pb-0.5">
+                        <input v-model=item.fn spellcheck="false" type="text" :placeholder=inputExample
+                            class="input input-lg join-item text-teal-500 tracking-wider w-[40rem]"
+                            @input="debouncedAddInput(item.fn, index)">
+                        <!-- <button class="btn btn-lg btn-soft btn-primary 
+                            w-[4.5em] rounded-r-lg join-item text-[1.2em]" @click="render(item.fn, index)">渲染
+                        </button> -->
+                    </div>
+                    <div class="li-b flex gap-4">
+                        <icon type="plus" extraclass="icon cursor-pointer select-none"
+                            @click="fuckList('plus', index)" />
+                        <icon type="minus" extraclass="icon cursor-pointer select-none"
+                            @click="fuckList('minus', index)" />
+                        <div class="colorPicker">
+                            <ColorPicker format="rgb" shape="square" :debounce="0" lang="ZH-cn"
+                            v-model:pureColor="item.color" @update:pureColor="throttleupdateColor($event, index)"/>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="flex list-row text-4xl justify-center p-2">
+                <div class="left-li-plus items-center flex h-[2rem] justify-center">
+                    <icon type="plus" extraclass="icon cursor-pointer select-none" @click="fuckList('plus-b', -1)" />
                 </div>
             </li>
             <li class="list-row text-4xl text-sky-600">千早 爱音</li>
@@ -61,24 +76,24 @@
                     </g>
                 </svg> -->
                 <button class="btn btn-soft btn-primary btn-xl w-[2.5em] join-item" @click="setView('reset')">
-                    <icon type="aim" extraclass="icon"/>
+                    <icon type="aim" extraclass="icon" />
                 </button>
                 <button class="btn btn-soft btn-primary btn-xl w-[2.5em] join-item" @click="setView('zoomIn')">
-                    <icon type="compress" extraclass="icon"/>
+                    <icon type="compress" extraclass="icon" />
                 </button>
                 <button class="btn btn-soft btn-primary btn-xl w-[2.5em] join-item" @click="setView('zoomOut')">
-                    <icon type="expand" extraclass="icon"/>
+                    <icon type="expand" extraclass="icon" />
                 </button>
                 <button class="btn btn-soft btn-primary btn-xl w-[2.5em] join-item" @click="setView('dragLeft')">
-                    <icon type="arrowleft" extraclass="icon"/>
+                    <icon type="arrowleft" extraclass="icon" />
                 </button>
                 <button class="btn btn-soft btn-primary btn-xl w-[2.5em] join-item" @click="setView('dragRight')">
-                    <icon type="arrowright" extraclass="icon"/>
+                    <icon type="arrowright" extraclass="icon" />
                 </button>
             </div>
         </div>
     </div>
-</template> 
+</template>
 
 <script>
 import packageJson from '../../package.json';
@@ -86,6 +101,8 @@ import TwoDPlotCom from '../components/render2D.vue';
 import ThreeDPlotCom from '../components/render3D.vue';
 import icon from '../components/icon.vue';
 import { mapState } from 'vuex';
+import { toRaw } from 'vue';
+import * as utils from '../assets/utils/componentUtils';
 
 export default {
     name: 'home',
@@ -101,61 +118,69 @@ export default {
             inputExample: '输入例:2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...',
         };
     },
+    created() {
+        // 输入防抖
+        this.debouncedAddInput = utils.debounce((input, index) => {
+            console.log("自动更新输入");
+            this.render(input, index);
+        }, 100);
+        this.throttledHandleResize = utils.throttle(() => {
+            setTimeout(() => {
+                if (this.show_2D) {
+                    this.$refs.TwoDPlotCom.fuckResize();
+                } else {
+                    this.$refs.ThreeDPlotCom.fuckResize();
+                }
+            }, 15);
+        }, 35);
+        this.throttleupdateColor = utils.throttle((color, index) => {
+            const currentData = [...toRaw(this.currentData)];
+            currentData[index].color = color;
+            this.fuckRender(currentData);
+        }, 25);
+    },
     mounted() {
-
+        window.addEventListener('resize', this.throttledHandleResize);
+        document.addEventListener('fullscreenchange', this.throttledHandleResize);
+        document.addEventListener('webkitfullscreenchange', this.throttledHandleResize); // Safari
+        document.addEventListener('mozfullscreenchange', this.throttledHandleResize);    // Firefox
+        document.addEventListener('MSFullscreenChange', this.throttledHandleResize);     // IE/Edge
+    },
+    beforeUnmount() {
+        window.removeEventListener('resize', this.throttledHandleResize);
+        document.removeEventListener('fullscreenchange', this.throttledHandleResize);
+        document.removeEventListener('webkitfullscreenchange', this.throttledHandleResize);
+        document.removeEventListener('mozfullscreenchange', this.throttledHandleResize);
+        document.removeEventListener('MSFullscreenChange', this.throttledHandleResize);
     },
     computed: {
-        functionInput: {
-            // 通过getter获取store中的输入
-            get() {
-                if (this.show_2D) {
-                    return this.$store.state.userInput_2D
-                }
-                else {
-                    return this.$store.state.userInput_3D
-                }
-            },
-            // 通过setter将输入传递给store
-            set(input) {
-                const playload = {
-                    input,
-                    is2D: this.show_2D
-                };
-                // this.$store.commit('userInput', playload);
-            }
+        ...mapState(["functionData_2D", "functionData_3D"]),
+        currentData() {
+            console.log("💩");
+            return this.show_2D ? this.functionData_2D : this.functionData_3D;
         },
-        ...mapState(["functionData"]),
+        userInput() {
+            console.log("💩💩");
+            return this.currentData.map(item => `"${item.fn}"`).join('  ,  ');
+        }
     },
     watch: {
-        functionData: {
-            handler(newVal) {
-                console.log(newVal);
-            }
-        }
+
     },
     methods: {
         // 切换二维图形绘制
         showTwoDPlot() {
             this.show_2D = true;
-            this.$store.commit('switchRender', this.show_2D);
+            this.throttledHandleResize();
+            this.$store.commit('switchRender', true);
             this.inputExample = '输入例:2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...';
         },
         // 切换三维图形绘制
         showThreeDPlot() {
             this.show_2D = false;
-            this.$store.commit('switchRender', this.show_2D);
+            this.throttledHandleResize();
+            this.$store.commit('switchRender', false);
             this.inputExample = '输入例:x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10';
-        },
-        // 渲染函数图形
-        render(inputs, index) {
-            const formatInputs = inputs.replace(/\s+/g, "").split(/[;；]/);
-            console.log(formatInputs);
-            if (this.show_2D) {
-                this.$refs.TwoDPlotCom.userInput(formatInputs, index);
-            }
-            else {
-                this.$refs.ThreeDPlotCom.formatInput(this.functionInput);
-            }
         },
         setView(evt) {
             if (this.show_2D) {
@@ -163,6 +188,54 @@ export default {
             } else {
                 // this.$refs.ThreeDPlotCom.setView();
             }
+        },
+        // 渲染函数图形
+        render(inputs, index, num) {
+            const formatInputs = inputs.replace(/\s+/g, "").split(/[;；]/);
+            console.log(formatInputs);
+            if (this.show_2D) {
+                this.$refs.TwoDPlotCom.userInput(formatInputs, index, num);
+            }
+            else {
+                this.$refs.ThreeDPlotCom.formatInput(formatInputs, index);
+            }
+        },
+        fuckRender(data) {
+            console.log("fuckRender:", data);
+            if (this.show_2D) {
+                this.$refs.TwoDPlotCom.fuckRender(data);
+            } else {
+                // this.$refs.ThreeDPlotCom.fuckRender(data);
+            }
+        },
+        fuckList(evt, index) {
+            const updatedData = [...toRaw(this.currentData)];
+            console.log("fuckList:", index);
+            switch (evt) {
+                case 'plus': {
+                    updatedData.splice(index + 1, 0, { fn: '', color: utils.generateRandomHarmoniousColor()});
+                    break;
+                }
+                case 'minus': {
+                    updatedData.splice(index, 1);
+                    this.fuckRender(updatedData);
+                    break;
+                }
+                case 'plus-b': {
+                    updatedData.push({ fn: '', color: utils.generateRandomHarmoniousColor()});
+                    break;
+                }
+            }
+            const payload = {
+                data: updatedData,
+                is2D: this.show_2D
+            }
+            this.$store.commit('syncData', payload);
+        },
+        updateColor(color, index) {
+            const currentData = [...toRaw(this.currentData)];
+            currentData[index].color = color;
+            this.fuckRender(currentData);
         }
     }
 };
@@ -171,5 +244,4 @@ export default {
 <style>
 @import url('../assets/componentCss/home.css');
 @import url('../assets/componentCss/icon1.css');
-
 </style>
