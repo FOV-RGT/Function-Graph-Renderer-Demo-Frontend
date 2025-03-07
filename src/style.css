@@ -12,12 +12,17 @@
 
 html {
   font-size: 18px;
-  min-width: 100vw;
-  min-height: 100vh;
+  min-width: 100dvw;
+  min-height: 100dvh;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   align-items: center;
   justify-content: center;
   font-family: 'deYiHei', sans-serif;
+}
+
+body {
+  width: 100dvw;
+  height: 100dvh;
 }
