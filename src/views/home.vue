@@ -54,7 +54,7 @@
                 <TwoDPlotCom ref="TwoDPlotCom" v-show="show_2D" class="renderComponent pl-2" />
                 <ThreeDPlotCom ref="ThreeDPlotCom" v-show="!show_2D" class="renderComponent" />
             </div>
-            <div class="foot h-1/20 flex justify-evenly items-center ">
+            <div class="foot h-1/20 flex justify-evenly items-center overflow-hidden">
                 <h1 class="text-transparent foot-h1 text-[clamp(1.2rem,5vw,2.4rem)] select-none max-h-full">函数图形渲染程序
                     <span class="text-[1.2rem] select-none">demo-v{{ version }}</span>
                 </h1>
