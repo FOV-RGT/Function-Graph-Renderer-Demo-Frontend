@@ -123,7 +123,7 @@ export default {
         return {
             version: packageJson.version,
             show_2D: true,
-            inputExample: '输入例:2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...',
+            inputExample: '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...',
         };
     },
     created() {
@@ -173,14 +173,14 @@ export default {
             this.show_2D = true;
             this.throttledResize();
             this.$store.commit('switchRender', true);
-            this.inputExample = '输入例:2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...';
+            this.inputExample = '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...';
         },
         // 切换三维图形绘制
         showThreeDPlot() {
             this.show_2D = false;
             this.throttledResize();
             this.$store.commit('switchRender', false);
-            this.inputExample = '输入例:x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10';
+            this.inputExample = 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10';
         },
         setView(evt) {
             if (this.show_2D) {
