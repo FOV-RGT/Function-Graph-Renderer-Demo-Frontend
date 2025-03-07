@@ -55,8 +55,8 @@
                 <ThreeDPlotCom ref="ThreeDPlotCom" v-show="!show_2D" class="renderComponent" />
             </div>
             <div class="foot h-1/20 flex justify-evenly items-center overflow-hidden">
-                <h1 class="text-transparent foot-h1 text-[clamp(1rem,3vw,2.4rem)] select-none max-h-full">函数图形渲染程序
-                    <span class="text-[clamp(0.6rem,2vw,1.2rem)] select-none">demo-v{{ version }}</span>
+                <h1 class="text-transparent foot-h1 text-[clamp(1em,2vw,2em)] select-none max-h-full">函数图形渲染程序
+                    <span class="text-[clamp(0.2em,1vw,0.6em)] select-none">demo-v{{ version }}</span>
                 </h1>
                 <button @click="showTwoDPlot" class="btn btn-soft btn-xl btn-success max-h-full pl-1 pr-1">
                     <p class="text-lg">二维函数图形绘制</p>
