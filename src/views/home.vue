@@ -23,23 +23,30 @@
     <div class="main flex relative w-screen h-[85vh] top-[15vh]">
         <ul class="list bg-base-300 w-[36rem] overflow-y-auto">
             <li class="flex justify-center border-b-2">
-                <div class="p-2 pb-1 text-[2em] text-amber-600 tracking-widest self-center">函数列表</div>
+                <div class="p-2 pb-1 text-[2em] text-amber-700 tracking-widest self-center">函数列表</div>
             </li>
             <li v-for="(item, index) in currentData" :key="index" class="list-row pl-1 pr-0 pb-0">
                 <div class="flex-col select-none">
                     <div class="join flex pb-0.5">
-                        <input v-model=item.fn spellcheck="false" type="text" :placeholder=inputExample
-                            class="input input-lg join-item text-teal-500 tracking-wider w-[40rem]"
-                            @input="debouncedAddInput(item.fn, index)">
-                        <!-- <button class="btn btn-lg btn-soft btn-primary 
-                            w-[4.5em] rounded-r-lg join-item text-[1.2em]" @click="render(item.fn, index)">渲染
-                        </button> -->
+                        <label class="li-input input flex-1 rounded-r-lg text-lg items-center pr-0 justify-start">
+                            f(x) &nbsp;=
+                            <input v-model=item.fn spellcheck="false" type="text" :placeholder=inputExample
+                                class="grow input-lg join-item text-teal-500 tracking-wider w-screen"
+                                @input="debouncedAddInput(item.fn, index)">
+                            <icon type="close_c" extraclass="icon cursor-pointer select-none pr-4 text-orange-800"
+                            @click="fuckList('delect', index)"/>
+                            <!-- <button class="btn btn-lg btn-soft btn-primary 
+                                w-[4.5em] rounded-r-lg join-item text-[1.2em]" @click="render(item.fn, index)">渲染
+                            </button> -->
+                        </label>
                     </div>
                     <div class="li-b flex gap-4">
                         <icon type="plus" extraclass="icon cursor-pointer select-none"
-                            @click="fuckList('plus', index)" />
+                            @click="fuckList('plus', index)"/>
                         <icon type="minus" extraclass="icon cursor-pointer select-none"
-                            @click="fuckList('minus', index)" />
+                            @click="fuckList('minus', index)"/>
+                        <icon :type="item.visible ? 'eye' : 'eye_c'" extraclass="icon cursor-pointer select-none"
+                            @click="fuckList('visible', index)"/>
                         <div class="colorPicker">
                             <ColorPicker format="rgb" shape="square" :debounce="0" lang="ZH-cn"
                             v-model:pureColor="item.color" @update:pureColor="throttleupdateColor($event, index)"/>
@@ -79,10 +86,10 @@
                     <icon type="aim" extraclass="icon" />
                 </button>
                 <button class="btn btn-soft btn-primary btn-xl w-[2.5em] join-item" @click="setView('zoomIn')">
-                    <icon type="compress" extraclass="icon" />
+                    <icon type="z_in" extraclass="icon" />
                 </button>
                 <button class="btn btn-soft btn-primary btn-xl w-[2.5em] join-item" @click="setView('zoomOut')">
-                    <icon type="expand" extraclass="icon" />
+                    <icon type="z_out" extraclass="icon" />
                 </button>
                 <button class="btn btn-soft btn-primary btn-xl w-[2.5em] join-item" @click="setView('dragLeft')">
                     <icon type="arrowleft" extraclass="icon" />
@@ -103,6 +110,7 @@ import icon from '../components/icon.vue';
 import { mapState } from 'vuex';
 import { toRaw } from 'vue';
 import * as utils from '../assets/utils/componentUtils';
+import Icon from '../components/icon.vue';
 
 export default {
     name: 'home',
@@ -124,7 +132,7 @@ export default {
             console.log("自动更新输入");
             this.render(input, index);
         }, 100);
-        this.throttledHandleResize = utils.throttle(() => {
+        this.throttledResize = utils.throttle(() => {
             setTimeout(() => {
                 if (this.show_2D) {
                     this.$refs.TwoDPlotCom.fuckResize();
@@ -140,18 +148,10 @@ export default {
         }, 25);
     },
     mounted() {
-        window.addEventListener('resize', this.throttledHandleResize);
-        document.addEventListener('fullscreenchange', this.throttledHandleResize);
-        document.addEventListener('webkitfullscreenchange', this.throttledHandleResize); // Safari
-        document.addEventListener('mozfullscreenchange', this.throttledHandleResize);    // Firefox
-        document.addEventListener('MSFullscreenChange', this.throttledHandleResize);     // IE/Edge
+        window.addEventListener('resize', this.throttledResize);
     },
     beforeUnmount() {
-        window.removeEventListener('resize', this.throttledHandleResize);
-        document.removeEventListener('fullscreenchange', this.throttledHandleResize);
-        document.removeEventListener('webkitfullscreenchange', this.throttledHandleResize);
-        document.removeEventListener('mozfullscreenchange', this.throttledHandleResize);
-        document.removeEventListener('MSFullscreenChange', this.throttledHandleResize);
+        window.removeEventListener('resize', this.throttledResize);
     },
     computed: {
         ...mapState(["functionData_2D", "functionData_3D"]),
@@ -171,14 +171,14 @@ export default {
         // 切换二维图形绘制
         showTwoDPlot() {
             this.show_2D = true;
-            this.throttledHandleResize();
+            this.throttledResize();
             this.$store.commit('switchRender', true);
             this.inputExample = '输入例:2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...';
         },
         // 切换三维图形绘制
         showThreeDPlot() {
             this.show_2D = false;
-            this.throttledHandleResize();
+            this.throttledResize();
             this.$store.commit('switchRender', false);
             this.inputExample = '输入例:x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10';
         },
@@ -213,7 +213,19 @@ export default {
             console.log("fuckList:", index);
             switch (evt) {
                 case 'plus': {
-                    updatedData.splice(index + 1, 0, { fn: '', color: utils.generateRandomHarmoniousColor()});
+                    updatedData.splice(index + 1, 0, {
+                        fn: '',
+                        color: utils.generateRandomHarmoniousColor(),
+                        visible: false
+                    });
+                    break;
+                }
+                case 'plus-b': {
+                    updatedData.push({
+                        fn: '',
+                        color: utils.generateRandomHarmoniousColor(),
+                        visible: false
+                    });
                     break;
                 }
                 case 'minus': {
@@ -221,8 +233,14 @@ export default {
                     this.fuckRender(updatedData);
                     break;
                 }
-                case 'plus-b': {
-                    updatedData.push({ fn: '', color: utils.generateRandomHarmoniousColor()});
+                case 'delect': {
+                    updatedData[index].fn = '';
+                    this.fuckRender(updatedData);
+                    break;
+                }
+                case 'visible': {
+                    updatedData[index].visible = !updatedData[index].visible;
+                    this.fuckRender(updatedData);
                     break;
                 }
             }
