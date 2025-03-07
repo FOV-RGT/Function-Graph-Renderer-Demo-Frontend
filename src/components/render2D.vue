@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100%;height: 100%;overflow: hidden;" ref="canvas2D"></div>
+  <div style="width: 100%;height: 100%;" ref="canvas2D"></div>
 </template>
 
 <script>
@@ -48,10 +48,8 @@ export default {
   methods: {
     // 接收父组件传递的输入
     userInput(inputs, index, num) {
-      this.rendering = true;
       console.log("更新输入");
       this.chartInstance.addInput(inputs, index, num).then(() => {
-        this.rendering = false;
         console.log("更新完成");
       });
     },

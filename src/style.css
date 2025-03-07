@@ -6,7 +6,6 @@
 @font-face {
   font-family: 'deYiHei';
   src: url('./assets/deYiHei.woff2') format('woff2');
-  font-weight: 100;
   font-style: normal;
 }
 
@@ -25,4 +24,5 @@ html {
 body {
   width: 100dvw;
   height: 100dvh;
+  @apply bg-gray-900;
 }
