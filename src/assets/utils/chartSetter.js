@@ -27,6 +27,7 @@ export class chartInstance {
                 color: i == 0 && newFunctionData[index] && newFunctionData[index].color !== Boolean ? newFunctionData[index].color : color, // 为每个函数生成唯一的颜色
                 hash: await utils.sha256(`${Date.now()}${inputs[i]}`), // 为每个输入生成唯一的哈希值
                 nSamples: 2048, // 采样点数
+                visible: true, // 是否可见
             });
         };
         console.log("将要插入数据:", updatedData);
@@ -41,7 +42,7 @@ export class chartInstance {
     }
 
     setFunction(data) {
-        data = data.filter(d => d.fn !== '');
+        data = data.filter(d => d.fn !== '' && d.visible == true);
         this.config.data = [...data];// 将data数组中的所有元素添加到config.data数组中
         try {
             this.instance = functionPlot(this.config);// 重新绘制图表
@@ -87,7 +88,7 @@ export class chartInstance {
         const currentConfig = this.config;
         const xDomain = currentConfig.xAxis.domain;
         const yDomain = currentConfig.yAxis.domain;
-        const zoomFactor = evt === 'zoomIn' ? 0.5 : 2;
+        const zoomFactor = evt === 'zoomIn' ? 2 : 0.5;
         const center = [(xDomain[0] + xDomain[1])/2, (yDomain[0] + yDomain[1])/2];
         const newXHalfWidth = (xDomain[1] - xDomain[0]) / (2 * zoomFactor);
         const newYHalfWidth = (yDomain[1] - yDomain[0]) / (2 * zoomFactor);
