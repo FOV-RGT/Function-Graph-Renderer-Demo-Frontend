@@ -55,8 +55,8 @@
                 <ThreeDPlotCom ref="ThreeDPlotCom" v-show="!show_2D" class="renderComponent" />
             </div>
             <div class="foot h-1/20 flex justify-evenly items-center overflow-hidden">
-                <h1 class="text-transparent foot-h1 text-[clamp(1.2rem,5vw,2.4rem)] select-none max-h-full">函数图形渲染程序
-                    <span class="text-[1.2rem] select-none">demo-v{{ version }}</span>
+                <h1 class="text-transparent foot-h1 text-[clamp(1rem,3vw,2.4rem)] select-none max-h-full">函数图形渲染程序
+                    <span class="text-[clamp(0.6rem,2vw,1.2rem)] select-none">demo-v{{ version }}</span>
                 </h1>
                 <button @click="showTwoDPlot" class="btn btn-soft btn-xl btn-success max-h-full pl-1 pr-1">
                     <p class="text-lg">二维函数图形绘制</p>
@@ -73,19 +73,19 @@
                                 points="34.09 324.07 48.58 179.14 106.56 48.71 222.5 34.21 468.87 266.1 255.11 359.69 34.09 324.07" />
                         </g>
                     </svg> -->
-                    <button class="btn btn-soft btn-primary btn-xl v w-[2.5em] join-item rounded-l-none pl-1 pr-1" @click="setView('reset')">
+                    <button class="btn btn-soft btn-primary btn-xl max-h-full w-[clamp(1em,3vw,2.5em)] join-item rounded-l-none pl-1 pr-1" @click="setView('reset')">
                         <icon type="aim" extraclass="icon"/>
                     </button>
-                    <button class="btn btn-soft btn-primary btn-xl max-h-full w-[2.5em] join-item pl-1 pr-1" @click="setView('zoomIn')">
+                    <button class="btn btn-soft btn-primary btn-xl max-h-full w-[clamp(1em,3vw,2.5em)] join-item pl-1 pr-1" @click="setView('zoomIn')">
                         <icon type="z_in" extraclass="icon"/>
                     </button>
-                    <button class="btn btn-soft btn-primary btn-xl max-h-full w-[2.5em] join-item pl-1 pr-1" @click="setView('zoomOut')">
+                    <button class="btn btn-soft btn-primary btn-xl max-h-full w-[clamp(1em,3vw,2.5em)] join-item pl-1 pr-1" @click="setView('zoomOut')">
                         <icon type="z_out" extraclass="icon"/>
                     </button>
-                    <button class="btn btn-soft btn-primary btn-xl max-h-full w-[2.5em] join-item pl-1 pr-1" @click="setView('dragLeft')">
+                    <button class="btn btn-soft btn-primary btn-xl max-h-full w-[clamp(1em,3vw,2.5em)] join-item pl-1 pr-1" @click="setView('dragLeft')">
                         <icon type="arrowleft" extraclass="icon"/>
                     </button>
-                    <button class="btn btn-soft btn-primary btn-xl max-h-full w-[2.5em] join-item rounded-r-none pl-1 pr-1" @click="setView('dragRight')">
+                    <button class="btn btn-soft btn-primary btn-xl max-h-full w-[clamp(1em,3vw,2.5em)] join-item rounded-r-none pl-1 pr-1" @click="setView('dragRight')">
                         <icon type="arrowright" extraclass="icon"/>
                     </button>
                 </div>
