@@ -45,7 +45,7 @@
                             @click="fuckList('plus', index)"/>
                         <icon type="minus" extraclass="icon cursor-pointer select-none"
                             @click="fuckList('minus', index)"/>
-                        <icon :type="item.visible ? 'eye' : 'eye_c'" extraclass="icon cursor-pointer select-none"
+                        <icon :type="item.visible == true ? 'eye' : 'eye_c'" extraclass="icon cursor-pointer select-none"
                             @click="fuckList('visible', index)"/>
                         <div class="colorPicker">
                             <ColorPicker format="rgb" shape="square" :debounce="0" lang="ZH-cn"

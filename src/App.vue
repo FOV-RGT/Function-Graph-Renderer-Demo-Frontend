@@ -9,4 +9,9 @@
 
 <style scoped>
 
+#app {
+    width: 100dvw;
+    height: 100dvh;
+}
+
 </style>
