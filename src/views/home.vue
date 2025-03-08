@@ -52,8 +52,8 @@
                 <ThreeDPlotCom ref="ThreeDPlotCom" v-show="!show_2D" class="renderComponent" />
             </div>
             <div class="foot h-1/20 flex justify-evenly items-center overflow-hidden">
-                <h1 class="text-transparent foot-h1 text-[clamp(1em,5vw,2.5em)] select-none max-h-full pr-0.5">函数图形渲染程序
-                    <span class="text-[clamp(0.2em,1vw,0.6em)] select-none">demo-v{{ version }}</span>
+                <h1 class="text-transparent foot-h1 text-[clamp(0.5em,3vw,2.5em)] select-none max-h-full pr-0.5">函数图形渲染程序
+                    <span class="text-[clamp(0.3em,1vw,0.6em)] select-none">demo-v{{ version }}</span>
                 </h1>
                 <button @click="showTwoDPlot" class="btn btn-soft lg:btn-lg md:btn-md sm:btn-sm btn-success pl-1 pr-1">
                     <p class="text-[clamp(0.6em, 1vw, 1em)]">二维函数图形绘制</p>
@@ -70,23 +70,23 @@
                                 points="34.09 324.07 48.58 179.14 106.56 48.71 222.5 34.21 468.87 266.1 255.11 359.69 34.09 324.07" />
                         </g>
                     </svg> -->
-                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(2em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
+                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
                     join-item rounded-l-none pl-1 pr-1" @click="setView('reset')">
                         <icon type="aim" extraclass="icon"/>
                     </button>
-                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(2em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
+                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
                     join-item pl-1 pr-1" @mousedown="startSetView('zoomIn')" @mouseup="endSetView()" @mouseleave="endSetView()">
                         <icon type="z_in" extraclass="icon"/>
                     </button>
-                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(2em,4vh,3em)]
+                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)]
                     w-[clamp(0.8em,2.5vw,2.5em)] join-item pl-1 pr-1" @mousedown="startSetView('zoomOut')" @mouseup="endSetView()" @mouseleave="endSetView()">
                         <icon type="z_out" extraclass="icon"/>
                     </button>
-                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(2em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
+                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
                     join-item pl-1 pr-1" @mousedown="startSetView('dragLeft')" @mouseup="endSetView()" @mouseleave="endSetView()">
                         <icon type="arrowleft" extraclass="icon"/>
                     </button>
-                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(2em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
+                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
                     join-item rounded-r-none pl-1 pr-1" @mousedown="startSetView('dragRight')" @mouseup="endSetView()" @mouseleave="endSetView()">
                         <icon type="arrowright" extraclass="icon"/>
                     </button>
