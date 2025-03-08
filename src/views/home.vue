@@ -14,9 +14,6 @@
                                 @input="debouncedAddInput(item.fn, index)">
                             <icon type="close_c" extraclass="icon cursor-pointer select-none pr-4 text-orange-800"
                                 @click="fuckList('delect', index)" />
-                            <!-- <button class="btn btn-lg btn-soft btn-primary 
-                                w-[4.5em] rounded-r-lg join-item text-[1.2em]" @click="render(item.fn, index)">渲染
-                            </button> -->
                         </label>
                     </div>
                     <div class="li-b flex gap-4">
@@ -49,22 +46,22 @@
             <li class="list-row text-4xl text-pink-800">祐天寺 若麦</li>
             <li class="list-row text-4xl text-pink-800">若叶 睦</li>
         </ul>
-        <div class="main-right flex-1 overflow-hidden shrink-1 pt-4 pr-4">
+        <div class="main-right flex-1 shrink-1 pt-4 pr-4 overflow-hidden">
             <div class="plotComponents h-19/20">
                 <TwoDPlotCom ref="TwoDPlotCom" v-show="show_2D" class="renderComponent pl-2" />
                 <ThreeDPlotCom ref="ThreeDPlotCom" v-show="!show_2D" class="renderComponent" />
             </div>
-            <div class="foot h-1/20 flex justify-evenly items-center overflow-hidden">
-                <h1 class="text-transparent foot-h1 text-[clamp(1em,2vw,2em)] select-none max-h-full">函数图形渲染程序
+            <div class="foot h-1/20 flex justify-evenly items-center">
+                <h1 class="text-transparent foot-h1 text-[clamp(1em,5vw,2.5em)] select-none max-h-full pr-0.5">函数图形渲染程序
                     <span class="text-[clamp(0.2em,1vw,0.6em)] select-none">demo-v{{ version }}</span>
                 </h1>
-                <button @click="showTwoDPlot" class="btn btn-soft btn-xl btn-success max-h-full pl-1 pr-1">
-                    <p class="text-lg">二维函数图形绘制</p>
+                <button @click="showTwoDPlot" class="btn btn-soft lg:btn-lg md:btn-md sm:btn-sm btn-success pl-1 pr-1">
+                    <p class="text-[clamp(0.6em, 1vw, 1em)]">二维函数图形绘制</p>
                 </button>
-                <button @click="showThreeDPlot" class="btn btn-soft btn-xl btn-success max-h-full pl-1 pr-1">
-                    <p class="text-lg">三维函数图形绘制</p>
+                <button @click="showThreeDPlot" class="btn btn-soft lg:btn-lg md:btn-md sm:btn-sm btn-success pl-1 pr-1">
+                    <p class="text-[clamp(0.6em, 1vw, 1em)]">三维函数图形绘制</p>
                 </button>
-                <div class="buttonsGroup join">
+                <div class="buttonsGroup join max-h-19/20 overflow-hidden">
                     <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513.56 394.43" width="100px" height="100px">
                         <g id="_图层_1-2" data-name="图层 1">
                             <polygon class="cls-1"
@@ -73,19 +70,24 @@
                                 points="34.09 324.07 48.58 179.14 106.56 48.71 222.5 34.21 468.87 266.1 255.11 359.69 34.09 324.07" />
                         </g>
                     </svg> -->
-                    <button class="btn btn-soft btn-primary btn-xl max-h-full w-[clamp(1em,3vw,2.5em)] join-item rounded-l-none pl-1 pr-1" @click="setView('reset')">
+                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(2em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
+                    join-item rounded-l-none pl-1 pr-1" @click="setView('reset')">
                         <icon type="aim" extraclass="icon"/>
                     </button>
-                    <button class="btn btn-soft btn-primary btn-xl max-h-full w-[clamp(1em,3vw,2.5em)] join-item pl-1 pr-1" @click="setView('zoomIn')">
+                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(2em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
+                    join-item pl-1 pr-1" @mousedown="startSetView('zoomIn')" @mouseup="endSetView()" @mouseleave="endSetView()">
                         <icon type="z_in" extraclass="icon"/>
                     </button>
-                    <button class="btn btn-soft btn-primary btn-xl max-h-full w-[clamp(1em,3vw,2.5em)] join-item pl-1 pr-1" @click="setView('zoomOut')">
+                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(2em,4vh,3em)]
+                    w-[clamp(0.8em,2.5vw,2.5em)] join-item pl-1 pr-1" @mousedown="startSetView('zoomOut')" @mouseup="endSetView()" @mouseleave="endSetView()">
                         <icon type="z_out" extraclass="icon"/>
                     </button>
-                    <button class="btn btn-soft btn-primary btn-xl max-h-full w-[clamp(1em,3vw,2.5em)] join-item pl-1 pr-1" @click="setView('dragLeft')">
+                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(2em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
+                    join-item pl-1 pr-1" @mousedown="startSetView('dragLeft')" @mouseup="endSetView()" @mouseleave="endSetView()">
                         <icon type="arrowleft" extraclass="icon"/>
                     </button>
-                    <button class="btn btn-soft btn-primary btn-xl max-h-full w-[clamp(1em,3vw,2.5em)] join-item rounded-r-none pl-1 pr-1" @click="setView('dragRight')">
+                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(2em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
+                    join-item rounded-r-none pl-1 pr-1" @mousedown="startSetView('dragRight')" @mouseup="endSetView()" @mouseleave="endSetView()">
                         <icon type="arrowright" extraclass="icon"/>
                     </button>
                 </div>
@@ -102,7 +104,6 @@ import icon from '../components/icon.vue';
 import { mapState } from 'vuex';
 import { toRaw } from 'vue';
 import * as utils from '../assets/utils/componentUtils';
-import Icon from '../components/icon.vue';
 
 export default {
     name: 'home',
@@ -116,6 +117,8 @@ export default {
             version: packageJson.version,
             show_2D: true,
             inputExample: '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...',
+            viewTimeOut: null,
+            viewInterval: null,
         };
     },
     created() {
@@ -157,7 +160,7 @@ export default {
         }
     },
     watch: {
-
+        
     },
     methods: {
         // 切换二维图形绘制
@@ -180,6 +183,18 @@ export default {
             } else {
                 // this.$refs.ThreeDPlotCom.setView();
             }
+        },
+        startSetView(evt) {
+            this.setView(evt);
+            this.viewTimeOut = setTimeout(() => {
+                this.viewInterval = setInterval(() => {
+                    this.setView(evt);
+                }, 25);
+            }, 150);
+        },
+        endSetView() {
+            clearTimeout(this.viewTimeOut);
+            clearInterval(this.viewInterval);
         },
         // 渲染函数图形
         render(inputs, index, num) {

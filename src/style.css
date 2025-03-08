@@ -5,7 +5,7 @@
 
 @font-face {
   font-family: 'deYiHei';
-  src: url('./assets/deYiHei.woff2') format('woff2');
+  src: url('/deYiHei.woff2') format('woff2');
   font-style: normal;
 }
 
