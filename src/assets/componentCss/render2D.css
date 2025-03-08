@@ -1,3 +1,7 @@
+.function-plot {
+    overflow: visible;
+}
+
 .function-plot .top-right-legend {
     display: none;
 }

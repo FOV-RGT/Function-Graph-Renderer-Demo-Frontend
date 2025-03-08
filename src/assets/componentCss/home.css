@@ -2,36 +2,6 @@
     font-weight: 500;
 }
 
-.home {
-    position: absolute;
-    display: flex;
-    letter-spacing: 0.1em;
-    width: 100%;
-    height: 15vh;
-}
-
-.home .top {
-    position: relative;
-    display: flex;
-    flex: 1;
-    flex-direction:column;
-    justify-content: space-evenly;
-    align-items: center;
-    user-select: none;
-}
-
-.top .head {
-    display: flex;
-}
-
-.top .topButtonGroup {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    gap: 2em;
-    height: 25%;
-}
-
 .topButtonGroup button p {
     letter-spacing: 0.05em;
     text-decoration: none;
@@ -39,43 +9,12 @@
     font-weight: 500;
 }
 
-.top .inputContainer {
-    display: flex;
-    justify-content: center;
-    user-select: none;
-}
-
-.main {
-    pointer-events:visibleFill;
-}
-
-.plotComponents {
-    position: relative;
-    height: 100%;
-    width: 75%;
-}
-
 .plotComponents .renderComponent {
-    width: 100%;
-    height: 100%;
-    position: relative;
     background-color:beige;
 }
 
-
-.plotComponents .buttonsGroup {
-    position: absolute;
-    display: flex;
-    justify-content: flex-end;
-    align-items:start;
-    width: 30%;
-    height: 10%;
-    bottom: 0;
-    right: 2em;
-}
-
 .buttonsGroup .icon {
-    font-size: 1.5em;
+    font-size: clamp(0.8em, 1.5vw, 1.5em);
 }
 
 .left-li-plus .icon {
@@ -106,4 +45,12 @@
     user-select: none;
 }
 
+.foot-h1 {
+    background: #BE93C5;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #7BC6CC, #BE93C5);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #7BC6CC, #BE93C5); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background-clip: text;
+    -webkit-background-clip: text;
+    
+}
 
