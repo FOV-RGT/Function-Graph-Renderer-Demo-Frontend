@@ -9,8 +9,25 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: '庞门正道标题体';
+  src: url('/庞门正道标题体.woff2') format('woff2');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'NanumPenScript-Regular';
+  src: url('/NanumPenScript-Regular.woff2') format('woff2');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'RobotoMono-Italic-VariableFont_wght';
+  src: url('/RobotoMono-Italic-VariableFont_wght.woff2') format('woff2');
+  font-style: normal;
+}
+
 html {
-  font-size: 18px;
   min-width: 100dvw;
   min-height: 100dvh;
   margin: 0;
@@ -18,7 +35,7 @@ html {
   box-sizing: border-box;
   align-items: center;
   justify-content: center;
-  font-family: 'deYiHei', sans-serif;
+  font-family: 'RobotoMono-Italic-VariableFont_wght', '庞门正道标题体', sans-serif;
 }
 
 body {

@@ -101,12 +101,19 @@ export class chartInstance {
         console.log("图表配置已更新:", this.config);
     }
 
-    dragView(evt) {
+    moveView(evt) {
         const currentConfig = this.config;
         const xDomain = currentConfig.xAxis.domain;
         const xRange = xDomain[1] - xDomain[0];
-        const dragFactor = evt === 'dragLeft' ? 0.2 : -0.2;
-        currentConfig.xAxis.domain = [xDomain[0] - xRange * dragFactor, xDomain[1] - xRange * dragFactor];
+        if (evt === 'moveLeft' || evt === 'moveRight') {
+            const moveFactor = evt === 'moveLeft' ? 0.2 : -0.2;
+            currentConfig.xAxis.domain = [xDomain[0] - xRange * moveFactor, xDomain[1] - xRange * moveFactor];
+        } else if (evt === 'moveUp' || evt === 'moveDown') {
+            const yDomain = currentConfig.yAxis.domain;
+            const yRange = yDomain[1] - yDomain[0];
+            const moveFactor = evt === 'moveUp' ? -0.2 : 0.2;
+            currentConfig.yAxis.domain = [yDomain[0] - yRange * moveFactor, yDomain[1] - yRange * moveFactor];
+        }
         currentConfig.id = '';
         this.destroyInstance();
         this.instance = functionPlot(currentConfig);

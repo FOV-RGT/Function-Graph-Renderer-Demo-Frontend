@@ -2,30 +2,23 @@
     font-weight: 500;
 }
 
-.topButtonGroup button p {
-    letter-spacing: 0.05em;
-    text-decoration: none;
-    font-size: 1.2em;
-    font-weight: 500;
-}
-
 .plotComponents .renderComponent {
     background-color:beige;
 }
 
-.buttonsGroup .icon {
+.foot-buttonsGroup .iconfont {
     font-size: clamp(0.8em, 1.5vw, 1.5em);
 }
 
-.left-li-plus .icon {
+.left-li-plus .iconfont {
     font-size: 1em;
 }
 
-.li-input .icon {
+.li-input .iconfont {
     font-size: 1em;
 }
 
-.li-b .icon {
+.li-b .iconfont {
     font-size: 2em;
 }
 
@@ -45,12 +38,27 @@
     user-select: none;
 }
 
-.foot-h1 {
+.top {
     background: #BE93C5;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #7BC6CC, #BE93C5);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #7BC6CC, #BE93C5); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: -webkit-linear-gradient(to bottom, #7BC6CC, #BE93C5);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to bottom, #7BC6CC, #BE93C5); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     background-clip: text;
     -webkit-background-clip: text;
-    
 }
 
+.top h1 {
+    font-size: clamp(0.625rem, 0.337rem + 1.44vw, 2.5rem);
+}
+
+.top p {
+    font-size: clamp(0.313rem, 0.072rem + 1.2vw, 1.875rem);
+}
+
+.top-buttonsGroup button{
+    font-size: clamp(0.625rem, 0.481rem + 0.72vw, 1.563rem);
+    height: clamp(2em,6vh,4em);
+}
+
+.li-top .iconfont {
+    font-size: 1em;
+}
