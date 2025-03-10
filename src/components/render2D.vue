@@ -4,7 +4,7 @@
 
 <script>
 import { chartInstance } from '../assets/utils/chartSetter';
-
+import { authApi } from '../api/auth.js';
 
 export default {
   data() {
@@ -14,7 +14,7 @@ export default {
     };
   },
   created() {
-    
+
   },
   mounted() {
     // 绘制图表
@@ -34,6 +34,17 @@ export default {
     this.chartInstance.addInput(fn, 0).then(() => {
       console.log("图表实例初始化完成");
     });
+    const data = {
+      login: "user1",
+      password: "123123"
+    }
+    authApi.login(data)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   },
   beforeUnmount() {
     console.log("销毁图表实例");
@@ -68,13 +79,21 @@ export default {
           console.log("触发:缩小范围");
           this.chartInstance.zoomView(evt);
           break;
-        case 'dragLeft':
+        case 'moveLeft':
           console.log("触发:左移视图");
-          this.chartInstance.dragView(evt);
+          this.chartInstance.moveView(evt);
           break;
-        case 'dragRight':
+        case 'moveRight':
           console.log("触发:右移视图");
-          this.chartInstance.dragView(evt);
+          this.chartInstance.moveView(evt);
+          break;
+        case 'moveUp':
+          console.log("触发:上移视图");
+          this.chartInstance.moveView(evt);
+          break;
+        case 'moveDown':
+          console.log("触发:下移视图");
+          this.chartInstance.moveView(evt);
           break;
         default:
           break;

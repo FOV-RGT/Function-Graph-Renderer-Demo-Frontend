@@ -1,67 +1,86 @@
 <template>
     <div class="main flex w-[100dvw] h-[100dvh] ">
-        <ul class="list bg-base-300 w-1/6 max-w-86 min-w-42 overflow-y-auto">
-            <li class="flex justify-center border-b-2 border-b-slate-500/80">
-                <div class="p-2 pb-1 text-[2em] text-slate-300/70 tracking-widest self-center select-none">函数列表</div>
-            </li>
-            <li v-for="(item, index) in currentData" :key="index" class="list-row pl-1 pr-1 pb-0 flex">
-                <div class="flex-col select-none flex-1">
-                    <div class="join flex pb-0.5">
-                        <label class="li-input input flex-1 text-lg items-center pr-0 justify-start">
-                            f(x) &nbsp;=
-                            <input v-model=item.fn spellcheck="false" type="text" :placeholder=inputExample
-                                class="join-item text-slate-300/80 tracking-wider flex-auto"
-                                @input="debouncedAddInput(item.fn, index)">
-                            <icon type="close_c" extraclass="icon cursor-pointer select-none pr-4 text-orange-800"
-                                @click="fuckList('delect', index)" />
-                        </label>
+        <div class="main-left w-1/6 min-w-42 shrink-1 overflow-y-auto bg-base-300">
+            <div v-show="showHome" class="w-full h-full flex justify-start flex-col">
+                <div class="top overflow-hidden text-center flex flex-col items-center mt-5 mb-10">
+                    <h1 class="text-transparent select-none whitespace-nowrap">函数图形渲染程序</h1>
+                    <p class="text-transparent select-none">demo-v{{ version }}</p>
+                </div>
+                <div class="top-buttonsGroup flex flex-col justify-between grow-1 pb-50">
+                    <button class="btn btn-block" @click="switchHomeShow('list')">
+                        输入函数
+                    </button>
+                    <button class="btn btn-block">
+                        调整
+                    </button>
+                    <button class="btn btn-block" @click="switchRenderer">
+                        切换模式
+                    </button>
+                    <button class="btn btn-block">
+                        历史记录
+                    </button>
+                    <button class="btn btn-block">
+                        设置
+                    </button>
+                </div>
+            </div>
+            <ul class="list overflow-x-hidden" v-show="showList">
+                <li class="flex justify-center border-b-2 border-b-slate-500/80 items-center">
+                    <div class="li-top p-2 pb-1 pl-8 text-[2em] text-slate-300/70 tracking-widest flex items-center justify-between select-none flex-1">
+                        <p>函数<span class="inline-block">列表</span></p>
+                        <icon type="rollBack" extraclass="cursor-pointer select-none pr-4" @click="switchHomeShow('list')"/>
                     </div>
-                    <div class="li-b flex gap-4">
-                        <icon type="plus" extraclass="icon cursor-pointer select-none"
-                            @click="fuckList('plus', index)" />
-                        <icon type="minus" extraclass="icon cursor-pointer select-none"
-                            @click="fuckList('minus', index)" />
-                        <icon :type="item.visible == true ? 'eye' : 'eye_c'"
-                            extraclass="icon cursor-pointer select-none" @click="fuckList('visible', index)" />
-                        <div class="colorPicker">
-                            <ColorPicker format="rgb" shape="square" :debounce="0" lang="ZH-cn"
-                                v-model:pureColor="item.color" @update:pureColor="throttleupdateColor($event, index)" />
+                </li>
+                <li v-for="(item, index) in currentData" :key="index" class="list-row pl-1 pr-1 pb-0 flex">
+                    <div class="flex-col select-none flex-1">
+                        <div class="join flex pb-0.5">
+                            <label class="li-input input flex-1 text-lg items-center pr-0 justify-start">
+                                f(x) &nbsp;=
+                                <input v-model=item.fn spellcheck="false" type="text" :placeholder=currentInputExample
+                                    class="join-item text-slate-300/80 flex-auto"
+                                    @input="debouncedAddInput(item.fn, index)">
+                                <icon type="close_c" extraclass="cursor-pointer select-none pr-4 text-orange-800"
+                                    @click="fuckList('delect', index)" />
+                            </label>
+                        </div>
+                        <div class="li-b flex gap-4">
+                            <icon type="plus" extraclass="cursor-pointer select-none"
+                                @click="fuckList('plus', index)" />
+                            <icon type="minus" extraclass="cursor-pointer select-none"
+                                @click="fuckList('minus', index)" />
+                            <icon :type="item.visible == true ? 'eye' : 'eye_c'"
+                                extraclass="cursor-pointer select-none" @click="fuckList('visible', index)" />
+                            <div class="colorPicker">
+                                <ColorPicker format="rgb" shape="square" :debounce="0" lang="ZH-cn"
+                                    v-model:pureColor="item.color" @update:pureColor="throttleupdateColor($event, index)" />
+                            </div>
                         </div>
                     </div>
-                </div>
-            </li>
-            <li class="flex list-row text-4xl justify-center p-2">
-                <div class="left-li-plus items-center flex h-[2rem] justify-center">
-                    <icon type="plus" extraclass="icon cursor-pointer select-none" @click="fuckList('plus-b', -1)" />
-                </div>
-            </li>
-            <li class="list-row text-4xl text-sky-600">千早 爱音</li>
-            <li class="list-row text-4xl text-sky-600">长崎 素世</li>
-            <li class="list-row text-4xl text-sky-600">高松 灯</li>
-            <li class="list-row text-4xl text-sky-600">椎名 立希</li>
-            <li class="list-row text-4xl text-sky-600">要 乐奈</li>
-            <li class="list-row text-4xl text-pink-800">丰川 祥子</li>
-            <li class="list-row text-4xl text-pink-800">八幡 海铃</li>
-            <li class="list-row text-4xl text-pink-800">三角 初华</li>
-            <li class="list-row text-4xl text-pink-800">祐天寺 若麦</li>
-            <li class="list-row text-4xl text-pink-800">若叶 睦</li>
-        </ul>
-        <div class="main-right flex-1 shrink-1 pt-4 pr-4 overflow-hidden">
+                </li>
+                <li class="flex list-row text-4xl justify-center p-2">
+                    <div class="left-li-plus items-center flex h-[2rem] justify-center">
+                        <icon type="plus" extraclass="cursor-pointer select-none" @click="fuckList('plus-b', -1)" />
+                    </div>
+                </li>
+                <li class="list-row text-4xl text-sky-600">千早 爱音</li>
+                <li class="list-row text-4xl text-sky-600">长崎 素世</li>
+                <li class="list-row text-4xl text-sky-600">高松 灯</li>
+                <li class="list-row text-4xl text-sky-600">椎名 立希</li>
+                <li class="list-row text-4xl text-sky-600">要 乐奈</li>
+                <li class="list-row text-4xl text-pink-800">丰川 祥子</li>
+                <li class="list-row text-4xl text-pink-800">八幡 海铃</li>
+                <li class="list-row text-4xl text-pink-800">三角 初华</li>
+                <li class="list-row text-4xl text-pink-800">祐天寺 若麦</li>
+                <li class="list-row text-4xl text-pink-800">若叶 睦</li>
+            </ul>
+        </div>
+        <div class="main-right flex-1 shrink-1 pt-6 pr-4 overflow-hidden">
             <div class="plotComponents h-19/20">
                 <TwoDPlotCom ref="TwoDPlotCom" v-show="show_2D" class="renderComponent pl-2" />
                 <ThreeDPlotCom ref="ThreeDPlotCom" v-show="!show_2D" class="renderComponent" />
             </div>
             <div class="foot h-1/20 flex justify-evenly items-center overflow-hidden">
-                <h1 class="text-transparent foot-h1 text-[clamp(1em,3vh,2.5em)] select-none max-h-full pr-0.5">函数图形渲染程序
-                    <span class="text-[clamp(0.3em,3vh,0.6em)] select-none">demo-v{{ version }}</span>
-                </h1>
-                <button @click="showTwoDPlot" class="btn btn-soft lg:btn-lg md:btn-md sm:btn-sm btn-success pl-1 pr-1">
-                    <p class="text-[clamp(0.6em, 1vw, 1em)]">二维函数图形绘制</p>
-                </button>
-                <button @click="showThreeDPlot" class="btn btn-soft lg:btn-lg md:btn-md sm:btn-sm btn-success pl-1 pr-1">
-                    <p class="text-[clamp(0.6em, 1vw, 1em)]">三维函数图形绘制</p>
-                </button>
-                <div class="buttonsGroup join max-h-19/20 overflow-hidden">
+                <div class="foot-buttonsGroup join max-h-19/20 overflow-hidden">
                     <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513.56 394.43" width="100px" height="100px">
                         <g id="_图层_1-2" data-name="图层 1">
                             <polygon class="cls-1"
@@ -72,23 +91,31 @@
                     </svg> -->
                     <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
                     join-item rounded-l-none pl-1 pr-1" @click="setView('reset')">
-                        <icon type="aim" extraclass="icon"/>
+                        <icon type="aim"/>
                     </button>
                     <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
                     join-item pl-1 pr-1" @mousedown="startSetView('zoomIn')" @mouseup="endSetView()" @mouseleave="endSetView()">
-                        <icon type="z_in" extraclass="icon"/>
-                    </button>
-                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)]
-                    w-[clamp(0.8em,2.5vw,2.5em)] join-item pl-1 pr-1" @mousedown="startSetView('zoomOut')" @mouseup="endSetView()" @mouseleave="endSetView()">
-                        <icon type="z_out" extraclass="icon"/>
+                        <icon type="z_in"/>
                     </button>
                     <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
-                    join-item pl-1 pr-1" @mousedown="startSetView('dragLeft')" @mouseup="endSetView()" @mouseleave="endSetView()">
-                        <icon type="arrowleft" extraclass="icon"/>
+                    join-item pl-1 pr-1" @mousedown="startSetView('zoomOut')" @mouseup="endSetView()" @mouseleave="endSetView()">
+                        <icon type="z_out"/>
                     </button>
                     <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
-                    join-item rounded-r-none pl-1 pr-1" @mousedown="startSetView('dragRight')" @mouseup="endSetView()" @mouseleave="endSetView()">
-                        <icon type="arrowright" extraclass="icon"/>
+                    join-item pl-1 pr-1" @mousedown="startSetView('moveUp')" @mouseup="endSetView()" @mouseleave="endSetView()">
+                        <icon type="arrowUp"/>
+                    </button>
+                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
+                    join-item pl-1 pr-1" @mousedown="startSetView('moveDown')" @mouseup="endSetView()" @mouseleave="endSetView()">
+                        <icon type="arrowDown"/>
+                    </button>
+                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
+                    join-item pl-1 pr-1" @mousedown="startSetView('moveLeft')" @mouseup="endSetView()" @mouseleave="endSetView()">
+                        <icon type="arrowLeft"/>
+                    </button>
+                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
+                    join-item rounded-r-none pl-1 pr-1" @mousedown="startSetView('moveRight')" @mouseup="endSetView()" @mouseleave="endSetView()">
+                        <icon type="arrowRight"/>
                     </button>
                 </div>
             </div>
@@ -116,9 +143,10 @@ export default {
         return {
             version: packageJson.version,
             show_2D: true,
-            inputExample: '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...',
             viewTimeOut: null,
             viewInterval: null,
+            showList: false,
+            showHome: true
         };
     },
     created() {
@@ -150,8 +178,21 @@ export default {
     },
     computed: {
         ...mapState(["functionData_2D", "functionData_3D"]),
+        currentInputExample() {
+            return this.show_2D ? '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...'
+            : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
+        },
         currentData() {
             console.log("💩");
+            // if (this.currentData && this.currentData.length > 0) {
+            //     const payload = JSON.stringify(this.currentData.map(item => ({
+            //     fn: item.fn,
+            //     color: item.color,
+            //     nSamples: item.nSamples,
+            //     visible: item.visible
+            // })));
+            // console.log(payload);
+            // }
             return this.show_2D ? this.functionData_2D : this.functionData_3D;
         },
         userInput() {
@@ -163,19 +204,10 @@ export default {
         
     },
     methods: {
-        // 切换二维图形绘制
-        showTwoDPlot() {
-            this.show_2D = true;
+        switchRenderer() {
+            this.show_2D = !this.show_2D;
             this.throttledResize();
-            this.$store.commit('switchRender', true);
-            this.inputExample = '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...';
-        },
-        // 切换三维图形绘制
-        showThreeDPlot() {
-            this.show_2D = false;
-            this.throttledResize();
-            this.$store.commit('switchRender', false);
-            this.inputExample = 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10';
+            this.$store.commit('switchRender', this.show_2D);
         },
         setView(evt) {
             if (this.show_2D) {
@@ -261,6 +293,19 @@ export default {
             const currentData = [...toRaw(this.currentData)];
             currentData[index].color = color;
             this.fuckRender(currentData);
+        },
+        switchHomeShow(evt) {
+            this.showHome = !this.showHome;
+            switch (evt) {
+                case 'list': {
+                    this.showList = !this.showList;
+                    break;
+                }
+                case 'hide': {
+                    this.showList = false;
+                    break;
+                }
+            }
         }
     }
 };

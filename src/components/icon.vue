@@ -4,8 +4,8 @@
 
 <script>
 var map = {
-    arrowleft: "icon-arrowleft",
-    arrowright: "icon-arrowright",
+    arrowLeft: "icon-arrowleft",
+    arrowRight: "icon-arrowright",
     aim: "icon-aim",
     compress: "icon-compress",
     expand: "icon-expend",
@@ -16,6 +16,11 @@ var map = {
     eye: "icon-eye",
     eye_c: "icon-eye-close",
     close_c: "icon-close-circle",
+    login: "icon-login",
+    logout: "icon-logout",
+    rollBack: "icon-rollback",
+    arrowUp: "icon-arrowup",
+    arrowDown: "icon-arrowdown",
 };
 export default {
     props: {
@@ -37,5 +42,5 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://at.alicdn.com/t/c/font_4845730_22pqd7dexk.css?spm=a313x.manage_type_myprojects.i1.9.53833a81TKgn4S&file=font_4845730_22pqd7dexk.css');
+@import url('https://at.alicdn.com/t/c/font_4845730_domrwa02osl.css?spm=a313x.manage_type_myprojects.i1.9.7c703a813bEmXz&file=font_4845730_domrwa02osl.css');
 </style>
