@@ -84,20 +84,30 @@
             </div>
             <div class="foot h-1/20 flex justify-evenly items-center overflow-hidden">
                 <label class="btn btn-lg" for="logInModal">
-                    <span class="loading loading-spinner"></span>
-                    请登录
+                    <div v-if="!isAuthenticated">
+                        <span class="loading loading-spinner"></span>
+                        请登录
+                    </div>
+                    <div v-else>
+                        <span class="text-2xl">{{ greetingMessage + nickname }}</span>
+                    </div>
                 </label>
                 <input type="checkbox" id="logInModal" class="modal-toggle" />
                 <div class="modal" role="dialog">
                     <div class="modal-box">
-                        <fieldset class="fieldset w-auto bg-base-200 border border-base-300 p-4 rounded-box">
-                            <legend class="fieldset-legend cursor-default"><span>登录</span></legend>
-                            <label class="fieldset-label cursor-default"><span>账号</span></label>
-                            <input type="text" class="input w-auto" placeholder="Account" v-model="account"/>
-                            <label class="fieldset-label cursor-default"><span>密码</span></label>
-                            <input type="password" class="input w-auto" v-model="password" placeholder="Password" />
-                            <button class="btn btn-neutral mt-4" @click="userLogin">Login</button>
-                        </fieldset>
+                        <form @submit.prevent="userLogin">
+                            <fieldset class="fieldset w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
+                                <legend class="fieldset-legend cursor-default"><span>登录</span></legend>
+                                <label class="fieldset-label cursor-default"><span>账号</span></label>
+                                <input type="text" class="input w-auto" placeholder="Account" v-model="account" autocomplete="username"/>
+                                <label class="fieldset-label cursor-default"><span>密码</span></label>
+                                <input type="password" class="input w-auto" v-model="password" placeholder="Password" autocomplete="current-password"/>
+                                <button type="submit" class="btn btn-neutral mt-4">
+                                    <span v-if="!logging" class="text-lg">登录</span>
+                                    <span v-else class="loading loading-spinner"></span>
+                                </button>
+                            </fieldset>
+                        </form>
                     </div>
                     <label class="modal-backdrop" for="logInModal">Close</label>
                 </div>
@@ -158,7 +168,7 @@ import icon from '../components/icon.vue';
 import { mapState } from 'vuex';
 import { toRaw } from 'vue';
 import * as utils from '../assets/utils/componentUtils';
-import { api } from '../store/index';
+import { authApi } from '../api/auth';
 
 export default {
     name: 'home',
@@ -177,6 +187,7 @@ export default {
             showHome: true,
             account: "",
             password: "",
+            logging: false,
         };
     },
     created() {
@@ -200,7 +211,14 @@ export default {
             this.fuckRender(currentData);
         }, 25);
     },
-    mounted() {
+    async mounted() {
+        try {
+            const res = await authApi.getUserInfo();
+            this.$store.commit('auth/setUser', res);
+        } catch (error) {
+            console.log('获取用户信息失败:', error);
+            this.$store.commit('auth/setToken', null);
+        }
         window.addEventListener('resize', this.throttledResize);
     },
     beforeUnmount() {
@@ -208,26 +226,39 @@ export default {
     },
     computed: {
         ...mapState(["functionData_2D", "functionData_3D"]),
+        ...mapState('auth', ['user', 'isAuthenticated', 'nickname']),
         currentInputExample() {
             return this.show_2D ? '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...'
                 : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
         },
         currentData() {
             console.log("💩");
-            if (this.currentData && this.currentData.length > 0) {
-                const payload = JSON.stringify(this.currentData.map(item => ({
-                    fn: item.fn,
-                    color: item.color,
-                    nSamples: item.nSamples,
-                    visible: item.visible
-                })));
-                console.log(payload);
-            }
+            // if (this.currentData && this.currentData.length > 0) {
+            //     const payload = JSON.stringify(this.currentData.map(item => ({
+            //         fn: item.fn,
+            //         color: item.color,
+            //         nSamples: item.nSamples,
+            //         visible: item.visible
+            //     })));
+            //     console.log(payload);
+            // }
             return this.show_2D ? this.functionData_2D : this.functionData_3D;
         },
         userInput() {
             console.log("💩💩");
             return this.currentData.map(item => `"${item.fn}"`).join('  ,  ');
+        },
+        greetingMessage() {
+            const time = new Date().getHours();
+            if (time >= 6 && time < 12) {
+                return '早上好，';
+            } else if (time >=12 && time <18) {
+                return '下午好，';
+            } else if (time >=18 && time < 24) {
+                return '晚上好，';
+            } else {
+                return '不是哥们，这么晚还搁这敲代码呢？';
+            }
         }
     },
     watch: {
@@ -337,17 +368,28 @@ export default {
                 }
             }
         },
-        userLogin() {
+        async userLogin() {
+            this.logging = true;
             const data = {
                 login: this.account,
                 password: this.password
             }
             console.log('登录数据:', data);
-            api.login(data).then(res => {
-                console.log('获取响应', res);
-            }).catch(error => {
-                console.log(error);
-            });
+            try {
+                const res = await authApi.login(data);
+                this.$store.commit('auth/setToken', res.token);
+            } catch (error) {
+                console.log('登录失败:', error);
+            } finally {
+                this.logging = false;
+                document.getElementById('logInModal').checked = false;
+            }
+            try {
+                const res = await authApi.getUserInfo();
+                this.$store.commit('auth/setUser', res);
+            } catch (error) {
+                console.log('获取用户信息失败:', error);
+            }
         }
     }
 };

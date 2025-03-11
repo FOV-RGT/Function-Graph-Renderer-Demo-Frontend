@@ -15,7 +15,7 @@ export class chartInstance {
         console.log("图表实例成功挂载");
     }
 
-    async createData(inputs, index = 0, num = 1) {
+    async createData(inputs, index = 0, num = 1, nSamples = 2025) {
         const updatedData = [];
         const rawData = toRaw(store.state.functionData_2D);
         const newFunctionData = [...rawData];
@@ -25,8 +25,7 @@ export class chartInstance {
             updatedData.push({
                 fn: inputs[i], // 函数表达式
                 color: i == 0 && newFunctionData[index] && newFunctionData[index].color !== Boolean ? newFunctionData[index].color : color, // 为每个函数生成唯一的颜色
-                hash: await utils.sha256(`${Date.now()}${inputs[i]}`), // 为每个输入生成唯一的哈希值
-                nSamples: 2025, // 采样点数
+                nSamples, // 采样点数
                 visible: true, // 是否可见
             });
         };

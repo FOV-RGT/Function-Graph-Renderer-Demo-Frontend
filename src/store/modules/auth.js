@@ -11,9 +11,11 @@ export default {
     
     // 状态定义
     state: {
-        user: null,                                     // 当前用户信息
-        token: localStorage.getItem('token') || null,   // 认证令牌，优先从本地存储获取
-        isAuthenticated: !!localStorage.getItem('token') // 是否已认证的标志
+        nickname: null,                                     // 当前用户信息
+        // token: localStorage.getItem('token') || null,   // 认证令牌，优先从本地存储获取
+        token: null,
+        // isAuthenticated: !!localStorage.getItem('token') // 是否已认证的标志
+        isAuthenticated: false
     },
     
     // 修改状态的方法
@@ -23,8 +25,9 @@ export default {
          * @param {Object} state - 当前状态
          * @param {Object} user - 用户信息对象
          */
-        setUser(state, user) {
-            state.user = user;
+        setUser(state, data) {
+            const nickname = data.imformation.nickname || "长期素食";
+            state.nickname = nickname;
         },
         
         /**
@@ -37,6 +40,7 @@ export default {
             state.isAuthenticated = !!token;
             // 持久化存储令牌
             if (token) {
+                console.log("存储令牌：", token);
                 localStorage.setItem('token', token);
             } else {
                 localStorage.removeItem('token');
@@ -48,7 +52,7 @@ export default {
          * @param {Object} state - 当前状态
          */
         logout(state) {
-            state.user = null;
+            state.nickname = null;
             state.token = null;
             state.isAuthenticated = false;
             // 清除本地存储的令牌
@@ -57,27 +61,7 @@ export default {
     },
     
     // 异步操作方法
-    actions: {
-        /**
-         * 用户登录
-         * @param {Object} context - 上下文对象，包含commit等方法
-         * @param {Object} credentials - 登录凭证
-         * @returns {Promise} 登录结果
-         */
-        async login({ commit }, credentials) {
-            try {
-                // 调用登录API
-                const res = await authApi.login(credentials);
-                // 更新状态
-                commit('setToken', res.token);
-                return res;
-            } catch (error) {
-                if (error.status === 404) {
-                    throw new Error('用户不存在，请检查用户名和密码');
-                }
-            }
-        },
-        
+    actions: {        
         /**
          * 用户注册
          * @param {Object} context - 上下文对象，包含commit等方法
@@ -93,7 +77,7 @@ export default {
                 commit('setUser', res.user);
                 return res;
             } catch (error) {
-                throw error;
+                throw(error);
             }
         },
         
@@ -110,13 +94,5 @@ export default {
                 commit('logout');
             }
         },
-        async getCurrentUser({ commit }) {
-            try {
-                const user = await authApi.getCurrentUser();
-                commit('setUser', user);
-            } catch  (error) {
-                throw error;
-            }
-        }
     }
 };
