@@ -13,8 +13,8 @@ export const authApi = {
      * @param {Object} credentials - 包含用户名和密码的登录凭证
      * @returns {Promise} 登录请求的Promise对象
      */
-    login(credentials) {
-        return api.post('/auth/signIn', credentials);
+    async login(credentials) {
+        return await api.post('/auth/signIn', credentials);
     },
 
     /**

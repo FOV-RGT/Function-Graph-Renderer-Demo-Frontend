@@ -26,9 +26,11 @@
             </div>
             <ul class="list overflow-x-hidden" v-show="showList">
                 <li class="flex justify-center border-b-2 border-b-slate-500/80 items-center">
-                    <div class="li-top p-2 pb-1 pl-8 text-[2em] text-slate-300/70 tracking-widest flex items-center justify-between select-none flex-1">
+                    <div
+                        class="li-top p-2 pb-1 pl-8 text-[2em] text-slate-300/70 tracking-widest flex items-center justify-between select-none flex-1">
                         <p>函数<span class="inline-block">列表</span></p>
-                        <icon type="rollBack" extraclass="cursor-pointer select-none pr-4" @click="switchHomeShow('list')"/>
+                        <icon type="rollBack" extraclass="cursor-pointer select-none pr-4"
+                            @click="switchHomeShow('list')" />
                     </div>
                 </li>
                 <li v-for="(item, index) in currentData" :key="index" class="list-row pl-1 pr-1 pb-0 flex">
@@ -48,11 +50,12 @@
                                 @click="fuckList('plus', index)" />
                             <icon type="minus" extraclass="cursor-pointer select-none"
                                 @click="fuckList('minus', index)" />
-                            <icon :type="item.visible == true ? 'eye' : 'eye_c'"
-                                extraclass="cursor-pointer select-none" @click="fuckList('visible', index)" />
+                            <icon :type="item.visible == true ? 'eye' : 'eye_c'" extraclass="cursor-pointer select-none"
+                                @click="fuckList('visible', index)" />
                             <div class="colorPicker">
                                 <ColorPicker format="rgb" shape="square" :debounce="0" lang="ZH-cn"
-                                    v-model:pureColor="item.color" @update:pureColor="throttleupdateColor($event, index)" />
+                                    v-model:pureColor="item.color"
+                                    @update:pureColor="throttleupdateColor($event, index)" />
                             </div>
                         </div>
                     </div>
@@ -80,6 +83,24 @@
                 <ThreeDPlotCom ref="ThreeDPlotCom" v-show="!show_2D" class="renderComponent" />
             </div>
             <div class="foot h-1/20 flex justify-evenly items-center overflow-hidden">
+                <label class="btn btn-lg" for="logInModal">
+                    <span class="loading loading-spinner"></span>
+                    请登录
+                </label>
+                <input type="checkbox" id="logInModal" class="modal-toggle" />
+                <div class="modal" role="dialog">
+                    <div class="modal-box">
+                        <fieldset class="fieldset w-auto bg-base-200 border border-base-300 p-4 rounded-box">
+                            <legend class="fieldset-legend cursor-default"><span>登录</span></legend>
+                            <label class="fieldset-label cursor-default"><span>账号</span></label>
+                            <input type="email" class="input w-auto" placeholder="Account" />
+                            <label class="fieldset-label cursor-default"><span>密码</span></label>
+                            <input type="password" class="input w-auto" placeholder="Password" />
+                            <button class="btn btn-neutral mt-4">Login</button>
+                        </fieldset>
+                    </div>
+                    <label class="modal-backdrop" for="logInModal">Close</label>
+                </div>
                 <div class="foot-buttonsGroup join max-h-19/20 overflow-hidden">
                     <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513.56 394.43" width="100px" height="100px">
                         <g id="_图层_1-2" data-name="图层 1">
@@ -91,31 +112,37 @@
                     </svg> -->
                     <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
                     join-item rounded-l-none pl-1 pr-1" @click="setView('reset')">
-                        <icon type="aim"/>
+                        <icon type="aim" />
                     </button>
                     <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
-                    join-item pl-1 pr-1" @mousedown="startSetView('zoomIn')" @mouseup="endSetView()" @mouseleave="endSetView()">
-                        <icon type="z_in"/>
+                    join-item pl-1 pr-1" @mousedown="startSetView('zoomIn')" @mouseup="endSetView()"
+                        @mouseleave="endSetView()">
+                        <icon type="z_in" />
                     </button>
                     <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
-                    join-item pl-1 pr-1" @mousedown="startSetView('zoomOut')" @mouseup="endSetView()" @mouseleave="endSetView()">
-                        <icon type="z_out"/>
+                    join-item pl-1 pr-1" @mousedown="startSetView('zoomOut')" @mouseup="endSetView()"
+                        @mouseleave="endSetView()">
+                        <icon type="z_out" />
                     </button>
                     <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
-                    join-item pl-1 pr-1" @mousedown="startSetView('moveUp')" @mouseup="endSetView()" @mouseleave="endSetView()">
-                        <icon type="arrowUp"/>
+                    join-item pl-1 pr-1" @mousedown="startSetView('moveUp')" @mouseup="endSetView()"
+                        @mouseleave="endSetView()">
+                        <icon type="arrowUp" />
                     </button>
                     <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
-                    join-item pl-1 pr-1" @mousedown="startSetView('moveDown')" @mouseup="endSetView()" @mouseleave="endSetView()">
-                        <icon type="arrowDown"/>
+                    join-item pl-1 pr-1" @mousedown="startSetView('moveDown')" @mouseup="endSetView()"
+                        @mouseleave="endSetView()">
+                        <icon type="arrowDown" />
                     </button>
                     <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
-                    join-item pl-1 pr-1" @mousedown="startSetView('moveLeft')" @mouseup="endSetView()" @mouseleave="endSetView()">
-                        <icon type="arrowLeft"/>
+                    join-item pl-1 pr-1" @mousedown="startSetView('moveLeft')" @mouseup="endSetView()"
+                        @mouseleave="endSetView()">
+                        <icon type="arrowLeft" />
                     </button>
                     <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
-                    join-item rounded-r-none pl-1 pr-1" @mousedown="startSetView('moveRight')" @mouseup="endSetView()" @mouseleave="endSetView()">
-                        <icon type="arrowRight"/>
+                    join-item rounded-r-none pl-1 pr-1" @mousedown="startSetView('moveRight')" @mouseup="endSetView()"
+                        @mouseleave="endSetView()">
+                        <icon type="arrowRight" />
                     </button>
                 </div>
             </div>
@@ -180,19 +207,19 @@ export default {
         ...mapState(["functionData_2D", "functionData_3D"]),
         currentInputExample() {
             return this.show_2D ? '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...'
-            : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
+                : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
         },
         currentData() {
             console.log("💩");
-            // if (this.currentData && this.currentData.length > 0) {
-            //     const payload = JSON.stringify(this.currentData.map(item => ({
-            //     fn: item.fn,
-            //     color: item.color,
-            //     nSamples: item.nSamples,
-            //     visible: item.visible
-            // })));
-            // console.log(payload);
-            // }
+            if (this.currentData && this.currentData.length > 0) {
+                const payload = JSON.stringify(this.currentData.map(item => ({
+                    fn: item.fn,
+                    color: item.color,
+                    nSamples: item.nSamples,
+                    visible: item.visible
+                })));
+                console.log(payload);
+            }
             return this.show_2D ? this.functionData_2D : this.functionData_3D;
         },
         userInput() {
@@ -201,7 +228,7 @@ export default {
         }
     },
     watch: {
-        
+
     },
     methods: {
         switchRenderer() {
