@@ -26,7 +26,7 @@ export class chartInstance {
                 fn: inputs[i], // 函数表达式
                 color: i == 0 && newFunctionData[index] && newFunctionData[index].color !== Boolean ? newFunctionData[index].color : color, // 为每个函数生成唯一的颜色
                 hash: await utils.sha256(`${Date.now()}${inputs[i]}`), // 为每个输入生成唯一的哈希值
-                nSamples: 3000, // 采样点数
+                nSamples: 2025, // 采样点数
                 visible: true, // 是否可见
             });
         };

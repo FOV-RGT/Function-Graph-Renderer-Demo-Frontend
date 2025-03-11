@@ -40,10 +40,10 @@ api.interceptors.request.use(config => {
  * 响应拦截器
  * 处理响应数据和错误
  */
-api.interceptors.response.use(response => {
+api.interceptors.response.use(res => {
     // 直接返回响应中的数据部分
-    console.log("接收响应：", response);
-    return response.data;
+    console.log("拦截响应：", res);
+    return res.data.data;
 }, error => {
     // 如果响应状态码为401（未授权）
     if (error.response && error.response.status === 401) {

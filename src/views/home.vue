@@ -93,10 +93,10 @@
                         <fieldset class="fieldset w-auto bg-base-200 border border-base-300 p-4 rounded-box">
                             <legend class="fieldset-legend cursor-default"><span>登录</span></legend>
                             <label class="fieldset-label cursor-default"><span>账号</span></label>
-                            <input type="email" class="input w-auto" placeholder="Account" />
+                            <input type="text" class="input w-auto" placeholder="Account" v-model="account"/>
                             <label class="fieldset-label cursor-default"><span>密码</span></label>
-                            <input type="password" class="input w-auto" placeholder="Password" />
-                            <button class="btn btn-neutral mt-4">Login</button>
+                            <input type="password" class="input w-auto" v-model="password" placeholder="Password" />
+                            <button class="btn btn-neutral mt-4" @click="userLogin">Login</button>
                         </fieldset>
                     </div>
                     <label class="modal-backdrop" for="logInModal">Close</label>
@@ -158,6 +158,7 @@ import icon from '../components/icon.vue';
 import { mapState } from 'vuex';
 import { toRaw } from 'vue';
 import * as utils from '../assets/utils/componentUtils';
+import { api } from '../store/index';
 
 export default {
     name: 'home',
@@ -173,7 +174,9 @@ export default {
             viewTimeOut: null,
             viewInterval: null,
             showList: false,
-            showHome: true
+            showHome: true,
+            account: "",
+            password: "",
         };
     },
     created() {
@@ -248,7 +251,7 @@ export default {
             this.viewTimeOut = setTimeout(() => {
                 this.viewInterval = setInterval(() => {
                     this.setView(evt);
-                }, 25);
+                }, 75);
             }, 150);
         },
         endSetView() {
@@ -333,6 +336,18 @@ export default {
                     break;
                 }
             }
+        },
+        userLogin() {
+            const data = {
+                login: this.account,
+                password: this.password
+            }
+            console.log('登录数据:', data);
+            api.login(data).then(res => {
+                console.log('获取响应', res);
+            }).catch(error => {
+                console.log(error);
+            });
         }
     }
 };

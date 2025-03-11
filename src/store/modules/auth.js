@@ -1,3 +1,6 @@
+import { authApi } from '../../api/auth';
+
+
 /**
  * 认证模块Vuex存储
  * 管理用户认证状态、令牌和相关操作
@@ -64,11 +67,10 @@ export default {
         async login({ commit }, credentials) {
             try {
                 // 调用登录API
-                const response = await authApi.login(credentials);
+                const res = await authApi.login(credentials);
                 // 更新状态
-                commit('setToken', response.token);
-                commit('setUser', response.user);
-                return response;
+                commit('setToken', res.token);
+                return res;
             } catch (error) {
                 throw error;
             }
@@ -83,11 +85,11 @@ export default {
         async register({ commit }, userData) {
             try {
                 // 调用注册API
-                const response = await authApi.register(userData);
+                const res = await authApi.register(userData);
                 // 更新状态
-                commit('setToken', response.token);
-                commit('setUser', response.user);
-                return response;
+                commit('setToken', res.token);
+                commit('setUser', res.user);
+                return res;
             } catch (error) {
                 throw error;
             }
@@ -104,6 +106,14 @@ export default {
             } finally {
                 // 无论API调用成功与否，都清除本地认证状态
                 commit('logout');
+            }
+        },
+        async getCurrentUser({ commit }) {
+            try {
+                const user = await authApi.getCurrentUser();
+                commit('setUser', user);
+            } catch  (error) {
+                throw error;
             }
         }
     }

@@ -33,3 +33,18 @@ const store = createStore({
 });
 
 export default store;
+
+export const api = {
+    async login(credentials) {
+        return await store.dispatch('auth/login', credentials);
+    },
+    async register(userData) {
+        return await store.dispatch('auth/register', userData);
+    },
+    async logout() {
+        return await store.dispatch('auth/logout');
+    },
+    async getCurrentUser() {
+        return await store.dispatch('auth/getCurrentUser');
+    },
+}
