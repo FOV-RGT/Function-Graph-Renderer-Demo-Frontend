@@ -72,7 +72,9 @@ export default {
                 commit('setToken', res.token);
                 return res;
             } catch (error) {
-                throw error;
+                if (error.status === 404) {
+                    throw new Error('用户不存在，请检查用户名和密码');
+                }
             }
         },
         

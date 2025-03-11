@@ -46,11 +46,11 @@ api.interceptors.response.use(res => {
     return res.data.data;
 }, error => {
     // 如果响应状态码为401（未授权）
-    if (error.response && error.response.status === 401) {
-        // 清除认证信息并重定向到登录页
-        store.commit('auth/logout');
-        router.push('/login');
-    }
+    // if (error.response && error.response.status === 401) {
+    //     // 清除认证信息并重定向到登录页
+    //     store.commit('auth/logout');
+    //     router.push('/login');
+    // }
     // 传递错误到调用者
     return Promise.reject(error);
 });
