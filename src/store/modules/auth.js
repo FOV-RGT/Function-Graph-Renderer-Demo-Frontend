@@ -68,23 +68,6 @@ export default {
     
     // 异步操作方法
     actions: {        
-        /**
-         * 用户注册
-         * @param {Object} context - 上下文对象，包含commit等方法
-         * @param {Object} userData - 用户注册数据
-         * @returns {Promise} 注册结果
-         */
-        async register({ commit }, userData) {
-            try {
-                // 调用注册API
-                const res = await authApi.register(userData);
-                // 更新状态
-                commit('setToken', res.token);
-                commit('setUser', res.user);
-                return res;
-            } catch (error) {
-                throw(error);
-            }
-        },
+        
     }
 };

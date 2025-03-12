@@ -10,12 +10,13 @@ export class chartInstance {
     constructor(target) {
         this.target = target;
         this.config = chartConfig.defaultConfig(target); // 初始化图表配置
+        this.zoomFactor = 0.2; // 默认缩放因子
         console.log("实例挂载:初始化配置完成");
         this.instance = functionPlot(this.config);// 初始化图表实例
         console.log("图表实例成功挂载");
     }
 
-    async createData(inputs, index = 0, num = 1, nSamples = 1024) {
+    async createData(inputs, index = 0, num = 1, nSamples = 2025, graphType = 'polyline') {
         const updatedData = [];
         const rawData = toRaw(store.state.functionData_2D);
         const newFunctionData = [...rawData];
@@ -25,7 +26,8 @@ export class chartInstance {
             updatedData.push({
                 fn: inputs[i], // 函数表达式
                 color: i == 0 && newFunctionData[index] && newFunctionData[index].color !== Boolean ? newFunctionData[index].color : color, // 为每个函数生成唯一的颜色
-                nSamples, // 采样点数
+                graphType: i == 0 && newFunctionData[index] && newFunctionData[index].graphType ? newFunctionData[index].graphType : graphType, // 图表类型
+                nSamples: nSamples, // 采样点数
                 visible: true, // 是否可见
             });
         };
@@ -41,14 +43,22 @@ export class chartInstance {
     }
 
     setFunction(data) {
-        data = data.filter(d => d.fn !== '' && d.visible == true);
-        this.config.data = [...data];// 将data数组中的所有元素添加到config.data数组中
-        try {
-            this.instance = functionPlot(this.config);// 重新绘制图表
-            console.log("图表实例已更新");
-        } catch (error) {
-            console.error('请检查输入');
-        }
+        const currentConfig = this.config;
+        currentConfig.data = [];
+        // 过滤可见函数并应用其配置
+        data.filter(item => item.fn !== '' && item.visible).forEach((item, index) => {
+            currentConfig.data.push({
+                fn: item.fn,
+                color: item.color,
+                graphType: item.graphType, // 使用函数的图表类型，默认为线图
+                nSamples: item.nSamples
+            });
+        });
+        // 重新渲染图表
+        this.destroyInstance();
+        this.instance = functionPlot(currentConfig);
+        this.config = currentConfig;
+        return currentConfig
     }
 
     async addInput(inputs, index, num) {
@@ -87,7 +97,9 @@ export class chartInstance {
         const currentConfig = this.config;
         const xDomain = currentConfig.xAxis.domain;
         const yDomain = currentConfig.yAxis.domain;
-        const zoomFactor = evt === 'zoomIn' ? 2 : 0.5;
+        // 使用实例的缩放因子
+        const zoomStep = this.zoomFactor;
+        const zoomFactor = evt === 'zoomIn' ? 1 + zoomStep : 1 / (1 + zoomStep);
         const center = [(xDomain[0] + xDomain[1])/2, (yDomain[0] + yDomain[1])/2];
         const newXHalfWidth = (xDomain[1] - xDomain[0]) / (2 * zoomFactor);
         const newYHalfWidth = (yDomain[1] - yDomain[0]) / (2 * zoomFactor);
@@ -129,5 +141,49 @@ export class chartInstance {
         this.instance = functionPlot(currentConfig);
         this.config = currentConfig;
         console.log("图表配置已更新:", this.config);
+    }
+
+    // 设置缩放因子
+    setZoomFactor(factor) {
+        // 验证缩放因子范围
+        if (factor < 0.01) factor = 0.01;
+        if (factor > 1) factor = 1.00;
+        this.zoomFactor = factor;
+        return this.zoomFactor;
+    }
+
+    getZoomFactor() {
+        return this.zoomFactor;
+    }
+
+    // 设置图表类型
+    setGraphType(graphType, index) {
+        const currentConfig = this.config;
+        
+        // 如果提供了特定索引，只更新该函数的图表类型
+        if (index !== undefined && currentConfig.data[index]) {
+            currentConfig.data[index].graphType = graphType;
+        } 
+        // 否则更新所有函数的图表类型
+        else if (index === undefined) {
+            currentConfig.data.forEach(item => {
+                if (item) item.graphType = graphType;
+            });
+        }
+        
+        // 重新渲染图表
+        this.destroyInstance();
+        this.instance = functionPlot(currentConfig);
+        this.config = currentConfig;
+        console.log("图表类型已更新:", graphType, "索引:", index);
+        return graphType;
+    }
+    // 获取图表类型
+    getGraphType(index) {
+        const rawData = toRaw(store.state.functionData_2D);
+        if (index !== undefined && rawData[index]) {
+            return rawData[index].graphType;
+        }
+        return null;
     }
 }

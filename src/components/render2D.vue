@@ -11,6 +11,13 @@ export default {
     return {
       chartInstance: null,
       rendering: false,
+      graphTypes: [
+        { value: 'polyline', label: '线图' },
+        { value: 'scatter', label: '点图' },
+        { value: 'interval', label: '区间图' },
+        { value: 'area', label: '面积图' }
+      ],
+      globalGraphType: 'polyline' // 默认全局图表类型
     };
   },
   created() {
@@ -61,27 +68,15 @@ export default {
           this.chartInstance.resetView(this.$refs.canvas2D);
           break;
         case 'zoomIn':
-          console.log("触发:放大范围");
-          this.chartInstance.zoomView(evt);
-          break;
         case 'zoomOut':
-          console.log("触发:缩小范围");
+          console.log(`触发:${evt === 'zoomIn' ? '放大' : '缩小'}范围`);
           this.chartInstance.zoomView(evt);
           break;
         case 'moveLeft':
-          console.log("触发:左移视图");
-          this.chartInstance.moveView(evt);
-          break;
         case 'moveRight':
-          console.log("触发:右移视图");
-          this.chartInstance.moveView(evt);
-          break;
         case 'moveUp':
-          console.log("触发:上移视图");
-          this.chartInstance.moveView(evt);
-          break;
         case 'moveDown':
-          console.log("触发:下移视图");
+          console.log(`触发:${evt}视图`);
           this.chartInstance.moveView(evt);
           break;
         default:
@@ -93,6 +88,31 @@ export default {
     },
     fuckResize() {
       this.chartInstance.resize(this.$refs.canvas2D);
+    },
+    // 更新图表实例的缩放因子
+    updateZoomFactor(zoomStep) {
+      if (this.chartInstance) {
+        this.chartInstance.setZoomFactor(zoomStep);
+      }
+    },
+    // 更新函数的图表类型
+    updateGraphType(graphType, index) {
+      console.log("更新图表类型:", graphType, "索引:", index);
+      if (this.chartInstance) {
+        this.chartInstance.setGraphType(graphType, index);
+      }
+    },
+    // 设置所有函数的图表类型
+    setAllGraphTypes(graphType) {
+      if (this.chartInstance) {
+        this.chartInstance.setGraphType(graphType);
+      }
+    },
+    // 更新单个函数的图表类型
+    updateFunctionGraphType(graphType, index) {
+      if (this.chartInstance) {
+        this.chartInstance.setGraphType(graphType, index);
+      }
     }
   }
 };

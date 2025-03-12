@@ -35,16 +35,36 @@
                 </li>
                 <li v-for="(item, index) in currentData" :key="index" class="list-row pl-1 pr-1 pb-0 flex">
                     <div class="flex-col select-none flex-1">
+                        <!-- 函数表达式输入区 -->
                         <div class="join flex pb-0.5">
-                            <label class="li-input input flex-1 text-lg items-center pr-0 justify-start">
-                                f(x) &nbsp;=
-                                <input v-model=item.fn spellcheck="false" type="text" :placeholder=currentInputExample
-                                    class="join-item text-slate-300/80 flex-auto"
-                                    @input="debouncedAddInput(item.fn, index)">
-                                <icon type="close_c" extraclass="cursor-pointer select-none pr-4 text-orange-800"
-                                    @click="fuckList('delect', index)" />
-                            </label>
+                                <label class="li-input input flex-1 text-lg items-center pr-0 justify-start">
+                                    f(x) &nbsp;=
+                                    <input v-model=item.fn spellcheck="false" type="text"
+                                        :placeholder=currentInputExample class="join-item text-slate-300/80 flex-auto"
+                                        @input="debouncedAddInput(item.fn, index)">
+                                    <icon type="close_c" extraclass="cursor-pointer select-none pr-4 text-orange-800"
+                                        @click="fuckList('delect', index)" />
+                                </label>
+                            </div>
+                        <!-- 图表类型选择器 -->
+                        <div class="graphTypeSelector flex items-center pb-1">
+                            <label class="text-xs mr-1">图表类型：</label>
+                            <select v-model="item.graphType" class="select select-xs bg-base-100 flex-1"
+                                @change="updateFunctionGraphType(item.graphType, index)">
+                                <option value="polyline">线图</option>
+                                <option value="scatter">点图</option>
+                                <option value="interval">区间图</option>
+                                <option value="area">面积图</option>
+                            </select>
                         </div>
+                        <!-- 采样点数量的控制输入框 -->
+                        <div class="samplePoints flex items-center">
+                                <label class="text-xs mr-1">采样点数：</label>
+                                <input type="number" v-model.number="item.nSamples" min="500" max="5000" step="1"
+                                    class="input input-xs w-16 text-center"
+                                    @change="updateSamplePoints(item.nSamples, index)" />
+                            </div>
+                        <!-- 其他操作区域 -->
                         <div class="li-b flex gap-4">
                             <icon type="plus" extraclass="cursor-pointer select-none"
                                 @click="fuckList('plus', index)" />
@@ -104,22 +124,30 @@
                                 <label class="fieldset-label cursor-default"><span>密码</span></label>
                                 <input type="password" class="input w-auto" v-model="password" placeholder="Password" autocomplete="current-password"/>
                                 <button type="submit" class="btn btn-success btn-soft mt-4">
+                                    <icon v-if="!logging" type="login"/>
                                     <span v-if="!logging" class="text-lg">登录</span>
                                     <span v-else class="loading loading-spinner"></span>
                                 </button>
                             </fieldset>
                         </form>
                         <div v-else>
-                            <div class="fieldset w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
+                            <div class="fieldset user-info w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
+                                <icon type="logout" class="ml-auto text-error cursor-pointer" @click="logout"/>
                                 <div class="fieldset-label cursor-default"><span>用户信息</span></div>
                                 <div class="fieldset-label cursor-default"><span>昵称: {{ nickname }}</span></div>
                                 <div class="fieldset-label cursor-default"><span>邮箱: {{ email }}</span></div>
                                 <div class="fieldset-label cursor-default"><span>账号: {{ username }}</span></div>
-                                <button class="btn btn-block btn-lg btn-error btn-soft text-xl" @click="logout">登出</button>
+                                <button class="btn btn-block btn-lg btn-info btn-soft text-xl">提交修改</button>
                             </div>
                         </div>
                     </div>
                     <label class="modal-backdrop" for="logInModal">Close</label>
+                </div>
+                <!-- 移动缩放步长控制组件到这里，位于foot-buttonsGroup左侧 -->
+                <div class="zoomFactorControl flex items-center">
+                    <label class="text-xs mr-1 text-slate-300/80">缩放步长:</label>
+                    <input type="number" v-model.number="zoomStep" min="0.01" max="1.00" step="0.01"
+                        class="input input-xs w-16 text-center" @change="updateZoomFactor" />
                 </div>
                 <div class="foot-buttonsGroup join max-h-19/20 overflow-hidden">
                     <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513.56 394.43" width="100px" height="100px">
@@ -198,7 +226,8 @@ export default {
             account: "",
             password: "",
             logging: false,
-            showInfo: false
+            showInfo: false,
+            zoomStep: 0.2, // 默认缩放步长
         };
     },
     created() {
@@ -206,7 +235,7 @@ export default {
         this.debouncedAddInput = utils.debounce((input, index) => {
             console.log("自动更新输入");
             this.render(input, index);
-        }, 100);
+        }, 400);
         this.throttledResize = utils.throttle(() => {
             setTimeout(() => {
                 if (this.show_2D) {
@@ -241,7 +270,7 @@ export default {
         ...mapState('auth', ['user', 'isAuthenticated', 'nickname', 'email', 'username']),
         currentInputExample() {
             return this.show_2D ? '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...'
-                : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
+            : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
         },
         currentData() {
             console.log("💩");
@@ -282,11 +311,10 @@ export default {
             this.throttledResize();
             this.$store.commit('switchRender', this.show_2D);
         },
+        //将缩放步长传递给2D图标实例
         setView(evt) {
             if (this.show_2D) {
-                this.$refs.TwoDPlotCom.setView(evt);
-            } else {
-                // this.$refs.ThreeDPlotCom.setView();
+                this.$refs.TwoDPlotCom.setView(evt, this.zoomStep);
             }
         },
         startSetView(evt) {
@@ -328,7 +356,9 @@ export default {
                     updatedData.splice(index + 1, 0, {
                         fn: '',
                         color: utils.generateRandomHarmoniousColor(),
-                        visible: false
+                        visible: false,
+                        graphType: 'polyline', // 添加默认图表类型
+                        nSamples: 2025 // 确保有默认采样点数
                     });
                     break;
                 }
@@ -336,7 +366,9 @@ export default {
                     updatedData.push({
                         fn: '',
                         color: utils.generateRandomHarmoniousColor(),
-                        visible: false
+                        visible: false,
+                        graphType: 'polyline', // 添加默认图表类型
+                        nSamples: 2025 // 确保有默认采样点数
                     });
                     break;
                 }
@@ -409,12 +441,50 @@ export default {
                 this.$store.commit('auth/setUser', null);
                 this.showInfo = false;
             }, 400);
-        }
+        },
+        // 更新采样点数量
+        updateSamplePoints(samples, index) {
+            // 验证输入范围
+            let validSamples = samples;
+            if (samples < 500) validSamples = 500;
+            if (samples > 5000) validSamples = 5000;
+            const currentData = [...toRaw(this.currentData)];
+            currentData[index].nSamples = validSamples;
+            this.fuckRender(currentData);
+            // 更新到 store
+            const payload = {
+                data: currentData,
+                is2D: this.show_2D
+            }
+            this.$store.commit('syncData', payload);
+        },
+        // 更新缩放因子(zoomfactor)
+        updateZoomFactor() {
+            // 验证范围
+            if (this.zoomStep < 0.01) this.zoomStep = 0.01;
+            if (this.zoomStep > 1) this.zoomStep = 1;
+            // 更新图表实例的缩放因子
+            if (this.show_2D && this.$refs.TwoDPlotCom) {
+                this.$refs.TwoDPlotCom.updateZoomFactor(this.zoomStep);
+            }
+        },
+        // 更新函数图表类型
+        updateFunctionGraphType(graphType, index) {
+            const currentData = [...toRaw(this.currentData)];
+            currentData[index].graphType = graphType;
+            this.fuckRender(currentData);
+            // 更新到 store
+            const payload = {
+                data: currentData,
+                is2D: this.show_2D
+            }
+            this.$store.commit('syncData', payload);
+        },
     }
 };
 </script>
 
-<style>
+<style scoped>
 @import url('../assets/componentCss/home.css');
 @import url('../assets/componentCss/icon1.css');
 </style>
