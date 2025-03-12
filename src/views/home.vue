@@ -57,6 +57,14 @@
                                     v-model:pureColor="item.color"
                                     @update:pureColor="throttleupdateColor($event, index)" />
                             </div>
+                            <!-- 添加采样点数量的控制输入框 -->
+                            <div class="samplePoints flex items-center">
+                                <label class="text-xs mr-1">采样</label>
+                                <input type="number" v-model.number="item.nSamples" min="10" max="2000" step="10"
+                                    class="input input-xs w-16 text-center"
+                                    @change="updateSamplePoints(item.nSamples, index)" />
+                            </div>
+                            
                         </div>
                     </div>
                 </li>
@@ -87,15 +95,15 @@
                     <span class="loading loading-spinner"></span>
                     请登录
                 </label>
-                <input type="checkbox" id="logInModal" class="modal-toggle" />
+                <input type="checkbox" id="logInModal" class="modal-toggle" /> 
                 <div class="modal" role="dialog">
                     <div class="modal-box">
                         <fieldset class="fieldset w-auto bg-base-200 border border-base-300 p-4 rounded-box">
                             <legend class="fieldset-legend cursor-default"><span>登录</span></legend>
                             <label class="fieldset-label cursor-default"><span>账号</span></label>
-                            <input type="text" class="input w-auto" placeholder="Account" v-model="account"/>
+                            <input type="text" class="input w-auto" placeholder="Account" v-model="account"/> 
                             <label class="fieldset-label cursor-default"><span>密码</span></label>
-                            <input type="password" class="input w-auto" v-model="password" placeholder="Password" />
+                            <input type="password" class="input w-auto" v-model="password" placeholder="Password" /> 
                             <button class="btn btn-neutral mt-4" @click="userLogin">Login</button>
                         </fieldset>
                     </div>
@@ -145,6 +153,13 @@
                         <icon type="arrowRight" />
                     </button>
                 </div>
+                <!-- 添加缩放步长的控制输入框 -->
+                <div class="zoomFactorControl flex items-center">
+                    <label class="text-xs mr-1 text-slate-300/80">缩放步长:</label>
+                    <input type="number" v-model.number="zoomStep" min="0.01" max="1" step="0.01"
+                           class="input input-xs w-16 text-center"
+                           @change="updateZoomFactor" />
+                </div>
             </div>
         </div>
     </div>
@@ -177,6 +192,7 @@ export default {
             showHome: true,
             account: "",
             password: "",
+            zoomStep: 0.2, // 默认缩放步长
         };
     },
     created() {
@@ -239,12 +255,11 @@ export default {
             this.throttledResize();
             this.$store.commit('switchRender', this.show_2D);
         },
+        //将缩放步长传递给2D图标实例
         setView(evt) {
             if (this.show_2D) {
-                this.$refs.TwoDPlotCom.setView(evt);
-            } else {
-                // this.$refs.ThreeDPlotCom.setView();
-            }
+                this.$refs.TwoDPlotCom.setView(evt, this.zoomStep);
+            } 
         },
         startSetView(evt) {
             this.setView(evt);
@@ -348,7 +363,44 @@ export default {
             }).catch(error => {
                 console.log(error);
             });
-        }
+        },
+        updateSamplePoints(nSamples, index) {
+            const currentData = [...toRaw(this.currentData)];
+            currentData[index].nSamples = nSamples;
+            this.fuckRender(currentData);
+        },
+        
+        // 更新采样点数量
+        updateSamplePoints(samples, index) {
+            // 验证输入范围
+            let validSamples = samples;
+            if (samples < 100) validSamples = 100;
+            if (samples > 5000) validSamples = 5000;
+            
+            const currentData = [...toRaw(this.currentData)];
+            currentData[index].nSamples = validSamples;
+            this.fuckRender(currentData);
+            
+            // 更新到 store
+            const payload = {
+                data: currentData,
+                is2D: this.show_2D
+            }
+            this.$store.commit('syncData', payload);
+        },
+        
+        // 更新缩放因子(zoomfactor)
+        updateZoomFactor() {
+
+            // 验证范围
+            if (this.zoomStep < 0.01) this.zoomStep = 0.01;
+            if (this.zoomStep > 1) this.zoomStep = 1;
+            
+            // 更新图表实例的缩放因子
+            if (this.show_2D && this.$refs.TwoDPlotCom) {
+                this.$refs.TwoDPlotCom.updateZoomFactor(this.zoomStep);
+            }
+        },
     }
 };
 </script>
@@ -356,4 +408,5 @@ export default {
 <style>
 @import url('../assets/componentCss/home.css');
 @import url('../assets/componentCss/icon1.css');
+
 </style>

@@ -10,12 +10,13 @@ export class chartInstance {
     constructor(target) {
         this.target = target;
         this.config = chartConfig.defaultConfig(target); // 初始化图表配置
+        this.zoomFactor = 0.2; // 默认缩放因子
         console.log("实例挂载:初始化配置完成");
         this.instance = functionPlot(this.config);// 初始化图表实例
         console.log("图表实例成功挂载");
     }
 
-    async createData(inputs, index = 0, num = 1) {
+    async createData(inputs, index = 0, num = 1 ,nSamples = 2025) {
         const updatedData = [];
         const rawData = toRaw(store.state.functionData_2D);
         const newFunctionData = [...rawData];
@@ -26,7 +27,7 @@ export class chartInstance {
                 fn: inputs[i], // 函数表达式
                 color: i == 0 && newFunctionData[index] && newFunctionData[index].color !== Boolean ? newFunctionData[index].color : color, // 为每个函数生成唯一的颜色
                 hash: await utils.sha256(`${Date.now()}${inputs[i]}`), // 为每个输入生成唯一的哈希值
-                nSamples: 2025, // 采样点数
+                nSamples: nSamples, // 采样点数
                 visible: true, // 是否可见
             });
         };
@@ -88,7 +89,9 @@ export class chartInstance {
         const currentConfig = this.config;
         const xDomain = currentConfig.xAxis.domain;
         const yDomain = currentConfig.yAxis.domain;
-        const zoomFactor = evt === 'zoomIn' ? 2 : 0.5;
+        // 使用实例的缩放因子
+        const zoomStep = this.zoomFactor;
+        const zoomFactor = evt === 'zoomIn' ? 1 + zoomStep : 1 / (1 + zoomStep);
         const center = [(xDomain[0] + xDomain[1])/2, (yDomain[0] + yDomain[1])/2];
         const newXHalfWidth = (xDomain[1] - xDomain[0]) / (2 * zoomFactor);
         const newYHalfWidth = (yDomain[1] - yDomain[0]) / (2 * zoomFactor);
@@ -130,5 +133,18 @@ export class chartInstance {
         this.instance = functionPlot(currentConfig);
         this.config = currentConfig;
         console.log("图表配置已更新:", this.config);
+    }
+
+    // 设置缩放因子
+    setZoomFactor(factor) {
+        // 验证缩放因子范围
+        if (factor < 0.01) factor = 0.01;
+        if (factor > 1) factor = 1;
+        this.zoomFactor = factor;
+        return this.zoomFactor;
+    }
+
+    getZoomFactor() {
+        return this.zoomFactor;
     }
 }

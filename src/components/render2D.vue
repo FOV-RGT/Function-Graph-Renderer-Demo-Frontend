@@ -104,6 +104,12 @@ export default {
     },
     fuckResize() {
       this.chartInstance.resize(this.$refs.canvas2D);
+    },
+    // 更新图表实例的缩放因子
+    updateZoomFactor(zoomStep) {
+      if (this.chartInstance) {
+        this.chartInstance.setZoomFactor(zoomStep);
+      }
     }
   }
 };

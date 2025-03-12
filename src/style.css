@@ -3,6 +3,17 @@
   themes: coffee --default, dark --coffee, prefersdark, cupcake;
 }
 
+<!--采样点数输入框的样式-->
+.samplePoints .input {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.8);
+}
+.samplePoints .input:focus {
+  border-color: rgba(255, 255, 255, 0.5);
+  outline: none;
+}
+
 @font-face {
   font-family: 'deYiHei';
   src: url('/deYiHei.woff2') format('woff2');
