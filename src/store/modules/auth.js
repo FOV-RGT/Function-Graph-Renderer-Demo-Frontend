@@ -67,14 +67,13 @@ export default {
         async login({ commit }, credentials) {
             try {
                 // 调用登录API
-                const res = await authApi.login(credentials);
+                const response = await authApi.login(credentials);
                 // 更新状态
-                commit('setToken', res.token);
-                return res;
+                commit('setToken', response.token);
+                commit('setUser', response.user);
+                return response;
             } catch (error) {
-                if (error.status === 404) {
-                    throw new Error('用户不存在，请检查用户名和密码');
-                }
+                throw error;
             }
         },
         

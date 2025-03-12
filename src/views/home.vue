@@ -242,19 +242,19 @@ export default {
         ...mapState(["functionData_2D", "functionData_3D"]),
         currentInputExample() {
             return this.show_2D ? '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...'
-                : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
+            : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
         },
         currentData() {
             console.log("💩");
-            if (this.currentData && this.currentData.length > 0) {
-                const payload = JSON.stringify(this.currentData.map(item => ({
-                    fn: item.fn,
-                    color: item.color,
-                    nSamples: item.nSamples,
-                    visible: item.visible
-                })));
-                console.log(payload);
-            }
+            // if (this.currentData && this.currentData.length > 0) {
+            //     const payload = JSON.stringify(this.currentData.map(item => ({
+            //     fn: item.fn,
+            //     color: item.color,
+            //     nSamples: item.nSamples,
+            //     visible: item.visible
+            // })));
+            // console.log(payload);
+            // }
             return this.show_2D ? this.functionData_2D : this.functionData_3D;
         },
         userInput() {

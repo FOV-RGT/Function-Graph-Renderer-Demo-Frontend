@@ -41,6 +41,17 @@ export default {
     this.chartInstance.addInput(fn, 0).then(() => {
       console.log("图表实例初始化完成");
     });
+    const data = {
+      login: "user1",
+      password: "123123"
+    }
+    authApi.login(data)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   },
   beforeUnmount() {
     console.log("销毁图表实例");

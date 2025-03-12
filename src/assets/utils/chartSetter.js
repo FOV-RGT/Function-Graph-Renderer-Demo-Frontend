@@ -48,7 +48,7 @@ export class chartInstance {
         currentConfig.data = [];
         
         // 过滤可见函数并应用其配置
-        data.filter(item => item.visible).forEach((item, index) => {
+        data.filter(item => item.fn !== '' && item.visible).forEach((item, index) => {
             currentConfig.data.push({
                 fn: item.fn,
                 color: item.color,
