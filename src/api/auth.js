@@ -76,4 +76,26 @@ export const authApi = {
             }
         }
     },
+    async updateUserInfo(data) {
+        try {
+            return await api.put('/users/account', data);
+        } catch (error) {
+            console.log("更新用户信息错误：", error.status);
+            switch (error.status) {
+                case 401:
+                case 404: {
+                    throw ('未授权');
+                }
+                case 400: {
+                    throw ('请求错误');
+                }
+                case 500: {
+                    throw ('服务器错误');
+                }
+                default: {
+                    throw (`未知错误: ${error.response.status}`);
+                }
+            }
+        }
+    }
 };

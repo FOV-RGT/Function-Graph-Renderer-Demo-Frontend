@@ -124,8 +124,8 @@
                                 <label class="fieldset-label cursor-default"><span>密码</span></label>
                                 <input type="password" class="input w-auto" v-model="password" placeholder="Password" autocomplete="current-password"/>
                                 <button type="submit" class="btn btn-success btn-soft mt-4">
-                                    <icon v-if="!logging" type="login"/>
-                                    <span v-if="!logging" class="text-lg">登录</span>
+                                    <icon v-if="!loading" type="login"/>
+                                    <span v-if="!loading" class="text-lg">登录</span>
                                     <span v-else class="loading loading-spinner"></span>
                                 </button>
                             </fieldset>
@@ -133,11 +133,14 @@
                         <div v-else>
                             <div class="fieldset user-info w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
                                 <icon type="logout" class="ml-auto text-error cursor-pointer" @click="logout"/>
-                                <div class="fieldset-label cursor-default"><span>用户信息</span></div>
-                                <div class="fieldset-label cursor-default"><span>昵称:</span><input type="text" placeholder="昵称" class="input input-ghost text-xl" v-model="nickname"/></div>
-                                <div class="fieldset-label cursor-default"><span>邮箱:</span><input type="text" placeholder="昵称" class="input input-ghost text-xl" v-model="email"/></div>
-                                <div class="fieldset-label cursor-default"><span>账号:</span><input type="text" placeholder="昵称" class="input input-ghost text-xl" v-model="username"/></div>
-                                <button class="btn btn-block btn-lg btn-info btn-soft text-xl">提交修改</button>
+                                <div class="cursor-default">用户信息</div>
+                                <div class="cursor-default flex items-center space-x-1"><span>昵称:</span><input type="text" placeholder="昵称" class="input input-ghost text-xl rounded-sm pl-0.5" v-model="nickname"/></div>
+                                <div class="cursor-default flex items-center space-x-1"><span>邮箱:</span><input type="text" placeholder="邮箱" class="input input-ghost text-xl rounded-sm pl-0.5" v-model="email"/></div>
+                                <div class="cursor-default flex items-center space-x-1"><span>账号:</span><input type="text" placeholder="账号" class="input input-ghost text-xl rounded-sm pl-0.5" v-model="username"/></div>
+                                <button class="btn btn-block btn-lg btn-info btn-soft text-xl" @click="updateUserInfo">
+                                    <span v-if="!loading">提交修改</span>
+                                    <span v-else class="loading loading-spinner"></span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -225,9 +228,9 @@ export default {
             showHome: true,
             account: "",
             password: "",
-            logging: false,
+            loading: false,
             showInfo: false,
-            zoomStep: 0.2, // 默认缩放步长
+            zoomStep: 0.2,
         };
     },
     created() {
@@ -413,7 +416,7 @@ export default {
             }
         },
         async userLogin() {
-            this.logging = true;
+            this.loading = true;
             const data = {
                 login: this.account,
                 password: this.password
@@ -431,7 +434,7 @@ export default {
             } catch (error) {
                 console.log('登录失败:', error);
             } finally {
-                this.logging = false;
+                this.loading = false;
             }
         },
         logout() {
@@ -480,11 +483,28 @@ export default {
             }
             this.$store.commit('syncData', payload);
         },
+        async updateUserInfo() {
+            this.loading = true;
+            try{
+                const data = {
+                    email: this.email || null,
+                    nickname: this.nickname || null,
+                    username: this.username || null
+                };
+                const res = await authApi.updateUserInfo(data);
+                this.$store.commit('auth/setUser', res);
+            } catch (error) {
+                console.log('更新用户信息失败:', error);
+            } finally {
+                this.loading = false;
+            }
+            
+        }
     }
 };
 </script>
 
-<style scoped>
+<style>
 @import url('../assets/componentCss/home.css');
 @import url('../assets/componentCss/icon1.css');
 </style>

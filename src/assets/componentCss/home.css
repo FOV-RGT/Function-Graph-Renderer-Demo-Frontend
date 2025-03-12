@@ -24,7 +24,7 @@
 
 .colorPicker {
     flex: 1 !important;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-items: center;
 }
@@ -32,6 +32,7 @@
 .colorPicker .vc-color-wrap {
     flex: 1 !important;
     margin-right: 0 !important;
+    display: inline-flex;
 }
 
 .current-color {
