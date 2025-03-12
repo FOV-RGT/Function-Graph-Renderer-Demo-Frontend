@@ -134,9 +134,9 @@
                             <div class="fieldset user-info w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
                                 <icon type="logout" class="ml-auto text-error cursor-pointer" @click="logout"/>
                                 <div class="fieldset-label cursor-default"><span>用户信息</span></div>
-                                <div class="fieldset-label cursor-default"><span>昵称: {{ nickname }}</span></div>
-                                <div class="fieldset-label cursor-default"><span>邮箱: {{ email }}</span></div>
-                                <div class="fieldset-label cursor-default"><span>账号: {{ username }}</span></div>
+                                <div class="fieldset-label cursor-default"><span>昵称:</span><input type="text" placeholder="昵称" class="input input-ghost text-xl" v-model="nickname"/></div>
+                                <div class="fieldset-label cursor-default"><span>邮箱:</span><input type="text" placeholder="昵称" class="input input-ghost text-xl" v-model="email"/></div>
+                                <div class="fieldset-label cursor-default"><span>账号:</span><input type="text" placeholder="昵称" class="input input-ghost text-xl" v-model="username"/></div>
                                 <button class="btn btn-block btn-lg btn-info btn-soft text-xl">提交修改</button>
                             </div>
                         </div>

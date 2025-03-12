@@ -159,7 +159,6 @@ export class chartInstance {
     // 设置图表类型
     setGraphType(graphType, index) {
         const currentConfig = this.config;
-        
         // 如果提供了特定索引，只更新该函数的图表类型
         if (index !== undefined && currentConfig.data[index]) {
             currentConfig.data[index].graphType = graphType;
@@ -170,7 +169,6 @@ export class chartInstance {
                 if (item) item.graphType = graphType;
             });
         }
-        
         // 重新渲染图表
         this.destroyInstance();
         this.instance = functionPlot(currentConfig);
@@ -178,6 +176,7 @@ export class chartInstance {
         console.log("图表类型已更新:", graphType, "索引:", index);
         return graphType;
     }
+    
     // 获取图表类型
     getGraphType(index) {
         const rawData = toRaw(store.state.functionData_2D);
