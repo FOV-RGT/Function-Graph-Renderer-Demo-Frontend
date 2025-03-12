@@ -38,7 +38,7 @@
                         <!-- 函数表达式输入区 -->
                         <div class="join flex pb-0.5">
                                 <label class="li-input input flex-1 text-lg items-center pr-0 justify-start">
-                                    f(x) &nbsp;=
+                                    f(x) =
                                     <input v-model=item.fn spellcheck="false" type="text"
                                         :placeholder=currentInputExample class="join-item text-slate-300/80 flex-auto"
                                         @input="debouncedAddInput(item.fn, index)">
@@ -166,33 +166,33 @@
                         <icon type="aim" />
                     </button>
                     <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
-                    join-item pl-1 pr-1" @mousedown="startSetView('zoomIn')" @mouseup="endSetView()"
-                        @mouseleave="endSetView()">
+                    join-item pl-1 pr-1" @mousedown="startSetView('zoomIn')" @mouseup="endSetView"
+                        @mouseleave="endSetView">
                         <icon type="z_in" />
                     </button>
                     <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
-                    join-item pl-1 pr-1" @mousedown="startSetView('zoomOut')" @mouseup="endSetView()"
-                        @mouseleave="endSetView()">
+                    join-item pl-1 pr-1" @mousedown="startSetView('zoomOut')" @mouseup="endSetView"
+                        @mouseleave="endSetView">
                         <icon type="z_out" />
                     </button>
                     <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
-                    join-item pl-1 pr-1" @mousedown="startSetView('moveUp')" @mouseup="endSetView()"
-                        @mouseleave="endSetView()">
+                    join-item pl-1 pr-1" @mousedown="startSetView('moveUp')" @mouseup="endSetView"
+                        @mouseleave="endSetView">
                         <icon type="arrowUp" />
                     </button>
                     <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
-                    join-item pl-1 pr-1" @mousedown="startSetView('moveDown')" @mouseup="endSetView()"
-                        @mouseleave="endSetView()">
+                    join-item pl-1 pr-1" @mousedown="startSetView('moveDown')" @mouseup="endSetView"
+                        @mouseleave="endSetView">
                         <icon type="arrowDown" />
                     </button>
                     <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
-                    join-item pl-1 pr-1" @mousedown="startSetView('moveLeft')" @mouseup="endSetView()"
-                        @mouseleave="endSetView()">
+                    join-item pl-1 pr-1" @mousedown="startSetView('moveLeft')" @mouseup="endSetView"
+                        @mouseleave="endSetView">
                         <icon type="arrowLeft" />
                     </button>
                     <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
-                    join-item rounded-r-none pl-1 pr-1" @mousedown="startSetView('moveRight')" @mouseup="endSetView()"
-                        @mouseleave="endSetView()">
+                    join-item rounded-r-none pl-1 pr-1" @mousedown="startSetView('moveRight')" @mouseup="endSetView"
+                        @mouseleave="endSetView">
                         <icon type="arrowRight" />
                     </button>
                 </div>
@@ -331,6 +331,8 @@ export default {
         endSetView() {
             clearTimeout(this.viewTimeOut);
             clearInterval(this.viewInterval);
+            this.viewTimeOut = null;
+            this.viewInterval = null;
         },
         // 渲染函数图形
         render(inputs, index, num) {

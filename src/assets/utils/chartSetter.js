@@ -55,6 +55,7 @@ export class chartInstance {
             });
         });
         // 重新渲染图表
+        currentConfig.id = '';
         this.destroyInstance();
         this.instance = functionPlot(currentConfig);
         this.config = currentConfig;
@@ -170,6 +171,7 @@ export class chartInstance {
             });
         }
         // 重新渲染图表
+        currentConfig.id = '';
         this.destroyInstance();
         this.instance = functionPlot(currentConfig);
         this.config = currentConfig;
