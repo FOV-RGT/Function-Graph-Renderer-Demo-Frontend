@@ -16,7 +16,7 @@ export class chartInstance {
         console.log("图表实例成功挂载");
     }
 
-    async createData(inputs, index = 0, num = 1 ,nSamples = 2025) {
+    async createData(inputs, index = 0, num = 1, nSamples = 2025, graphType = 'polyline') {
         const updatedData = [];
         const rawData = toRaw(store.state.functionData_2D);
         const newFunctionData = [...rawData];
@@ -26,6 +26,7 @@ export class chartInstance {
             updatedData.push({
                 fn: inputs[i], // 函数表达式
                 color: i == 0 && newFunctionData[index] && newFunctionData[index].color !== Boolean ? newFunctionData[index].color : color, // 为每个函数生成唯一的颜色
+                graphType: i == 0 && newFunctionData[index] && newFunctionData[index].graphType ? newFunctionData[index].graphType : graphType, // 图表类型
                 hash: await utils.sha256(`${Date.now()}${inputs[i]}`), // 为每个输入生成唯一的哈希值
                 nSamples: nSamples, // 采样点数
                 visible: true, // 是否可见
@@ -43,14 +44,25 @@ export class chartInstance {
     }
 
     setFunction(data) {
-        data = data.filter(d => d.fn !== '' && d.visible == true);
-        this.config.data = [...data];// 将data数组中的所有元素添加到config.data数组中
-        try {
-            this.instance = functionPlot(this.config);// 重新绘制图表
-            console.log("图表实例已更新");
-        } catch (error) {
-            console.error('请检查输入');
-        }
+        const currentConfig = this.config;
+        currentConfig.data = [];
+        
+        // 过滤可见函数并应用其配置
+        data.filter(item => item.visible).forEach((item, index) => {
+            currentConfig.data.push({
+                fn: item.fn,
+                color: item.color,
+                graphType: item.graphType || 'polyline', // 使用函数的图表类型，默认为线图
+                nSamples: item.nSamples || 2025
+            });
+        });
+        
+        // 重新渲染图表
+        this.destroyInstance();
+        this.instance = functionPlot(currentConfig);
+        this.config = currentConfig;
+        
+        return currentConfig;
     }
 
     async addInput(inputs, index, num) {
@@ -139,12 +151,45 @@ export class chartInstance {
     setZoomFactor(factor) {
         // 验证缩放因子范围
         if (factor < 0.01) factor = 0.01;
-        if (factor > 1) factor = 1;
+        if (factor > 1) factor = 1.00;
         this.zoomFactor = factor;
         return this.zoomFactor;
     }
 
     getZoomFactor() {
         return this.zoomFactor;
+    }
+
+    // 设置图表类型
+    setGraphType(graphType, index) {
+        const currentConfig = this.config;
+        
+        // 如果提供了特定索引，只更新该函数的图表类型
+        if (index !== undefined && currentConfig.data[index]) {
+            currentConfig.data[index].graphType = graphType;
+        } 
+        // 否则更新所有函数的图表类型
+        else if (index === undefined) {
+            currentConfig.data.forEach(item => {
+                if (item) item.graphType = graphType;
+            });
+        }
+        
+        // 重新渲染图表
+        this.destroyInstance();
+        this.instance = functionPlot(currentConfig);
+        this.config = currentConfig;
+        
+        console.log("图表类型已更新:", graphType, "索引:", index);
+        return graphType;
+    }
+
+    // 获取图表类型
+    getGraphType(index) {
+        const rawData = toRaw(store.state.functionData_2D);
+        if (index !== undefined && rawData[index]) {
+            return rawData[index].graphType;
+        }
+        return null;
     }
 }

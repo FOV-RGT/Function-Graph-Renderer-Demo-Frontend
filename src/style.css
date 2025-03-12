@@ -3,17 +3,6 @@
   themes: coffee --default, dark --coffee, prefersdark, cupcake;
 }
 
-<!--采样点数输入框的样式-->
-.samplePoints .input {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.8);
-}
-.samplePoints .input:focus {
-  border-color: rgba(255, 255, 255, 0.5);
-  outline: none;
-}
-
 @font-face {
   font-family: 'deYiHei';
   src: url('/deYiHei.woff2') format('woff2');
@@ -53,4 +42,33 @@ body {
   width: 100dvw;
   height: 100dvh;
   @apply bg-gray-900;
+}
+
+
+@import url('../assets/componentCss/home.css');
+@import url('../assets/componentCss/icon1.css');
+
+/* 图表类型选择器样式 */
+.graphTypeSelector .select {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(197,159,105); /* 选择框中显示的文字颜色 */
+}
+
+.graphTypeSelector .select:focus {
+    border-color: rgba(255, 255, 255, 0.5);
+    outline: none;
+}
+
+/* 修复下拉选项的字体颜色 */
+.graphTypeSelector .select option {
+    background-color: rgba(245,245,220); /* 背景 */
+    color: rgb(197,159,105); /* 文本 */
+}
+
+/* 确保悬停状态有明显的区分 */
+.graphTypeSelector .select option:hover,
+.graphTypeSelector .select option:focus,
+.graphTypeSelector .select option:active {
+    background-color: rgba(255, 255, 255, 0.2);
 }
