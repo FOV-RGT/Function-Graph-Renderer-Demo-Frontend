@@ -15,7 +15,9 @@ export default {
         // token: localStorage.getItem('token') || null,   // 认证令牌，优先从本地存储获取
         token: null,
         // isAuthenticated: !!localStorage.getItem('token') // 是否已认证的标志
-        isAuthenticated: false
+        isAuthenticated: false,
+        email: null,
+        username: null
     },
     
     // 修改状态的方法
@@ -26,8 +28,12 @@ export default {
          * @param {Object} user - 用户信息对象
          */
         setUser(state, data) {
-            const nickname = data.imformation.nickname || "长期素食";
+            const nickname = !!data ? data.imformation.nickname || "长期素食" : null;
+            const email = !!data ? data.imformation.email || "未知邮箱" : null;
+            const username = !!data ? data.imformation.username || "未知用户名" : null;
             state.nickname = nickname;
+            state.email = email;
+            state.username = username;
         },
         
         /**
@@ -78,20 +84,6 @@ export default {
                 return res;
             } catch (error) {
                 throw(error);
-            }
-        },
-        
-        /**
-         * 用户注销
-         * @param {Object} context - 上下文对象，包含commit等方法
-         */
-        async logout({ commit }) {
-            try {
-                // 调用注销API
-                await authApi.logout();
-            } finally {
-                // 无论API调用成功与否，都清除本地认证状态
-                commit('logout');
             }
         },
     }

@@ -3,6 +3,7 @@
  * 配置Axios实例、拦截器和通用错误处理
  */
 import axios from 'axios';
+import store from '../store/index';
 
 /**
  * 创建Axios实例并配置基本参数
@@ -22,7 +23,7 @@ const api = axios.create({
 api.interceptors.request.use(config => {
     // 从本地存储中获取认证令牌
     console.log("拦截请求：", config);
-    const token = localStorage.getItem('token');
+    const token = store.state.auth.token;
     // 如果令牌存在，添加到请求头
     if (token) {
         console.log("添加令牌：", token);

@@ -41,9 +41,9 @@ export const authApi = {
      * @param {Object} userData - 包含用户信息的注册数据
      * @returns {Promise} 注册请求的Promise对象
      */
-    register(userData) {
+    async register(userData) {
         try {
-            return api.post('/auth/auth/sign_up', userData);
+            return await api.post('/auth/auth/sign_up', userData);
         } catch (error) {
             throw (`未知错误: ${error.response.status}`);
         }
@@ -54,9 +54,9 @@ export const authApi = {
      * 要求用户已经登录，并在请求头中包含有效的认证令牌
      * @returns {Promise} 获取用户信息的Promise对象
      */
-    getUserInfo() {
+    async getUserInfo() {
         try {
-            return api.get('/users/me');
+            return await api.get('/users/me');
         } catch (error) {
             console.log("获取用户信息错误：", error.status);
             switch (error.status) {
@@ -76,13 +76,4 @@ export const authApi = {
             }
         }
     },
-
-    /**
-     * 用户登出
-     * 清除服务器端的会话信息
-     * @returns {Promise} 登出请求的Promise对象
-     */
-    logout() {
-        return api.post('/auth/logout');
-    }
 };

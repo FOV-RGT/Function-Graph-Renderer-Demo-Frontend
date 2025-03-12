@@ -85,29 +85,39 @@
             <div class="foot h-1/20 flex justify-evenly items-center overflow-hidden">
                 <label class="btn btn-lg" for="logInModal">
                     <div v-if="!isAuthenticated">
-                        <span class="loading loading-spinner"></span>
+                        <div class="status status-info animate-bounce"></div>
                         请登录
                     </div>
-                    <div v-else>
+                    <div v-else class="flex items-center space-x-3">
+                        <div aria-label="success" class="status status-success"></div>
                         <span class="text-2xl">{{ greetingMessage + nickname }}</span>
                     </div>
                 </label>
                 <input type="checkbox" id="logInModal" class="modal-toggle" />
                 <div class="modal" role="dialog">
                     <div class="modal-box">
-                        <form @submit.prevent="userLogin">
+                        <form @submit.prevent="userLogin" v-if="!showInfo">
                             <fieldset class="fieldset w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
                                 <legend class="fieldset-legend cursor-default"><span>登录</span></legend>
                                 <label class="fieldset-label cursor-default"><span>账号</span></label>
                                 <input type="text" class="input w-auto" placeholder="Account" v-model="account" autocomplete="username"/>
                                 <label class="fieldset-label cursor-default"><span>密码</span></label>
                                 <input type="password" class="input w-auto" v-model="password" placeholder="Password" autocomplete="current-password"/>
-                                <button type="submit" class="btn btn-neutral mt-4">
+                                <button type="submit" class="btn btn-success btn-soft mt-4">
                                     <span v-if="!logging" class="text-lg">登录</span>
                                     <span v-else class="loading loading-spinner"></span>
                                 </button>
                             </fieldset>
                         </form>
+                        <div v-else>
+                            <div class="fieldset w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
+                                <div class="fieldset-label cursor-default"><span>用户信息</span></div>
+                                <div class="fieldset-label cursor-default"><span>昵称: {{ nickname }}</span></div>
+                                <div class="fieldset-label cursor-default"><span>邮箱: {{ email }}</span></div>
+                                <div class="fieldset-label cursor-default"><span>账号: {{ username }}</span></div>
+                                <button class="btn btn-block btn-lg btn-error btn-soft text-xl" @click="logout">登出</button>
+                            </div>
+                        </div>
                     </div>
                     <label class="modal-backdrop" for="logInModal">Close</label>
                 </div>
@@ -188,6 +198,7 @@ export default {
             account: "",
             password: "",
             logging: false,
+            showInfo: false
         };
     },
     created() {
@@ -215,6 +226,7 @@ export default {
         try {
             const res = await authApi.getUserInfo();
             this.$store.commit('auth/setUser', res);
+            this.showInfo = true;
         } catch (error) {
             console.log('获取用户信息失败:', error);
             this.$store.commit('auth/setToken', null);
@@ -226,7 +238,7 @@ export default {
     },
     computed: {
         ...mapState(["functionData_2D", "functionData_3D"]),
-        ...mapState('auth', ['user', 'isAuthenticated', 'nickname']),
+        ...mapState('auth', ['user', 'isAuthenticated', 'nickname', 'email', 'username']),
         currentInputExample() {
             return this.show_2D ? '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...'
                 : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
@@ -376,20 +388,27 @@ export default {
             }
             console.log('登录数据:', data);
             try {
-                const res = await authApi.login(data);
-                this.$store.commit('auth/setToken', res.token);
+                const loginRes = await authApi.login(data);
+                this.$store.commit('auth/setToken', loginRes.token);
+                const infoRes = await authApi.getUserInfo();
+                this.$store.commit('auth/setUser', infoRes);
+                document.getElementById('logInModal').checked = false;
+                setTimeout(() => {
+                    this.showInfo = true;
+                }, 400);
             } catch (error) {
                 console.log('登录失败:', error);
             } finally {
                 this.logging = false;
-                document.getElementById('logInModal').checked = false;
             }
-            try {
-                const res = await authApi.getUserInfo();
-                this.$store.commit('auth/setUser', res);
-            } catch (error) {
-                console.log('获取用户信息失败:', error);
-            }
+        },
+        logout() {
+            document.getElementById('logInModal').checked = false;
+            setTimeout(() => {
+                this.$store.commit('auth/setToken', null);
+                this.$store.commit('auth/setUser', null);
+                this.showInfo = false;
+            }, 400);
         }
     }
 };

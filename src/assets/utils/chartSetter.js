@@ -15,7 +15,7 @@ export class chartInstance {
         console.log("图表实例成功挂载");
     }
 
-    async createData(inputs, index = 0, num = 1, nSamples = 2025) {
+    async createData(inputs, index = 0, num = 1, nSamples = 1024) {
         const updatedData = [];
         const rawData = toRaw(store.state.functionData_2D);
         const newFunctionData = [...rawData];
