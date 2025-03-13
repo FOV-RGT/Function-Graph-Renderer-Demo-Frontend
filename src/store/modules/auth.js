@@ -28,9 +28,11 @@ export default {
          * @param {Object} user - 用户信息对象
          */
         setUser(state, data) {
-            const nickname = !!data ? data.imformation.nickname || "长期素食" : null;
-            const email = !!data ? data.imformation.email || "未知邮箱" : null;
-            const username = !!data ? data.imformation.username || "未知用户名" : null;
+            console.log("用户信息：", data);
+            
+            const nickname = !!data ? data.imformation?.nickname || data?.userinf?.nickname || "长期素食" : '';
+            const email = !!data ? data.imformation?.email || data?.userinf?.email || "未知邮箱" : '';
+            const username = !!data ? data.imformation?.username || data?.userinf?.username || "未知用户名" : '';
             state.nickname = nickname;
             state.email = email;
             state.username = username;

@@ -1,6 +1,6 @@
 <template>
     <div class="main flex w-[100dvw] h-[100dvh] ">
-        <div class="main-left w-1/6 min-w-42 shrink-1 overflow-y-auto bg-base-300">
+        <div class="main-left w-1/6 min-w-52 shrink-1 overflow-y-auto bg-base-300">
             <div v-show="showHome" class="w-full h-full flex justify-start flex-col">
                 <div class="top overflow-hidden text-center flex flex-col items-center mt-5 mb-10">
                     <h1 class="text-transparent select-none whitespace-nowrap">函数图形渲染程序</h1>
@@ -38,7 +38,7 @@
                         <!-- 函数表达式输入区 -->
                         <div class="join flex pb-0.5">
                                 <label class="li-input input flex-1 text-lg items-center pr-0 justify-start">
-                                    f(x) =
+                                    <span>f(x)=</span>
                                     <input v-model=item.fn spellcheck="false" type="text"
                                         :placeholder=currentInputExample class="join-item text-slate-300/80 flex-auto"
                                         @input="debouncedAddInput(item.fn, index)">
@@ -110,10 +110,10 @@
                     </div>
                     <div v-else class="flex items-center space-x-3">
                         <div aria-label="success" class="status status-success"></div>
-                        <span class="text-2xl">{{ greetingMessage + nickname }}</span>
+                        <span class="text-2xl">{{ greetingMessage + userInfo.nickname }}</span>
                     </div>
                 </label>
-                <input type="checkbox" id="logInModal" class="modal-toggle" />
+                <input type="checkbox" id="logInModal" class="modal-toggle" @change="$event.target.checked && initFormData()"/>
                 <div class="modal" role="dialog">
                     <div class="modal-box">
                         <form @submit.prevent="userLogin" v-if="!showInfo">
@@ -130,18 +130,16 @@
                                 </button>
                             </fieldset>
                         </form>
-                        <div v-else>
-                            <div class="fieldset user-info w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
-                                <icon type="logout" class="ml-auto text-error cursor-pointer" @click="logout"/>
-                                <div class="cursor-default">用户信息</div>
-                                <div class="cursor-default flex items-center space-x-1"><span>昵称:</span><input type="text" placeholder="昵称" class="input input-ghost text-xl rounded-sm pl-0.5" v-model="nickname"/></div>
-                                <div class="cursor-default flex items-center space-x-1"><span>邮箱:</span><input type="text" placeholder="邮箱" class="input input-ghost text-xl rounded-sm pl-0.5" v-model="email"/></div>
-                                <div class="cursor-default flex items-center space-x-1"><span>账号:</span><input type="text" placeholder="账号" class="input input-ghost text-xl rounded-sm pl-0.5" v-model="username"/></div>
-                                <button class="btn btn-block btn-lg btn-info btn-soft text-xl" @click="updateUserInfo">
-                                    <span v-if="!loading">提交修改</span>
-                                    <span v-else class="loading loading-spinner"></span>
-                                </button>
-                            </div>
+                        <div v-else class="fieldset user-info w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
+                            <icon type="logout" class="ml-auto text-error cursor-pointer" @click="logout"/>
+                            <div class="cursor-default">用户信息</div>
+                            <div class="cursor-default flex items-center space-x-1"><span>昵称:</span><input type="text" placeholder="昵称" class="input input-ghost text-xl rounded-sm pl-0.5" v-model="formData.nickname"/></div>
+                            <div class="cursor-default flex items-center space-x-1"><span>邮箱:</span><input type="text" placeholder="邮箱" class="input input-ghost text-xl rounded-sm pl-0.5" v-model="formData.email"/></div>
+                            <div class="cursor-default flex items-center space-x-1"><span>账号:</span><input type="text" placeholder="账号" class="input input-ghost text-xl rounded-sm pl-0.5" v-model="formData.username"/></div>
+                            <button class="btn btn-block btn-lg btn-info btn-soft text-xl" @click="updateUserInfo">
+                                <span v-if="!loading">提交修改</span>
+                                <span v-else class="loading loading-spinner"></span>
+                            </button>
                         </div>
                     </div>
                     <label class="modal-backdrop" for="logInModal">Close</label>
@@ -229,8 +227,8 @@ export default {
         return {
             version: packageJson.version,
             show_2D: true,
-            viewTimeOut: null,
-            viewInterval: null,
+            viewTimeOut: {},
+            viewInterval: {},
             showList: false,
             showHome: true,
             account: "",
@@ -239,6 +237,8 @@ export default {
             showInfo: false,
             zoomStep: 0.5,
             moveStep:0.2,
+            userInfo: {},
+            formData: {}
         };
     },
     created() {
@@ -265,6 +265,7 @@ export default {
     async mounted() {
         try {
             const res = await authApi.getUserInfo();
+            this.userInfo = res.imformation;
             this.$store.commit('auth/setUser', res);
             this.showInfo = true;
         } catch (error) {
@@ -278,7 +279,7 @@ export default {
     },
     computed: {
         ...mapState(["functionData_2D", "functionData_3D"]),
-        ...mapState('auth', ['user', 'isAuthenticated', 'nickname', 'email', 'username']),
+        ...mapState('auth', ['user', 'isAuthenticated']),
         currentInputExample() {
             return this.show_2D ? '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...'
             : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
@@ -436,6 +437,8 @@ export default {
                 const loginRes = await authApi.login(data);
                 this.$store.commit('auth/setToken', loginRes.token);
                 const infoRes = await authApi.getUserInfo();
+                this.userInfo = infoRes.imformation;
+                console.log('登录成功:', this.userInfo);
                 this.$store.commit('auth/setUser', infoRes);
                 document.getElementById('logInModal').checked = false;
                 setTimeout(() => {
@@ -452,15 +455,15 @@ export default {
             setTimeout(() => {
                 this.$store.commit('auth/setToken', null);
                 this.$store.commit('auth/setUser', null);
+                this.formData = {};
+                this.userInfo = {};
                 this.showInfo = false;
             }, 400);
         },
         // 更新采样点数量
         updateSamplePoints(samples, index) {
             // 验证输入范围
-            let validSamples = samples;
-            if (samples < 500) validSamples = 500;
-            if (samples > 5000) validSamples = 5000;
+            const validSamples = utils.clamp(samples, 500, 5000);
             const currentData = [...toRaw(this.currentData)];
             currentData[index].nSamples = validSamples;
             this.fuckRender(currentData);
@@ -474,8 +477,7 @@ export default {
         // 更新缩放因子(zoomfactor)
         updateZoomFactor() {
             // 验证范围
-            if (this.zoomStep < 0.01) this.zoomStep = 0.01;
-            if (this.zoomStep > 1) this.zoomStep = 1;
+            this.zoomStep = utils.clamp(this.zoomStep, 0.01, 1.00);
             // 更新图表实例的缩放因子
             if (this.show_2D && this.$refs.TwoDPlotCom) {
                 this.$refs.TwoDPlotCom.updateZoomFactor(this.zoomStep);
@@ -507,20 +509,30 @@ export default {
         },
         async updateUserInfo() {
             this.loading = true;
+            const info = this.formData;
             try{
                 const data = {
-                    email: this.email || null,
-                    nickname: this.nickname || null,
-                    username: this.username || null
+                    email: info.email || '',
+                    nickname: info.nickname || '',
+                    username: info.username || ''
                 };
                 const res = await authApi.updateUserInfo(data);
                 this.$store.commit('auth/setUser', res);
+                this.userInfo = res.userinf;
+                this.initFormData();
+                console.log('更新用户信息成功:', res);
             } catch (error) {
                 console.log('更新用户信息失败:', error);
             } finally {
                 this.loading = false;
             }
-            
+        },
+        initFormData() {
+            this.formData = {
+                email: this.userInfo.email || '',
+                nickname: this.userInfo.nickname || '',
+                username: this.userInfo.username || '',
+            }
         }
     }
 };
