@@ -114,7 +114,7 @@ export class chartInstance {
     }
 
     // 设置移动步长
-setMoveStep(moveStep) {
+    setMoveStep(moveStep) {
     this.moveStep = moveStep;
 }
 

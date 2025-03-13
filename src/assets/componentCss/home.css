@@ -93,14 +93,26 @@
     background-color: rgba(255, 255, 255, 0.2);
 }
 
+/* 缩放步长控制器样式 */
+.zoomFactorControl .input {
+    background-color: rgba(38,27,37, 1);
+    border-color: rgba(69,54,49,1);
+    color: rgba(197,159,105);
+}
+
+.zoomFactorControl .input:focus {
+    border-color: rgba(197,159,105);
+    outline: none;
+}
+
 /* 移动步长控制器样式*/
 .moveStepControl .input {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-    color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(38,27,37, 1);
+    border-color: rgba(69,54,49,1);
+    color: rgba(197,159,105);
 }
 
 .moveStepControl .input:focus {
-    border-color: rgba(255, 255, 255, 0.5);
+    border-color: rgba(197,159,105);
     outline: none;
 }
