@@ -265,9 +265,9 @@ export default {
     },
     async mounted() {
         try {
-            if (!this.isAuthenticated) {
-                throw new Error('未登录');
-            }
+            // if (!this.isAuthenticated) {
+            //     throw new Error('未登录');
+            // }
             const authRes = await authApi.getUserInfo();
             this.userInfo = authRes.imformation;
             this.$store.commit('auth/setUser', authRes);
