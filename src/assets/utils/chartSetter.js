@@ -3,16 +3,16 @@ import functionPlot from 'function-plot';
 import * as utils from './componentUtils';
 import { select } from 'd3';
 import store from '../../store';
-import { toRaw } from 'vue';
+import { toRaw, markRaw} from 'vue';
 
 
 export class chartInstance {
     constructor(target) {
         this.target = target;
-        this.config = chartConfig.defaultConfig(target); // 初始化图表配置
+        this.config = markRaw(chartConfig.defaultConfig(target)); // 初始化图表配置
         this.zoomFactor = 0.5; // 默认缩放因子
         console.log("实例挂载:初始化配置完成");
-        this.instance = functionPlot(this.config);// 初始化图表实例
+        this.instance = markRaw(functionPlot(this.config));// 初始化图表实例
         console.log("图表实例成功挂载");
     }
 
@@ -29,6 +29,7 @@ export class chartInstance {
                 graphType: i == 0 && newFunctionData[index] && newFunctionData[index].graphType ? newFunctionData[index].graphType : graphType, // 图表类型
                 nSamples, // 采样点数
                 visible: true, // 是否可见
+                dimension: 2 // 函数维
             });
         };
         console.log("将要插入数据:", updatedData);
@@ -46,19 +47,13 @@ export class chartInstance {
         const currentConfig = this.config;
         currentConfig.data = [];
         // 过滤可见函数并应用其配置
-        data.filter(item => item.fn !== '' && item.visible).forEach((item, index) => {
-            currentConfig.data.push({
-                fn: item.fn,
-                color: item.color,
-                graphType: item.graphType, // 使用函数的图表类型，默认为线图
-                nSamples: item.nSamples
-            });
-        });
+        data = data.filter(item => item.fn !== '' && item.visible);
+        currentConfig.data = data;
         // 重新渲染图表
         currentConfig.id = '';
         this.destroyInstance();
-        this.instance = functionPlot(currentConfig);
-        this.config = currentConfig;
+        this.instance = markRaw(functionPlot(currentConfig));
+        this.config = markRaw(currentConfig);
         return currentConfig
     }
 
@@ -148,6 +143,7 @@ moveView(evt, moveStep = 0.5) {
     }
     
     // 重新渲染图表
+    currentConfig.id = '';
     this.destroyInstance();
     this.instance = functionPlot(currentConfig);
     this.config = currentConfig;

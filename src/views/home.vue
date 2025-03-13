@@ -212,9 +212,10 @@ import TwoDPlotCom from '../components/render2D.vue';
 import ThreeDPlotCom from '../components/render3D.vue';
 import icon from '../components/icon.vue';
 import { mapState } from 'vuex';
-import { toRaw } from 'vue';
+import { toRaw, markRaw} from 'vue';
 import * as utils from '../assets/utils/componentUtils';
-import { authApi } from '../api/auth';
+import authApi from '../api/auth';
+import fnApi from '../api/function';
 
 export default {
     name: 'home',
@@ -264,12 +265,18 @@ export default {
     },
     async mounted() {
         try {
-            const res = await authApi.getUserInfo();
-            this.userInfo = res.imformation;
-            this.$store.commit('auth/setUser', res);
+            // if (!this.isAuthenticated) {
+            //     throw new Error('未登录');
+            // }
+            const authRes = await authApi.getUserInfo();
+            this.userInfo = authRes.imformation;
+            this.$store.commit('auth/setUser', authRes);
             this.showInfo = true;
+            const fnRes = await fnApi.getFunctionData();
+            this.$store.commit('syncData', fnRes.mathdatas);
+            console.log('初始化用户信息成功');
         } catch (error) {
-            console.log('获取用户信息失败:', error);
+            console.log('初始化用户信息失败:', error);
             this.$store.commit('auth/setToken', null);
         }
         window.addEventListener('resize', this.throttledResize);
@@ -315,7 +322,25 @@ export default {
         }
     },
     watch: {
-
+        functionData_2D: {
+            async handler(newVal) {
+                if (!this.isAuthenticated) return;
+                let data = markRaw(newVal);
+                data = data.map(item => ({
+                    fn: item.fn,
+                    color: item.color,
+                    nSamples: item.nSamples,
+                    visible: item.visible,
+                    dimension: item.dimension,
+                }));
+                try {
+                    await fnApi.uploadFunctionData(newVal);
+                    console.log('更新历史数据成功');
+                } catch (error) {
+                    console.log('更新历史数据失败:', error);
+                }
+            },
+        }
     },
     methods: {
         switchRenderer() {
@@ -440,6 +465,9 @@ export default {
                 this.userInfo = infoRes.imformation;
                 console.log('登录成功:', this.userInfo);
                 this.$store.commit('auth/setUser', infoRes);
+                const fnRes = await fnApi.getFunctionData();
+                console.log('获取历史数据成功:', fnRes);
+                this.$store.commit('syncData', fnRes.mathdatas);
                 document.getElementById('logInModal').checked = false;
                 setTimeout(() => {
                     this.showInfo = true;
@@ -487,8 +515,7 @@ export default {
         // 更新移动步长(movefactor)
         updateMoveStep() {
             // 验证范围
-            if (this.moveStep < 0.01) this.moveStep = 0.01;
-            if (this.moveStep > 1) this.moveStep = 1;
+            this.moveStep = utils.clamp(this.moveStep, 0.01, 1.00);
             // 更新图表实例的移动步长
             if (this.show_2D && this.$refs.TwoDPlotCom) {
                 this.$refs.TwoDPlotCom.updateMoveStep(this.moveStep);

@@ -1,4 +1,4 @@
-import { authApi } from '../../api/auth';
+import authApi from '../../api/auth';
 
 
 /**
@@ -12,10 +12,10 @@ export default {
     // 状态定义
     state: {
         nickname: null,                                     // 当前用户信息
-        // token: localStorage.getItem('token') || null,   // 认证令牌，优先从本地存储获取
-        token: null,
-        // isAuthenticated: !!localStorage.getItem('token') // 是否已认证的标志
-        isAuthenticated: false,
+        token: localStorage.getItem('token') || null,   // 认证令牌，优先从本地存储获取
+        // token: null,
+        isAuthenticated: !!localStorage.getItem('token'), // 是否已认证的标志
+        // isAuthenticated: false,
         email: null,
         username: null
     },
@@ -28,8 +28,6 @@ export default {
          * @param {Object} user - 用户信息对象
          */
         setUser(state, data) {
-            console.log("用户信息：", data);
-            
             const nickname = !!data ? data.imformation?.nickname || data?.userinf?.nickname || "长期素食" : '';
             const email = !!data ? data.imformation?.email || data?.userinf?.email || "未知邮箱" : '';
             const username = !!data ? data.imformation?.username || data?.userinf?.username || "未知用户名" : '';
