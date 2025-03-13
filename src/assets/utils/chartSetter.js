@@ -27,7 +27,7 @@ export class chartInstance {
                 fn: inputs[i], // 函数表达式
                 color: i == 0 && newFunctionData[index] && newFunctionData[index].color !== Boolean ? newFunctionData[index].color : color, // 为每个函数生成唯一的颜色
                 graphType: i == 0 && newFunctionData[index] && newFunctionData[index].graphType ? newFunctionData[index].graphType : graphType, // 图表类型
-                nSamples: nSamples, // 采样点数
+                nSamples, // 采样点数
                 visible: true, // 是否可见
             });
         };
