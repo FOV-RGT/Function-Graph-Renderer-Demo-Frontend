@@ -455,9 +455,7 @@ export default {
         // 更新采样点数量
         updateSamplePoints(samples, index) {
             // 验证输入范围
-            let validSamples = samples;
-            if (samples < 500) validSamples = 500;
-            if (samples > 5000) validSamples = 5000;
+            const validSamples = utils.clamp(samples, 500, 5000);
             const currentData = [...toRaw(this.currentData)];
             currentData[index].nSamples = validSamples;
             this.fuckRender(currentData);
@@ -471,9 +469,7 @@ export default {
         // 更新缩放因子(zoomfactor)
         updateZoomFactor() {
             // 验证范围
-            console.log('111')
-            if (this.zoomStep < 0.01) this.zoomStep = 0.01;
-            if (this.zoomStep > 1) this.zoomStep = 1;
+            this.zoomStep = utils.clamp(this.zoomStep, 0.01, 1.00);
             // 更新图表实例的缩放因子
             if (this.show_2D && this.$refs.TwoDPlotCom) {
                 this.$refs.TwoDPlotCom.updateZoomFactor(this.zoomStep);
@@ -493,7 +489,7 @@ export default {
         },
         async updateUserInfo() {
             this.loading = true;
-            const info = this.userInfo;
+            const info = this.formData;
             try{
                 const data = {
                     email: info.email || '',
@@ -502,6 +498,9 @@ export default {
                 };
                 const res = await authApi.updateUserInfo(data);
                 this.$store.commit('auth/setUser', res);
+                this.userInfo = res.userinf;
+                this.initFormData();
+                console.log('更新用户信息成功:', res);
             } catch (error) {
                 console.log('更新用户信息失败:', error);
             } finally {
