@@ -61,7 +61,7 @@ export default {
       });
     },
     // 重置视图
-    setView(evt) {
+    setView(evt,zoomStep,moveStep) {
       switch (evt) {
         case 'reset':
           console.log("触发:重置范围");
@@ -70,14 +70,14 @@ export default {
         case 'zoomIn':
         case 'zoomOut':
           console.log(`触发:${evt === 'zoomIn' ? '放大' : '缩小'}范围`);
-          this.chartInstance.zoomView(evt);
+          this.chartInstance.zoomView(evt,zoomStep);
           break;
         case 'moveLeft':
         case 'moveRight':
         case 'moveUp':
         case 'moveDown':
           console.log(`触发:${evt}视图`);
-          this.chartInstance.moveView(evt);
+          this.chartInstance.moveView(evt,moveStep);
           break;
         default:
           break;
@@ -95,6 +95,14 @@ export default {
         this.chartInstance.setZoomFactor(zoomStep);
       }
     },
+
+    //更新图表实例的移动因子
+    updateMoveFactor(moveStep) {
+      if (this.chartInstance) {
+        this.chartInstance.setMoveFactor(moveStep);
+      }
+    },
+
     // 更新函数的图表类型
     updateGraphType(graphType, index) {
       console.log("更新图表类型:", graphType, "索引:", index);

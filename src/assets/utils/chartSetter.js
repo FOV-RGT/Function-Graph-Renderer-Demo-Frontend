@@ -10,7 +10,7 @@ export class chartInstance {
     constructor(target) {
         this.target = target;
         this.config = chartConfig.defaultConfig(target); // 初始化图表配置
-        this.zoomFactor = 0.2; // 默认缩放因子
+        this.zoomFactor = 0.5; // 默认缩放因子
         console.log("实例挂载:初始化配置完成");
         this.instance = functionPlot(this.config);// 初始化图表实例
         console.log("图表实例成功挂载");
@@ -113,25 +113,45 @@ export class chartInstance {
         console.log("图表配置已更新:", this.config);
     }
 
-    moveView(evt) {
-        const currentConfig = this.config;
-        const xDomain = currentConfig.xAxis.domain;
-        const xRange = xDomain[1] - xDomain[0];
-        if (evt === 'moveLeft' || evt === 'moveRight') {
-            const moveFactor = evt === 'moveLeft' ? 0.2 : -0.2;
-            currentConfig.xAxis.domain = [xDomain[0] - xRange * moveFactor, xDomain[1] - xRange * moveFactor];
-        } else if (evt === 'moveUp' || evt === 'moveDown') {
-            const yDomain = currentConfig.yAxis.domain;
-            const yRange = yDomain[1] - yDomain[0];
-            const moveFactor = evt === 'moveUp' ? -0.2 : 0.2;
-            currentConfig.yAxis.domain = [yDomain[0] - yRange * moveFactor, yDomain[1] - yRange * moveFactor];
-        }
-        currentConfig.id = '';
-        this.destroyInstance();
-        this.instance = functionPlot(currentConfig);
-        this.config = currentConfig;
-        console.log("图表配置已更新:", this.config);
+    // 设置移动步长
+setMoveStep(moveStep) {
+    this.moveStep = moveStep;
+}
+
+// 修改 moveView 方法接受步长参数
+moveView(evt, moveStep = 0.5) {
+    const currentConfig = this.config;
+    const xDomain = currentConfig.xAxis.domain;
+    const yDomain = currentConfig.yAxis.domain;
+    // 使用传入的移动步长
+    const step = moveStep || this.moveStep || 0.5;
+    
+    const xRange = Math.abs(xDomain[1] - xDomain[0]);
+    const yRange = Math.abs(yDomain[1] - yDomain[0]);
+    const xStep = xRange * step * 0.05;
+    const yStep = yRange * step * 0.05;
+    
+    // 根据方向移动视图
+    switch (evt) {
+        case 'moveLeft':
+            currentConfig.xAxis.domain = [xDomain[0] - xStep, xDomain[1] - xStep];
+            break;
+        case 'moveRight':
+            currentConfig.xAxis.domain = [xDomain[0] + xStep, xDomain[1] + xStep];
+            break;
+        case 'moveUp':
+            currentConfig.yAxis.domain = [yDomain[0] + yStep, yDomain[1] + yStep];
+            break;
+        case 'moveDown':
+            currentConfig.yAxis.domain = [yDomain[0] - yStep, yDomain[1] - yStep];
+            break;
     }
+    
+    // 重新渲染图表
+    this.destroyInstance();
+    this.instance = functionPlot(currentConfig);
+    this.config = currentConfig;
+}
 
     resize(target) {
         const currentConfig = this.config;
@@ -151,6 +171,15 @@ export class chartInstance {
         if (factor > 1) factor = 1.00;
         this.zoomFactor = factor;
         return this.zoomFactor;
+    }
+
+    //设置移动因子
+    setMoveFactor(factor) {
+        // 验证移动因子范围
+        if (factor < 0.01) factor = 0.01;
+        if (factor > 1) factor = 1.00;
+        this.moveFactor = factor;
+        return this.moveFactor;
     }
 
     getZoomFactor() {

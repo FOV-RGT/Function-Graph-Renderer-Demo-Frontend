@@ -146,12 +146,19 @@
                     </div>
                     <label class="modal-backdrop" for="logInModal">Close</label>
                 </div>
-                <!-- 移动缩放步长控制组件到这里，位于foot-buttonsGroup左侧 -->
+                <!-- 缩放步长控制组件 -->
                 <div class="zoomFactorControl flex items-center">
                     <label class="text-xs mr-1 text-slate-300/80">缩放步长:</label>
                     <input type="number" v-model.number="zoomStep" min="0.01" max="1.00" step="0.01"
                         class="input input-xs w-16 text-center" @change="updateZoomFactor" />
                 </div>
+                <!-- 移动步长控制组件 -->
+                <div class="moveStepControl flex items-center">
+                    <label class="text-xs mr-1 text-slate-300/80">移动步长:</label>
+                    <input type="number" v-model.number="moveStep" min="0.01" max="1.00" step="0.01"
+                        class="input input-xs w-16 text-center" @change="updateMoveStep" />
+                </div>
+                
                 <div class="foot-buttonsGroup join max-h-19/20 overflow-hidden">
                     <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513.56 394.43" width="100px" height="100px">
                         <g id="_图层_1-2" data-name="图层 1">
@@ -230,7 +237,8 @@ export default {
             password: "",
             loading: false,
             showInfo: false,
-            zoomStep: 0.2,
+            zoomStep: 0.5,
+            moveStep:0.2,
         };
     },
     created() {
@@ -314,10 +322,10 @@ export default {
             this.throttledResize();
             this.$store.commit('switchRender', this.show_2D);
         },
-        //将缩放步长传递给2D图标实例
+        //将缩放步长和移动步长传递给2D图标实例
         setView(evt) {
             if (this.show_2D) {
-                this.$refs.TwoDPlotCom.setView(evt, this.zoomStep);
+                this.$refs.TwoDPlotCom.setView(evt, this.zoomStep, this.moveStep);
             }
         },
         startSetView(evt) {
@@ -473,6 +481,18 @@ export default {
                 this.$refs.TwoDPlotCom.updateZoomFactor(this.zoomStep);
             }
         },
+
+        // 更新移动步长(movefactor)
+        updateMoveStep() {
+            // 验证范围
+            if (this.moveStep < 0.01) this.moveStep = 0.01;
+            if (this.moveStep > 1) this.moveStep = 1;
+            // 更新图表实例的移动步长
+            if (this.show_2D && this.$refs.TwoDPlotCom) {
+                this.$refs.TwoDPlotCom.updateMoveStep(this.moveStep);
+            }
+        },
+
         // 更新函数图表类型
         updateFunctionGraphType(graphType, index) {
             const currentData = [...toRaw(this.currentData)];
