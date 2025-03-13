@@ -10,17 +10,9 @@ export default {
     return {
       chartInstance: null,
       rendering: false,
-      graphTypes: [
-        { value: 'polyline', label: '线图' },
-        { value: 'scatter', label: '点图' },
-        { value: 'interval', label: '区间图' },
-        { value: 'area', label: '面积图' }
-      ],
-      globalGraphType: 'polyline' // 默认全局图表类型
     };
   },
   created() {
-
   },
   mounted() {
     // 绘制图表
@@ -60,7 +52,7 @@ export default {
       });
     },
     // 重置视图
-    setView(evt,zoomStep,moveStep) {
+    setView(evt, zoomStep, moveStep) {
       switch (evt) {
         case 'reset':
           console.log("触发:重置范围");
@@ -69,25 +61,20 @@ export default {
         case 'zoomIn':
         case 'zoomOut':
           console.log(`触发:${evt === 'zoomIn' ? '放大' : '缩小'}范围`);
-          this.chartInstance.zoomView(evt,zoomStep);
+          this.chartInstance.zoomView(evt, zoomStep);
           break;
         case 'moveLeft':
         case 'moveRight':
         case 'moveUp':
         case 'moveDown':
           console.log(`触发:${evt}视图`);
-          this.chartInstance.moveView(evt,moveStep);
+          this.chartInstance.moveView(evt, moveStep);
           break;
         default:
           break;
       }
     },
-    fuckRender(data) {
-      this.chartInstance.setFunction(data);
-    },
-    fuckResize() {
-      this.chartInstance.resize(this.$refs.canvas2D);
-    },
+
     // 更新图表实例的缩放因子
     updateZoomFactor(zoomStep) {
       if (this.chartInstance) {
@@ -101,26 +88,7 @@ export default {
         this.chartInstance.setMoveFactor(moveStep);
       }
     },
-
-    // 更新函数的图表类型
-    updateGraphType(graphType, index) {
-      console.log("更新图表类型:", graphType, "索引:", index);
-      if (this.chartInstance) {
-        this.chartInstance.setGraphType(graphType, index);
-      }
-    },
-    // 设置所有函数的图表类型
-    setAllGraphTypes(graphType) {
-      if (this.chartInstance) {
-        this.chartInstance.setGraphType(graphType);
-      }
-    },
-    // 更新单个函数的图表类型
-    updateFunctionGraphType(graphType, index) {
-      if (this.chartInstance) {
-        this.chartInstance.setGraphType(graphType, index);
-      }
-    }
+    
   }
 };
 </script>

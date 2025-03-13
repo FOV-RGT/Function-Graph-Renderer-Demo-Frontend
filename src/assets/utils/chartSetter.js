@@ -16,7 +16,7 @@ export class chartInstance {
         console.log("图表实例成功挂载");
     }
 
-    async createData(inputs, index = 0, num = 1, nSamples = 2025, graphType = 'polyline') {
+    async createData(inputs, index = 0, num = 1) {
         const updatedData = [];
         const rawData = toRaw(store.state.functionData_2D);
         const newFunctionData = [...rawData];
@@ -26,8 +26,8 @@ export class chartInstance {
             updatedData.push({
                 fn: inputs[i], // 函数表达式
                 color: i == 0 && newFunctionData[index] && newFunctionData[index].color !== Boolean ? newFunctionData[index].color : color, // 为每个函数生成唯一的颜色
-                graphType: i == 0 && newFunctionData[index] && newFunctionData[index].graphType ? newFunctionData[index].graphType : graphType, // 图表类型
-                nSamples, // 采样点数
+                graphType : 'polyline',
+                nSamples : 2025, // 采样点数
                 visible: true, // 是否可见
                 dimension: 2 // 函数维
             });
@@ -108,23 +108,16 @@ export class chartInstance {
         console.log("图表配置已更新:", this.config);
     }
 
-    // 设置移动步长
-    setMoveStep(moveStep) {
-    this.moveStep = moveStep;
-}
-
-// 修改 moveView 方法接受步长参数
-moveView(evt, moveStep = 0.5) {
-    const currentConfig = this.config;
-    const xDomain = currentConfig.xAxis.domain;
-    const yDomain = currentConfig.yAxis.domain;
-    // 使用传入的移动步长
-    const step = moveStep || this.moveStep || 0.5;
-    
-    const xRange = Math.abs(xDomain[1] - xDomain[0]);
-    const yRange = Math.abs(yDomain[1] - yDomain[0]);
-    const xStep = xRange * step * 0.05;
-    const yStep = yRange * step * 0.05;
+    moveView(evt, moveStep = 0.5) {
+        const currentConfig = this.config;
+        const xDomain = currentConfig.xAxis.domain;
+        const yDomain = currentConfig.yAxis.domain;
+        // 使用传入的移动步长
+        const step = moveStep;
+        const xRange = Math.abs(xDomain[1] - xDomain[0]);
+        const yRange = Math.abs(yDomain[1] - yDomain[0]);
+        const xStep = xRange * step * 0.5;
+        const yStep = yRange * step * 0.5;
     
     // 根据方向移动视图
     switch (evt) {
@@ -147,7 +140,7 @@ moveView(evt, moveStep = 0.5) {
     this.destroyInstance();
     this.instance = functionPlot(currentConfig);
     this.config = currentConfig;
-}
+    }
 
     resize(target) {
         const currentConfig = this.config;
@@ -158,6 +151,28 @@ moveView(evt, moveStep = 0.5) {
         this.instance = functionPlot(currentConfig);
         this.config = currentConfig;
         console.log("图表配置已更新:", this.config);
+    }
+
+    //设置采样点数
+    setSamplePoints(nSamples, index) {
+        const currentConfig = this.config;
+        // 如果提供了特定索引，只更新该函数的采样点数
+        if (index !== undefined && currentConfig.data[index]) {
+            currentConfig.data[index].nSamples = nSamples;
+        }
+        // 否则更新所有函数的采样点数
+        else if (index === undefined) {
+            currentConfig.data.forEach(item => {
+                if (item) item.nSamples = nSamples;
+            });
+        }
+        // 重新渲染图表
+        currentConfig.id = '';
+        this.destroyInstance();
+        this.instance = functionPlot(currentConfig);
+        this.config = currentConfig;
+        console.log("采样点数已更新:", nSamples, "索引:", index);
+        return nSamples;
     }
 
     // 设置缩放因子
@@ -177,39 +192,5 @@ moveView(evt, moveStep = 0.5) {
         this.moveFactor = factor;
         return this.moveFactor;
     }
-
-    getZoomFactor() {
-        return this.zoomFactor;
-    }
-
-    // 设置图表类型
-    setGraphType(graphType, index) {
-        const currentConfig = this.config;
-        // 如果提供了特定索引，只更新该函数的图表类型
-        if (index !== undefined && currentConfig.data[index]) {
-            currentConfig.data[index].graphType = graphType;
-        } 
-        // 否则更新所有函数的图表类型
-        else if (index === undefined) {
-            currentConfig.data.forEach(item => {
-                if (item) item.graphType = graphType;
-            });
-        }
-        // 重新渲染图表
-        currentConfig.id = '';
-        this.destroyInstance();
-        this.instance = functionPlot(currentConfig);
-        this.config = currentConfig;
-        console.log("图表类型已更新:", graphType, "索引:", index);
-        return graphType;
-    }
     
-    // 获取图表类型
-    getGraphType(index) {
-        const rawData = toRaw(store.state.functionData_2D);
-        if (index !== undefined && rawData[index]) {
-            return rawData[index].graphType;
-        }
-        return null;
-    }
 }

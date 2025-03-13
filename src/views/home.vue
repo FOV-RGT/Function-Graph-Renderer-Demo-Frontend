@@ -37,33 +37,22 @@
                     <div class="flex-col select-none flex-1">
                         <!-- 函数表达式输入区 -->
                         <div class="join flex pb-0.5">
-                                <label class="li-input input flex-1 text-lg items-center pr-0 justify-start">
-                                    <span>f(x)=</span>
-                                    <input v-model=item.fn spellcheck="false" type="text"
-                                        :placeholder=currentInputExample class="join-item text-slate-300/80 flex-auto"
-                                        @input="debouncedAddInput(item.fn, index)">
-                                    <icon type="close_c" extraclass="cursor-pointer select-none pr-4 text-orange-800"
-                                        @click="fuckList('delect', index)" />
-                                </label>
-                            </div>
-                        <!-- 图表类型选择器 -->
-                        <div class="graphTypeSelector flex items-center pb-1">
-                            <label class="text-xs mr-1">图表类型：</label>
-                            <select v-model="item.graphType" class="select select-xs bg-base-100 flex-1"
-                                @change="updateFunctionGraphType(item.graphType, index)">
-                                <option value="polyline">线图</option>
-                                <option value="scatter">点图</option>
-                                <option value="interval">区间图</option>
-                                <option value="area">面积图</option>
-                            </select>
+                            <label class="li-input input flex-1 text-lg items-center pr-0 justify-start">
+                                <span>f(x)=</span>
+                                <input v-model=item.fn spellcheck="false" type="text" :placeholder=currentInputExample
+                                    class="join-item text-slate-300/80 flex-auto"
+                                    @input="debouncedAddInput(item.fn, index)">
+                                <icon type="close_c" extraclass="cursor-pointer select-none pr-4 text-orange-800"
+                                    @click="fuckList('delect', index)" />
+                            </label>
                         </div>
                         <!-- 采样点数量的控制输入框 -->
                         <div class="samplePoints flex items-center">
-                                <label class="text-xs mr-1">采样点数：</label>
-                                <input type="number" v-model.number="item.nSamples" min="500" max="5000" step="1"
-                                    class="input input-xs w-16 text-center"
-                                    @change="updateSamplePoints(item.nSamples, index)" />
-                            </div>
+                            <label class="text-xs mr-1">采样点数：</label>
+                            <input type="number" :value="item.nSamples" min="500" max="5000" step="1"
+                                class="input input-xs w-16 text-center"
+                                @change="updateSamplePoints($event.target.value, index)" />
+                        </div>
                         <!-- 其他操作区域 -->
                         <div class="li-b flex gap-4">
                             <icon type="plus" extraclass="cursor-pointer select-none"
@@ -113,29 +102,40 @@
                         <span class="text-2xl">{{ greetingMessage + userInfo.nickname }}</span>
                     </div>
                 </label>
-                <input type="checkbox" id="logInModal" class="modal-toggle" @change="$event.target.checked && initFormData()"/>
+                <input type="checkbox" id="logInModal" class="modal-toggle"
+                    @change="$event.target.checked && initFormData()" />
                 <div class="modal" role="dialog">
                     <div class="modal-box">
                         <form @submit.prevent="userLogin" v-if="!showInfo">
-                            <fieldset class="fieldset w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
+                            <fieldset
+                                class="fieldset w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
                                 <legend class="fieldset-legend cursor-default"><span>登录</span></legend>
                                 <label class="fieldset-label cursor-default"><span>账号</span></label>
-                                <input type="text" class="input w-auto" placeholder="Account" v-model="account" autocomplete="username"/>
+                                <input type="text" class="input w-auto" placeholder="Account" v-model="account"
+                                    autocomplete="username" />
                                 <label class="fieldset-label cursor-default"><span>密码</span></label>
-                                <input type="password" class="input w-auto" v-model="password" placeholder="Password" autocomplete="current-password"/>
+                                <input type="password" class="input w-auto" v-model="password" placeholder="Password"
+                                    autocomplete="current-password" />
                                 <button type="submit" class="btn btn-success btn-soft mt-4">
-                                    <icon v-if="!loading" type="login"/>
+                                    <icon v-if="!loading" type="login" />
                                     <span v-if="!loading" class="text-lg">登录</span>
                                     <span v-else class="loading loading-spinner"></span>
                                 </button>
                             </fieldset>
                         </form>
-                        <div v-else class="fieldset user-info w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
-                            <icon type="logout" class="ml-auto text-error cursor-pointer" @click="logout"/>
+                        <div v-else
+                            class="fieldset user-info w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
+                            <icon type="logout" class="ml-auto text-error cursor-pointer" @click="logout" />
                             <div class="cursor-default">用户信息</div>
-                            <div class="cursor-default flex items-center space-x-1"><span>昵称:</span><input type="text" placeholder="昵称" class="input input-ghost text-xl rounded-sm pl-0.5" v-model="formData.nickname"/></div>
-                            <div class="cursor-default flex items-center space-x-1"><span>邮箱:</span><input type="text" placeholder="邮箱" class="input input-ghost text-xl rounded-sm pl-0.5" v-model="formData.email"/></div>
-                            <div class="cursor-default flex items-center space-x-1"><span>账号:</span><input type="text" placeholder="账号" class="input input-ghost text-xl rounded-sm pl-0.5" v-model="formData.username"/></div>
+                            <div class="cursor-default flex items-center space-x-1"><span>昵称:</span><input type="text"
+                                    placeholder="昵称" class="input input-ghost text-xl rounded-sm pl-0.5"
+                                    v-model="formData.nickname" /></div>
+                            <div class="cursor-default flex items-center space-x-1"><span>邮箱:</span><input type="text"
+                                    placeholder="邮箱" class="input input-ghost text-xl rounded-sm pl-0.5"
+                                    v-model="formData.email" /></div>
+                            <div class="cursor-default flex items-center space-x-1"><span>账号:</span><input type="text"
+                                    placeholder="账号" class="input input-ghost text-xl rounded-sm pl-0.5"
+                                    v-model="formData.username" /></div>
                             <button class="btn btn-block btn-lg btn-info btn-soft text-xl" @click="updateUserInfo">
                                 <span v-if="!loading">提交修改</span>
                                 <span v-else class="loading loading-spinner"></span>
@@ -156,7 +156,7 @@
                     <input type="number" v-model.number="moveStep" min="0.01" max="1.00" step="0.01"
                         class="input input-xs w-16 text-center" @change="updateMoveStep" />
                 </div>
-                
+
                 <div class="foot-buttonsGroup join max-h-19/20 overflow-hidden">
                     <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513.56 394.43" width="100px" height="100px">
                         <g id="_图层_1-2" data-name="图层 1">
@@ -212,7 +212,7 @@ import TwoDPlotCom from '../components/render2D.vue';
 import ThreeDPlotCom from '../components/render3D.vue';
 import icon from '../components/icon.vue';
 import { mapState } from 'vuex';
-import { toRaw, markRaw} from 'vue';
+import { toRaw, markRaw } from 'vue';
 import * as utils from '../assets/utils/componentUtils';
 import authApi from '../api/auth';
 import fnApi from '../api/function';
@@ -237,7 +237,7 @@ export default {
             loading: false,
             showInfo: false,
             zoomStep: 0.5,
-            moveStep:0.2,
+            moveStep: 0.2,
             userInfo: {},
             formData: {}
         };
@@ -289,7 +289,7 @@ export default {
         ...mapState('auth', ['user', 'isAuthenticated']),
         currentInputExample() {
             return this.show_2D ? '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...'
-            : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
+                : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
         },
         currentData() {
             console.log("💩");
@@ -312,9 +312,9 @@ export default {
             const time = new Date().getHours();
             if (time >= 6 && time < 12) {
                 return '早上好，';
-            } else if (time >=12 && time <18) {
+            } else if (time >= 12 && time < 18) {
                 return '下午好，';
-            } else if (time >=18 && time < 24) {
+            } else if (time >= 18 && time < 24) {
                 return '晚上好，';
             } else {
                 return '不是哥们，这么晚还搁这敲代码呢？';
@@ -396,7 +396,6 @@ export default {
                         fn: '',
                         color: utils.generateRandomHarmoniousColor(),
                         visible: false,
-                        graphType: 'polyline', // 添加默认图表类型
                         nSamples: 2025 // 确保有默认采样点数
                     });
                     break;
@@ -406,7 +405,6 @@ export default {
                         fn: '',
                         color: utils.generateRandomHarmoniousColor(),
                         visible: false,
-                        graphType: 'polyline', // 添加默认图表类型
                         nSamples: 2025 // 确保有默认采样点数
                     });
                     break;
@@ -488,20 +486,26 @@ export default {
                 this.showInfo = false;
             }, 400);
         },
+
         // 更新采样点数量
         updateSamplePoints(samples, index) {
-            // 验证输入范围
-            const validSamples = utils.clamp(samples, 500, 5000);
-            const currentData = [...toRaw(this.currentData)];
-            currentData[index].nSamples = validSamples;
-            this.fuckRender(currentData);
-            // 更新到 store
-            const payload = {
-                data: currentData,
-                is2D: this.show_2D
+            const validSamples = utils.clamp(Number(samples), 500, 5000);
+            const currentData = this.show_2D ? this.functionData_2D : this.functionData_3D;
+            if (index < 0 || index >= currentData.length) return;
+            try {
+                this.$store.commit('syncData', {
+                    data: currentData.map((item, idx) =>
+                        idx === index ? { ...item, nSamples: validSamples } : item),
+                    is2D: this.show_2D
+                });
+                if (this.show_2D && this.$refs.TwoDPlotCom && currentData[index].visible) {
+                    this.$nextTick(() => this.$refs.TwoDPlotCom.fuckRender(this.functionData_2D));
+                }
+            } catch (error) {
+                console.error("更新采样点数出错:", error);
             }
-            this.$store.commit('syncData', payload);
         },
+
         // 更新缩放因子(zoomfactor)
         updateZoomFactor() {
             // 验证范围
@@ -518,26 +522,14 @@ export default {
             this.moveStep = utils.clamp(this.moveStep, 0.01, 1.00);
             // 更新图表实例的移动步长
             if (this.show_2D && this.$refs.TwoDPlotCom) {
-                this.$refs.TwoDPlotCom.updateMoveStep(this.moveStep);
+                this.$refs.TwoDPlotCom.updateMoveFactor(this.moveStep);
             }
         },
 
-        // 更新函数图表类型
-        updateFunctionGraphType(graphType, index) {
-            const currentData = [...toRaw(this.currentData)];
-            currentData[index].graphType = graphType;
-            this.fuckRender(currentData);
-            // 更新到 store
-            const payload = {
-                data: currentData,
-                is2D: this.show_2D
-            }
-            this.$store.commit('syncData', payload);
-        },
         async updateUserInfo() {
             this.loading = true;
             const info = this.formData;
-            try{
+            try {
                 const data = {
                     email: info.email || '',
                     nickname: info.nickname || '',
@@ -554,6 +546,7 @@ export default {
                 this.loading = false;
             }
         },
+
         initFormData() {
             this.formData = {
                 email: this.userInfo.email || '',

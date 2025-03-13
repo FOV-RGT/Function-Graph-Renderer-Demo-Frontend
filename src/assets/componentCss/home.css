@@ -68,31 +68,6 @@
     font-size: clamp(0.938rem, 0.793rem + 0.72vw, 1.875rem);
 }
 
-/* 图表类型选择器样式 */
-.graphTypeSelector .select {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-    color: rgba(197,159,105); /* 选择框中显示的文字颜色 */
-}
-
-.graphTypeSelector .select:focus {
-    border-color: rgba(255, 255, 255, 0.5);
-    outline: none;
-}
-
-/* 修复下拉选项的字体颜色 */
-.graphTypeSelector .select option {
-    background-color: rgba(245,245,220); /* 背景 */
-    color: rgb(197,159,105); /* 文本 */
-}
-
-/* 确保悬停状态有明显的区分 */
-.graphTypeSelector .select option:hover,
-.graphTypeSelector .select option:focus,
-.graphTypeSelector .select option:active {
-    background-color: rgba(255, 255, 255, 0.2);
-}
-
 /* 缩放步长控制器样式 */
 .zoomFactorControl .input {
     background-color: rgba(38,27,37, 1);
