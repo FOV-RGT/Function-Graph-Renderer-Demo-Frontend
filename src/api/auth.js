@@ -7,7 +7,7 @@ import api from './index';
 /**
  * 认证API对象，包含所有认证相关的API方法
  */
-export const authApi = {
+const authApi = {
     /**
      * 用户登录
      * @param {Object} credentials - 包含用户名和密码的登录凭证
@@ -99,3 +99,5 @@ export const authApi = {
         }
     }
 };
+
+export default authApi;

@@ -4,7 +4,6 @@
 
 <script>
 import { chartInstance } from '../assets/utils/chartSetter';
-import { authApi } from '../api/auth.js';
 
 export default {
   data() {
