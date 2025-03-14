@@ -263,6 +263,8 @@ export default {
                     console.log('输入错误:', error);
                     return;
                 }
+            } else {
+                this.$refs.ThreeDPlotCom.formatInput([formatInput], index);
             }
         }, 400);
         this.throttledResize = utils.throttle(() => {
@@ -389,17 +391,6 @@ export default {
             clearInterval(this.viewInterval);
             this.viewTimeOut = {};
             this.viewInterval = {};
-        },
-        // 渲染函数图形
-        render(inputs, index, num) {
-            const formatInputs = inputs.replace(/\s+/g, "").split(/[;；]/);
-            console.log(formatInputs);
-            if (this.show_2D) {
-                this.$refs.TwoDPlotCom.userInput(formatInputs, index, num);
-            }
-            else {
-                this.$refs.ThreeDPlotCom.formatInput(formatInputs, index);
-            }
         },
         fuckRender(data) {
             console.log("fuckRender:", data);
