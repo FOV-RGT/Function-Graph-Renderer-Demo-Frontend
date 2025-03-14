@@ -46,17 +46,6 @@
                                     @click="fuckList('delect', index)" />
                             </label>
                         </div>
-                        <!-- 图表类型选择器 -->
-                        <div class="graphTypeSelector flex items-center pb-1">
-                            <label class="text-xs mr-1">图表类型：</label>
-                            <select v-model="item.graphType" class="select select-xs bg-base-100 flex-1"
-                                @change="updateFunctionGraphType(item.graphType, index)">
-                                <option value="polyline">线图</option>
-                                <option value="scatter">点图</option>
-                                <option value="interval">区间图</option>
-                                <option value="area">面积图</option>
-                            </select>
-                        </div>
                         <!-- 采样点数量的控制输入框 -->
                         <div class="samplePoints flex items-center">
                             <label class="text-xs mr-1">采样点数：</label>
@@ -514,22 +503,18 @@ export default {
             }, 400);
         },
 
-        // 更新采样点数量
+        // 更新采样点数量 
         updateSamplePoints(samples, index) {
             const validSamples = utils.clamp(Number(samples), 500, 5000);
             const currentData = this.show_2D ? this.functionData_2D : this.functionData_3D;
             if (index < 0 || index >= currentData.length) return;
-            try {
-                this.$store.commit('syncData', {
-                    data: currentData.map((item, idx) =>
-                        idx === index ? { ...item, nSamples: validSamples } : item),
-                    is2D: this.show_2D
-                });
-                if (this.show_2D && this.$refs.TwoDPlotCom && currentData[index].visible) {
-                    this.$nextTick(() => this.$refs.TwoDPlotCom.fuckRender(this.functionData_2D));
-                }
-            } catch (error) {
-                console.error("更新采样点数出错:", error);
+            this.$store.commit('syncData', {
+                data: currentData.map((item, idx) =>
+                    idx === index ? { ...item, nSamples: validSamples } : item),
+                is2D: this.show_2D
+            });
+            if (this.show_2D && this.$refs.TwoDPlotCom && currentData[index].visible) {
+                this.$nextTick(() => this.$refs.TwoDPlotCom.updateSamplePoints(validSamples, index));
             }
         },
 

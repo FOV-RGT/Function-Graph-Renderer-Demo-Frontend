@@ -90,8 +90,20 @@ export default {
 
     fuckRender(data) {
       this.chartInstance.setFunction(data);
+    },
+
+
+    // 更新采样点数量
+    updateSamplePoints(samples, index) {
+      if (!this.chartInstance) return;
+      try {
+        if (typeof this.chartInstance.setSamplePoints === 'function') {
+          this.chartInstance.setSamplePoints(samples, index);
+        } 
+      } catch (error) {
+        console.error("采样点更新失败");
+      }
     }
-    
   }
 };
 </script>
