@@ -46,12 +46,23 @@
                                     @click="fuckList('delect', index)" />
                             </label>
                         </div>
+                        <!-- 图表类型选择器 -->
+                        <div class="graphTypeSelector flex items-center pb-1">
+                            <label class="text-xs mr-1">图表类型：</label>
+                            <select v-model="item.graphType" class="select select-xs bg-base-100 flex-1"
+                                @change="updateFunctionGraphType(item.graphType, index)">
+                                <option value="polyline">线图</option>
+                                <option value="scatter">点图</option>
+                                <option value="interval">区间图</option>
+                                <option value="area">面积图</option>
+                            </select>
+                        </div>
                         <!-- 采样点数量的控制输入框 -->
                         <div class="samplePoints flex items-center">
                             <label class="text-xs mr-1">采样点数：</label>
-                            <input type="number" :value="item.nSamples" min="500" max="5000" step="1"
+                            <input type="number" v-model.number="item.nSamples" min="500" max="5000" step="1"
                                 class="input input-xs w-16 text-center"
-                                @change="updateSamplePoints($event.target.value, index)" />
+                                @change="updateSamplePoints(item.nSamples, index)" />
                         </div>
                         <!-- 其他操作区域 -->
                         <div class="li-b flex gap-4">
@@ -268,12 +279,20 @@ export default {
             // if (!this.isAuthenticated) {
             //     throw new Error('未登录');
             // }
+            console.log("查询token", this.$store.state.auth.token);
             const authRes = await authApi.getUserInfo();
+            console.log('用户信息:', authRes);
             this.userInfo = authRes.imformation;
             this.$store.commit('auth/setUser', authRes);
             this.showInfo = true;
             const fnRes = await fnApi.getFunctionData();
-            this.$store.commit('syncData', fnRes.mathdatas);
+            console.log('历史数据:', fnRes);
+            const payload = {
+                data: fnRes.mathdatas || [],
+                is2D: this.show_2D
+            }
+            this.$store.commit('syncData', payload);
+            this.fuckRender(this.currentData);
             console.log('初始化用户信息成功');
         } catch (error) {
             console.log('初始化用户信息失败:', error);
@@ -331,10 +350,10 @@ export default {
                     color: item.color,
                     nSamples: item.nSamples,
                     visible: item.visible,
-                    dimension: item.dimension,
+                    dimension: 2,
                 }));
                 try {
-                    await fnApi.uploadFunctionData(newVal);
+                    await fnApi.uploadFunctionData(data);
                     console.log('更新历史数据成功');
                 } catch (error) {
                     console.log('更新历史数据失败:', error);
@@ -396,7 +415,9 @@ export default {
                         fn: '',
                         color: utils.generateRandomHarmoniousColor(),
                         visible: false,
-                        nSamples: 2025 // 确保有默认采样点数
+                        graphType: 'polyline', // 添加默认图表类型
+                        nSamples: 2025, // 确保有默认采样点数
+                        dimension: 2
                     });
                     break;
                 }
@@ -405,7 +426,9 @@ export default {
                         fn: '',
                         color: utils.generateRandomHarmoniousColor(),
                         visible: false,
-                        nSamples: 2025 // 确保有默认采样点数
+                        graphType: 'polyline', // 添加默认图表类型
+                        nSamples: 2025, // 确保有默认采样点数
+                        dimension: 2
                     });
                     break;
                 }
@@ -464,8 +487,12 @@ export default {
                 console.log('登录成功:', this.userInfo);
                 this.$store.commit('auth/setUser', infoRes);
                 const fnRes = await fnApi.getFunctionData();
-                console.log('获取历史数据成功:', fnRes);
-                this.$store.commit('syncData', fnRes.mathdatas);
+                const payload = {
+                    data: fnRes.mathdatas || [],
+                    is2D: this.show_2D
+                }
+                console.log("负载:", payload);
+                this.$store.commit('syncData', payload);
                 document.getElementById('logInModal').checked = false;
                 setTimeout(() => {
                     this.showInfo = true;

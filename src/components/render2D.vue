@@ -9,7 +9,6 @@ export default {
   data() {
     return {
       chartInstance: null,
-      rendering: false,
     };
   },
   created() {
@@ -18,20 +17,20 @@ export default {
     // 绘制图表
     console.log("图表实例开始挂载");
     this.chartInstance = new chartInstance(this.$refs.canvas2D);
-    const currentData = this.$store.state.functionData_2D;
-    let fn = [];
-    if (currentData && currentData.length > 0) {
-      console.log(currentData);
-      fn = currentData.map(item => item.fn);
-      const payload = {
-        data: [],
-        is2D: true
-      }
-      this.$store.commit("syncData", payload);
-    }
-    this.chartInstance.addInput(fn, 0).then(() => {
-      console.log("图表实例初始化完成");
-    });
+    // const currentData = this.$store.state.functionData_2D;
+    // let fn = [];
+    // if (currentData && currentData.length > 0) {
+    //   console.log(currentData);
+    //   fn = currentData.map(item => item.fn);
+    //   const payload = {
+    //     data: [],
+    //     is2D: true
+    //   }
+    //   this.$store.commit("syncData", payload);
+    // }
+    // this.chartInstance.addInput(fn, 0).then(() => {
+    //   console.log("图表实例初始化完成");
+    // });
   },
   beforeUnmount() {
     console.log("销毁图表实例");
@@ -88,6 +87,10 @@ export default {
         this.chartInstance.setMoveFactor(moveStep);
       }
     },
+
+    fuckRender(data) {
+      this.chartInstance.setFunction(data);
+    }
     
   }
 };
