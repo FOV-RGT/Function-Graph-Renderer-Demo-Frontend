@@ -11,11 +11,12 @@ export default {
     
     // 状态定义
     state: {
-        nickname: null,                                     // 当前用户信息
         token: localStorage.getItem('token') || null,   // 认证令牌，优先从本地存储获取
         // token: null,
         isAuthenticated: !!localStorage.getItem('token'), // 是否已认证的标志
         // isAuthenticated: false,
+        // 以下信息暂时用不到
+        nickname: null,
         email: null,
         username: null
     },

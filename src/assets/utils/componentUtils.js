@@ -337,3 +337,15 @@ export const sha256 = async (input) => {
     return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
 }// 生成SHA-256哈希值
 
+export const sortData = (data) => {
+    if (!data?.length === 0) return [];
+    const newData = data.sort((a, b) => a.id - b.id);
+    let dataArray = [];
+    newData.forEach((item) => {
+        if (!dataArray[item.uploadId]) {
+            dataArray[item.uploadId] = [];
+        }
+        dataArray[item.uploadId].push(item);
+    })
+    return Object.values(dataArray);
+}

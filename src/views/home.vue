@@ -39,9 +39,9 @@
                         <div class="join flex pb-0.5">
                             <label class="li-input input flex-1 text-lg items-center pr-0 justify-start">
                                 <span>f(x)=</span>
-                                <input v-model=item.fn spellcheck="false" type="text" :placeholder=currentInputExample
+                                <input :value="item.fn" spellcheck="false" type="text" :placeholder=currentInputExample
                                     class="join-item text-slate-300/80 flex-auto"
-                                    @input="debouncedAddInput(item.fn, index)">
+                                    @input="debouncedAddInput($event.target.value, index)">
                                 <icon type="close_c" extraclass="cursor-pointer select-none pr-4 text-orange-800"
                                     @click="fuckList('delect', index)" />
                             </label>
@@ -216,6 +216,7 @@ import { toRaw, markRaw } from 'vue';
 import * as utils from '../assets/utils/componentUtils';
 import authApi from '../api/auth';
 import fnApi from '../api/function';
+import { parse } from 'mathjs';
 
 export default {
     name: 'home',
@@ -245,8 +246,24 @@ export default {
     created() {
         // 输入防抖
         this.debouncedAddInput = utils.debounce((input, index) => {
-            console.log("自动更新输入");
-            this.render(input, index);
+            const formatInput = input.replace(/\s+/g, "");
+            if (this.show_2D) {
+                try {
+                    parse(formatInput);
+                    const newData = [...toRaw(this.currentData)];
+                    newData[index].fn = formatInput;
+                    const payload = {
+                        data: newData,
+                        is2D: this.show_2D
+                    }
+                    console.log("debouncedAddInput:", payload);
+                    this.$store.commit('syncData', payload);
+                    this.fuckRender(newData);
+                } catch (error) {
+                    console.log('输入错误:', error);
+                    return;
+                }
+            }
         }, 400);
         this.throttledResize = utils.throttle(() => {
             setTimeout(() => {
@@ -265,9 +282,7 @@ export default {
     },
     async mounted() {
         try {
-            // if (!this.isAuthenticated) {
-            //     throw new Error('未登录');
-            // }
+            if (!this.isAuthenticated) throw new Error('未登录');
             console.log("查询token", this.$store.state.auth.token);
             const authRes = await authApi.getUserInfo();
             console.log('用户信息:', authRes);
@@ -276,8 +291,11 @@ export default {
             this.showInfo = true;
             const fnRes = await fnApi.getFunctionData();
             console.log('历史数据:', fnRes);
+            const fnData = utils.sortData(fnRes.mathdatas);
+            const latestData = fnData.length > 0 ? fnData[fnData.length - 1] : [];
+            console.log('最新数据:', latestData);
             const payload = {
-                data: fnRes.mathdatas || [],
+                data: latestData,
                 is2D: this.show_2D
             }
             this.$store.commit('syncData', payload);
@@ -312,10 +330,6 @@ export default {
             // }
             return this.show_2D ? this.functionData_2D : this.functionData_3D;
         },
-        userInput() {
-            console.log("💩💩");
-            return this.currentData.map(item => `"${item.fn}"`).join('  ,  ');
-        },
         greetingMessage() {
             const time = new Date().getHours();
             if (time >= 6 && time < 12) {
@@ -339,7 +353,7 @@ export default {
                     color: item.color,
                     nSamples: item.nSamples,
                     visible: item.visible,
-                    dimension: 2,
+                    dimension: item.dimension,
                 }));
                 try {
                     await fnApi.uploadFunctionData(data);
@@ -373,8 +387,8 @@ export default {
         endSetView() {
             clearTimeout(this.viewTimeOut);
             clearInterval(this.viewInterval);
-            this.viewTimeOut = null;
-            this.viewInterval = null;
+            this.viewTimeOut = {};
+            this.viewInterval = {};
         },
         // 渲染函数图形
         render(inputs, index, num) {
@@ -455,10 +469,6 @@ export default {
                     this.showList = !this.showList;
                     break;
                 }
-                case 'hide': {
-                    this.showList = false;
-                    break;
-                }
             }
         },
         async userLogin() {
@@ -476,12 +486,15 @@ export default {
                 console.log('登录成功:', this.userInfo);
                 this.$store.commit('auth/setUser', infoRes);
                 const fnRes = await fnApi.getFunctionData();
+                const fnData = utils.sortData(fnRes.mathdatas);
+                const latestData = fnData.length > 0 ? fnData[fnData.length - 1] : [];
                 const payload = {
-                    data: fnRes.mathdatas || [],
+                    data: latestData,
                     is2D: this.show_2D
                 }
                 console.log("负载:", payload);
                 this.$store.commit('syncData', payload);
+                this.fuckRender(this.currentData);
                 document.getElementById('logInModal').checked = false;
                 setTimeout(() => {
                     this.showInfo = true;
@@ -505,19 +518,19 @@ export default {
 
         // 更新采样点数量 
         updateSamplePoints(samples, index) {
-            const validSamples = utils.clamp(Number(samples), 500, 5000);
-            const currentData = this.show_2D ? this.functionData_2D : this.functionData_3D;
-            if (index < 0 || index >= currentData.length) return;
-            this.$store.commit('syncData', {
-                data: currentData.map((item, idx) =>
-                    idx === index ? { ...item, nSamples: validSamples } : item),
+            if (!this.show_2D) return
+            const validSamples = utils.clamp(samples, 500, 5000);
+            const data = [...toRaw(this.currentData)];
+            data[index].nSamples = validSamples;
+            const payload = {
+                data: data,
                 is2D: this.show_2D
-            });
-            if (this.show_2D && this.$refs.TwoDPlotCom && currentData[index].visible) {
-                this.$nextTick(() => this.$refs.TwoDPlotCom.updateSamplePoints(validSamples, index));
+            }
+            this.$store.commit('syncData', payload);
+            if (this.currentData[index].visible) {
+                this.$refs.TwoDPlotCom.fuckRender(this.functionData_2D);
             }
         },
-
         // 更新缩放因子(zoomfactor)
         updateZoomFactor() {
             // 验证范围

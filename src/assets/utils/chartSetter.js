@@ -21,17 +21,12 @@ export class chartInstance {
         const newFunctionData = [...rawData];
         console.log("原始数据:", newFunctionData);
         for (let i = 0; i < inputs.length; i++) {
-            const color = utils.generateRandomHarmoniousColor();
+            const color = i === 0 && newFunctionData[index] && !!newFunctionData[index].color ? newFunctionData[index].color : utils.generateRandomHarmoniousColor();
             updatedData.push({
                 fn: inputs[i], // 函数表达式
-                color:
-                    i == 0 &&
-                        newFunctionData[index] &&
-                        newFunctionData[index].color !== Boolean
-                        ? newFunctionData[index].color
-                        : color, // 为每个函数生成唯一的颜色
-                graphType: "polyline",
-                nSamples: 2025, // 采样点数
+                color, // 为每个函数生成唯一的颜色
+                graphType : 'polyline',
+                nSamples : 2025, // 采样点数
                 visible: true, // 是否可见
                 dimension: 2, // 函数维
             });
@@ -49,12 +44,9 @@ export class chartInstance {
 
     setFunction(data) {
         const currentConfig = this.config;
-        currentConfig.data = [];
         // 过滤可见函数并应用其配置
-        data = data.filter((item) => item.fn !== "" && item.visible);
-        currentConfig.data = data;
+        currentConfig.data = data.filter(item => item.fn !== '' && item.visible);
         // 重新渲染图表
-        currentConfig.id = "";
         this.destroyInstance();
         this.instance = markRaw(functionPlot(currentConfig));
         this.config = markRaw(currentConfig);
@@ -138,28 +130,27 @@ export class chartInstance {
         const yRange = Math.abs(yDomain[1] - yDomain[0]);
         const xStep = xRange * step * 0.5;
         const yStep = yRange * step * 0.5;
-
-        // 根据方向移动视图
-        switch (evt) {
-            case "moveLeft":
-                currentConfig.xAxis.domain = [xDomain[0] - xStep, xDomain[1] - xStep];
-                break;
-            case "moveRight":
-                currentConfig.xAxis.domain = [xDomain[0] + xStep, xDomain[1] + xStep];
-                break;
-            case "moveUp":
-                currentConfig.yAxis.domain = [yDomain[0] + yStep, yDomain[1] + yStep];
-                break;
-            case "moveDown":
-                currentConfig.yAxis.domain = [yDomain[0] - yStep, yDomain[1] - yStep];
-                break;
-        }
-
-        // 重新渲染图表
-        currentConfig.id = "";
-        this.destroyInstance();
-        this.instance = functionPlot(currentConfig);
-        this.config = currentConfig;
+    
+    // 根据方向移动视图
+    switch (evt) {
+        case 'moveLeft':
+            currentConfig.xAxis.domain = [xDomain[0] - xStep, xDomain[1] - xStep];
+            break;
+        case 'moveRight':
+            currentConfig.xAxis.domain = [xDomain[0] + xStep, xDomain[1] + xStep];
+            break;
+        case 'moveUp':
+            currentConfig.yAxis.domain = [yDomain[0] + yStep, yDomain[1] + yStep];
+            break;
+        case 'moveDown':
+            currentConfig.yAxis.domain = [yDomain[0] - yStep, yDomain[1] - yStep];
+            break;
+    }
+    // 重新渲染图表
+    currentConfig.id = '';
+    this.destroyInstance();
+    this.instance = functionPlot(currentConfig);
+    this.config = currentConfig;
     }
 
     resize(target) {

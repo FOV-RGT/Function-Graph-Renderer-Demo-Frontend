@@ -76,22 +76,21 @@ export default {
 
     // 更新图表实例的缩放因子
     updateZoomFactor(zoomStep) {
-      if (this.chartInstance) {
-        this.chartInstance.setZoomFactor(zoomStep);
-      }
+      this.chartInstance.setZoomFactor(zoomStep);
     },
 
     //更新图表实例的移动因子
     updateMoveFactor(moveStep) {
-      if (this.chartInstance) {
-        this.chartInstance.setMoveFactor(moveStep);
-      }
+      this.chartInstance.setMoveFactor(moveStep);
     },
 
     fuckRender(data) {
       this.chartInstance.setFunction(data);
     },
 
+    fuckResize() {
+      this.chartInstance.resize(this.$refs.canvas2D);
+    },
 
     // 更新采样点数量
     updateSamplePoints(samples, index) {
