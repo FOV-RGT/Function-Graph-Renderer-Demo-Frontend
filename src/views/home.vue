@@ -49,9 +49,9 @@
                         <!-- 采样点数量的控制输入框 -->
                         <div class="samplePoints flex items-center">
                             <label class="text-xs mr-1">采样点数：</label>
-                            <input type="number" v-model.number="item.nSamples" min="500" max="5000" step="1"
+                            <input type="number" :value.number="item.nSamples" min="500" max="5000" step="1"
                                 class="input input-xs w-16 text-center"
-                                @change="updateSamplePoints(item.nSamples, index)" />
+                                @input="debouncedUpdateSamplePoints($event.target.valueAsNumber, index)" />
                         </div>
                         <!-- 其他操作区域 -->
                         <div class="li-b flex gap-4">
@@ -156,7 +156,6 @@
                     <input type="number" v-model.number="moveStep" min="0.01" max="1.00" step="0.01"
                         class="input input-xs w-16 text-center" @change="updateMoveStep" />
                 </div>
-
                 <div class="foot-buttonsGroup join max-h-19/20 overflow-hidden">
                     <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513.56 394.43" width="100px" height="100px">
                         <g id="_图层_1-2" data-name="图层 1">
@@ -212,9 +211,8 @@ import TwoDPlotCom from '../components/render2D.vue';
 import ThreeDPlotCom from '../components/render3D.vue';
 import icon from '../components/icon.vue';
 import { mapState, mapGetters } from 'vuex';
-import { toRaw, markRaw } from 'vue';
+import { toRaw } from 'vue';
 import * as utils from '../assets/utils/componentUtils';
-import fnApi from '../api/function';
 import { parse } from 'mathjs';
 import * as service from '../services/userService';
 
@@ -267,6 +265,22 @@ export default {
                 }
             } else {
                 this.$refs.ThreeDPlotCom.formatInput([formatInput], index);
+            }
+        }, 400);
+        this.debouncedUpdateSamplePoints = utils.debounce((samples, index) => {
+            if (!this.show_2D) return
+            console.log('666');
+            const validSamples = utils.clamp(samples, 500, 5000);
+            const data = [...toRaw(this.currentData)];
+            data[index].nSamples = validSamples;
+            const payload = {
+                data: data,
+                is2D: this.show_2D,
+                needUpload: true
+            }
+            this.$store.commit('syncData', payload);
+            if (this.currentData[index].visible) {
+                this.$refs.TwoDPlotCom.fuckRender(this.functionData_2D);
             }
         }, 400);
         this.throttledResize = utils.throttle(() => {
@@ -479,6 +493,7 @@ export default {
         // 更新采样点数量 
         updateSamplePoints(samples, index) {
             if (!this.show_2D) return
+            console.log('666');
             const validSamples = utils.clamp(samples, 500, 5000);
             const data = [...toRaw(this.currentData)];
             data[index].nSamples = validSamples;

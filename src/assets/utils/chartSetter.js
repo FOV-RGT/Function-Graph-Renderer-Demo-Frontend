@@ -48,6 +48,7 @@ export class chartInstance {
         // 过滤可见函数并应用其配置
         currentConfig.data = data.filter(item => item.fn !== '' && item.visible);
         // 重新渲染图表
+        currentConfig.id = '';
         this.destroyInstance();
         this.instance = markRaw(functionPlot(currentConfig));
         this.config = markRaw(currentConfig);
