@@ -1,7 +1,7 @@
 import authApi from '../api/auth';
 import fnApi from '../api/function';
 import store from '../store';
-import * as utils from '../assets/utils/componentUtils';
+import { sortData } from '../assets/utils/componentUtils';
 
 
 
@@ -16,7 +16,7 @@ export async function initUserData(options = { is2D: true }) {
         store.commit('auth/setUser', info);
         // 获取函数数据
         const fnRes = await fnApi.getFunctionData();
-        const fnData = utils.sortData(fnRes.mathdatas);
+        const fnData = sortData(fnRes.mathdatas);
         const latestData = fnData.length > 0 ? fnData[fnData.length - 1] : [];
         // 更新数据
         const payload = {
@@ -29,7 +29,6 @@ export async function initUserData(options = { is2D: true }) {
             success: true
         };
     } catch (error) {
-        console.error('初始化用户信息失败:', error);
         store.commit('auth/setToken', null);
         return {
             success: false,
@@ -45,7 +44,6 @@ export async function login(credentials, options = { is2D: true }) {
         // 登录后获取完整数据
         return await initUserData(options);
     } catch (error) {
-        console.error('登录失败:', error);
         return {
             success: false,
             error
@@ -62,7 +60,6 @@ export async function updateUserInfo(info) {
             success: true
         };
     } catch (error) {
-        console.error('更新用户信息失败:', error);
         return {
             success: false,
             error
@@ -87,6 +84,27 @@ export async function uploadFunctionData(data) {
         await fnApi.uploadFunctionData(data);
         return {
             success: true
+        };
+    } catch (error) {
+        return {
+            success: false,
+            error
+        };
+    }
+}
+
+export async function getHistoricalData(currentPage) {
+    try {
+        const res = await fnApi.getHistoricalData(currentPage);
+        const fnData = res.mathdatas.sort((a, b) => b.id - a.id);
+        const pagination = res.pagination;
+        const data = {
+            fnData,
+            pagination
+        };
+        return {
+            success: true,
+            data
         };
     } catch (error) {
         return {

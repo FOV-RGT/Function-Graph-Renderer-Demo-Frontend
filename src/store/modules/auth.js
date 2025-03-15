@@ -32,9 +32,9 @@ export default {
     // 修改状态的方法
     mutations: {
         setUser(state, data) {
-            const nickname = data.nickname || "长期素食";
-            const email = data.email || "未知邮箱";
-            const username = data.username || "未知用户名";
+            const nickname = data?.nickname || "长期素食";
+            const email = data?.email || "未知邮箱";
+            const username = data?.username || "未知用户名";
             state.nickname = nickname;
             state.email = email;
             state.username = username;

@@ -338,7 +338,7 @@ export const sha256 = async (input) => {
 }// 生成SHA-256哈希值
 
 export const sortData = (data) => {
-    if (!data?.length === 0) return [];
+    if (!data || !data.length) return [];
     const newData = data.sort((a, b) => a.id - b.id);
     let dataArray = [];
     newData.forEach((item) => {

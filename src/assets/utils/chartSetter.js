@@ -1,6 +1,6 @@
 import * as chartConfig from "../chartConfig";
 import functionPlot from "function-plot";
-import * as utils from "./componentUtils";
+import { generateRandomHarmoniousColor } from "./componentUtils";
 import { select } from "d3";
 import store from "../../store";
 import { toRaw, markRaw } from "vue";
@@ -21,7 +21,7 @@ export class chartInstance {
         const newFunctionData = [...rawData];
         console.log("原始数据:", newFunctionData);
         for (let i = 0; i < inputs.length; i++) {
-            const color = i === 0 && newFunctionData[index] && !!newFunctionData[index].color ? newFunctionData[index].color : utils.generateRandomHarmoniousColor();
+            const color = i === 0 && newFunctionData[index] && !!newFunctionData[index].color ? newFunctionData[index].color : generateRandomHarmoniousColor();
             updatedData.push({
                 fn: inputs[i], // 函数表达式
                 color, // 为每个函数生成唯一的颜色

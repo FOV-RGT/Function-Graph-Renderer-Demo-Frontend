@@ -44,8 +44,29 @@ const fnApi = {
                 }
             }
         }
+    },
+    async getHistoricalData(currentPage) {
+        try {
+            return await api.get('/mathdata/2d', {params: {currentPage}});
+        } catch (error) {
+            console.log("获取历史数据错误：", error.status);
+            switch (error.status) {
+                case 401:
+                case 404: {
+                    throw ('未授权');
+                }
+                case 400: {
+                    throw ('请求错误');
+                }
+                case 500: {
+                    throw ('服务器错误');
+                }
+                default: {
+                    throw (`未知错误: ${error.response.status}`);
+                }
+            }
+        }
     }
-
 }
 
 export default fnApi;

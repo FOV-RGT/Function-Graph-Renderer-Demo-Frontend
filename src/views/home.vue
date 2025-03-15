@@ -16,7 +16,7 @@
                     <button class="btn btn-block" @click="switchRenderer">
                         切换模式
                     </button>
-                    <button class="btn btn-block">
+                    <button class="btn btn-block" @click="showTable = !showTable">
                         历史记录
                     </button>
                     <button class="btn btn-block">
@@ -71,7 +71,7 @@
                 </li>
                 <li class="flex list-row text-4xl justify-center p-2">
                     <div class="left-li-plus items-center flex h-[2rem] justify-center">
-                        <icon type="plus" extraclass="cursor-pointer select-none" @click="fuckList('plus-b', -1)" />
+                        <icon type="plus" extraclass="cursor-pointer select-none" @click="fuckList('plus-b')" />
                     </div>
                 </li>
                 <li class="list-row text-4xl text-sky-600">千早 爱音</li>
@@ -117,8 +117,10 @@
                                 <input type="password" class="input w-auto" v-model="password" placeholder="Password"
                                     autocomplete="current-password" />
                                 <button type="submit" class="btn btn-success btn-soft mt-4">
-                                    <icon v-if="!loading" type="login" />
-                                    <span v-if="!loading" class="text-lg">登录</span>
+                                    <div v-if="!loading.login">
+                                        <icon type="login" />
+                                        <span class="text-lg">登录</span>
+                                    </div>
                                     <span v-else class="loading loading-spinner"></span>
                                 </button>
                             </fieldset>
@@ -137,7 +139,7 @@
                                     placeholder="账号" class="input input-ghost text-xl rounded-sm pl-0.5"
                                     v-model="formData.username" /></div>
                             <button class="btn btn-block btn-lg btn-info btn-soft text-xl" @click="updateUserInfo">
-                                <span v-if="!loading">提交修改</span>
+                                <span v-if="!loading.updateInfo">提交修改</span>
                                 <span v-else class="loading loading-spinner"></span>
                             </button>
                         </div>
@@ -203,6 +205,10 @@
             </div>
         </div>
     </div>
+    <hisDataTable v-show="showTable" :fnData="fnData" :pagination="pagination" 
+    class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
+    bg-base-100 rounded-box border border-base-content/10 overflow-auto lg:max-w-6xl md:max-w-3xl sm:max-w-1xl h-auto"
+    @changePage="getHisData" @closeTable="showTable = false"/>
 </template>
 
 <script>
@@ -215,6 +221,7 @@ import { toRaw } from 'vue';
 import * as utils from '../assets/utils/componentUtils';
 import { parse } from 'mathjs';
 import * as service from '../services/userService';
+import hisDataTable from '../components/hisDataTable.vue';
 
 
 
@@ -223,23 +230,30 @@ export default {
     components: {
         TwoDPlotCom,
         ThreeDPlotCom,
-        icon
+        icon,
+        hisDataTable
     },
     data() {
         return {
             version: packageJson.version,
             show_2D: true,
-            viewTimeOut: {},
-            viewInterval: {},
+            viewTimeOut: null,
+            viewInterval: null,
             showList: false,
             showHome: true,
             account: "",
             password: "",
-            loading: false,
+            loading: {
+                login: false,
+                updateInfo: false
+            },
             showInfo: false,
             zoomStep: 0.5,
             moveStep: 0.2,
-            formData: {}
+            formData: {},
+            showTable: false,
+            fnData: [],
+            pagination: {},
         };
     },
     created() {
@@ -269,7 +283,6 @@ export default {
         }, 400);
         this.debouncedUpdateSamplePoints = utils.debounce((samples, index) => {
             if (!this.show_2D) return
-            console.log('666');
             const validSamples = utils.clamp(samples, 500, 5000);
             const data = [...toRaw(this.currentData)];
             data[index].nSamples = validSamples;
@@ -303,6 +316,7 @@ export default {
         if (success) {
             this.fuckRender(this.currentData);
             this.initFormData();
+            this.getHisData();
             this.showInfo = true;
             console.log('初始化用户信息成功');
         } else {
@@ -319,7 +333,7 @@ export default {
         ...mapGetters('auth', ['userInfo', 'displayName', 'isAuthenticated']),
         currentInputExample() {
             return this.show_2D ? '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...'
-            : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
+                : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
         },
         currentData() {
             console.log("💩");
@@ -343,7 +357,7 @@ export default {
             } else if (time >= 18 && time < 24) {
                 return '晚上好，';
             } else {
-                return '不是哥们，这么晚还搁这敲代码呢？';
+                return '夜深了，';
             }
         }
     },
@@ -368,26 +382,34 @@ export default {
             this.throttledResize();
             this.$store.commit('switchRender', this.show_2D);
         },
+
         //将缩放步长和移动步长传递给2D图标实例
         setView(evt) {
             if (this.show_2D) {
                 this.$refs.TwoDPlotCom.setView(evt, this.zoomStep, this.moveStep);
             }
         },
+
         startSetView(evt) {
             this.setView(evt);
             this.viewTimeOut = setTimeout(() => {
-                this.viewInterval = setInterval(() => {
-                    this.setView(evt);
-                }, 75);
+                this.viewInterval = requestAnimationFrame(() => this._runSetView(evt));
             }, 150);
         },
+
+        _runSetView(evt) {
+            this.setView(evt);
+            // 请求下一帧
+            this.viewInterval = requestAnimationFrame(() => this._runSetView(evt));
+        },
+
         endSetView() {
             clearTimeout(this.viewTimeOut);
-            clearInterval(this.viewInterval);
-            this.viewTimeOut = {};
-            this.viewInterval = {};
+            cancelAnimationFrame(this.viewInterval);
+            this.viewTimeOut = null;
+            this.viewInterval = null;
         },
+
         fuckRender(data) {
             console.log("fuckRender:", data);
             if (this.show_2D) {
@@ -396,15 +418,15 @@ export default {
                 // this.$refs.ThreeDPlotCom.fuckRender(data);
             }
         },
+
         fuckList(evt, index) {
             const updatedData = [...toRaw(this.currentData)];
-            console.log("fuckList:", index);
             switch (evt) {
                 case 'plus': {
                     updatedData.splice(index + 1, 0, {
                         fn: '',
                         color: utils.generateRandomHarmoniousColor(),
-                        visible: false,
+                        visible: true,
                         graphType: 'polyline', // 添加默认图表类型
                         nSamples: 2025, // 确保有默认采样点数
                         dimension: 2
@@ -415,7 +437,7 @@ export default {
                     updatedData.push({
                         fn: '',
                         color: utils.generateRandomHarmoniousColor(),
-                        visible: false,
+                        visible: true,
                         graphType: 'polyline', // 添加默认图表类型
                         nSamples: 2025, // 确保有默认采样点数
                         dimension: 2
@@ -445,11 +467,13 @@ export default {
             }
             this.$store.commit('syncData', payload);
         },
+
         updateColor(color, index) {
             const currentData = [...toRaw(this.currentData)];
             currentData[index].color = color;
             this.fuckRender(currentData);
         },
+
         switchHomeShow(evt) {
             this.showHome = !this.showHome;
             switch (evt) {
@@ -459,8 +483,9 @@ export default {
                 }
             }
         },
+
         async userLogin() {
-            this.loading = true;
+            this.loading.login = true;
             const data = {
                 login: this.account,
                 password: this.password
@@ -471,13 +496,14 @@ export default {
                 this.fuckRender(this.currentData);
                 document.getElementById('logInModal').checked = false;
                 this.initFormData();
+                this.getHisData();
                 setTimeout(() => {
                     this.showInfo = true;
                 }, 400);
             } else {
                 console.log('登录失败:', error);
             }
-            this.loading = false;
+            this.loading.login = false;
         },
         logout() {
             document.getElementById('logInModal').checked = false;
@@ -485,8 +511,8 @@ export default {
                 this.$store.commit('auth/setToken', null);
                 this.$store.commit('auth/setUser', null);
                 this.formData = {};
-                this.userInfo = {};
                 this.showInfo = false;
+                console.log(this.userInfo);
             }, 400);
         },
 
@@ -511,7 +537,7 @@ export default {
         },
 
         async updateUserInfo() {
-            this.loading = true;
+            this.loading.updateInfo = true;
             const { success, error } = await service.updateUserInfo(this.formData);
             if (success) {
                 this.initFormData();
@@ -519,7 +545,7 @@ export default {
             } else {
                 console.log('更新用户信息失败:', error);
             }
-            this.loading = false;
+            this.loading.updateInfo = false;
         },
 
         initFormData() {
@@ -528,7 +554,19 @@ export default {
                 nickname: this.userInfo.nickname || '',
                 username: this.userInfo.username || '',
             }
-        }
+        },
+
+        async getHisData(currentPage = 1) {
+            const { success, data, error } = await service.getHistoricalData(currentPage);
+            if (success) {
+                this.fnData = data.fnData;
+                this.pagination = data.pagination;
+                console.log('获取历史数据成功:', data);
+                
+            } else {
+                console.log('获取历史数据失败:', error);
+            }
+        } 
     }
 };
 </script>
