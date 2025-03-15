@@ -490,23 +490,6 @@ export default {
             }, 400);
         },
 
-        // 更新采样点数量 
-        updateSamplePoints(samples, index) {
-            if (!this.show_2D) return
-            console.log('666');
-            const validSamples = utils.clamp(samples, 500, 5000);
-            const data = [...toRaw(this.currentData)];
-            data[index].nSamples = validSamples;
-            const payload = {
-                data: data,
-                is2D: this.show_2D,
-                needUpload: true
-            }
-            this.$store.commit('syncData', payload);
-            if (this.currentData[index].visible) {
-                this.$refs.TwoDPlotCom.fuckRender(this.functionData_2D);
-            }
-        },
         // 更新缩放因子(zoomfactor)
         updateZoomFactor() {
             // 验证范围
