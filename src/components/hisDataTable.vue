@@ -94,7 +94,7 @@ export default {
     data() {
         return {
             selected: [],
-            loading: true,
+            loading: false,
         }
     },
     created() {

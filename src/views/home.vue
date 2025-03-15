@@ -205,10 +205,19 @@
             </div>
         </div>
     </div>
-    <hisDataTable v-show="showTable" :fnData="fnData" :pagination="pagination" 
-    class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
-    bg-base-100 rounded-box border border-base-content/10 overflow-auto lg:max-w-6xl md:max-w-3xl sm:max-w-1xl h-auto"
-    @changePage="getHisData" @closeTable="showTable = false"/>
+    <transition name="bg">
+    <div v-if="showTable" class="fixed inset-0 z-40" @click="showTable = false">
+        <div class="absolute inset-0 bg-black/30"></div>
+    </div>
+    </transition>
+    <transition name="table">
+        <hisDataTable v-if="showTable" :fnData="fnData" :pagination="pagination"
+            class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
+            bg-base-100 rounded-box border border-base-content/10 overflow-auto
+            lg:max-w-6xl md:max-w-3xl sm:max-w-1xl h-auto z-80"
+            @changePage="getHisData" @closeTable="showTable = false"
+            />
+    </transition>
 </template>
 
 <script>
@@ -562,11 +571,11 @@ export default {
                 this.fnData = data.fnData;
                 this.pagination = data.pagination;
                 console.log('获取历史数据成功:', data);
-                
+
             } else {
                 console.log('获取历史数据失败:', error);
             }
-        } 
+        }
     }
 };
 </script>
