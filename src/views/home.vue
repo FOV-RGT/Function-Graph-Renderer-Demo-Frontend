@@ -211,12 +211,14 @@ import packageJson from '../../package.json';
 import TwoDPlotCom from '../components/render2D.vue';
 import ThreeDPlotCom from '../components/render3D.vue';
 import icon from '../components/icon.vue';
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import { toRaw, markRaw } from 'vue';
 import * as utils from '../assets/utils/componentUtils';
-import authApi from '../api/auth';
 import fnApi from '../api/function';
 import { parse } from 'mathjs';
+import * as service from '../services/userService';
+
+
 
 export default {
     name: 'home',
@@ -239,7 +241,6 @@ export default {
             showInfo: false,
             zoomStep: 0.5,
             moveStep: 0.2,
-            userInfo: {},
             formData: {}
         };
     },
@@ -283,27 +284,13 @@ export default {
         }, 25);
     },
     async mounted() {
-        try {
-            if (!this.isAuthenticated) throw new Error('未登录');
-            console.log("查询token", this.$store.state.auth.token);
-            const authRes = await authApi.getUserInfo();
-            console.log('用户信息:', authRes);
-            this.userInfo = authRes.imformation;
-            this.$store.commit('auth/setUser', authRes);
-            this.showInfo = true;
-            const fnRes = await fnApi.getFunctionData();
-            console.log('历史数据:', fnRes);
-            const fnData = utils.sortData(fnRes.mathdatas);
-            const latestData = fnData.length > 0 ? fnData[fnData.length - 1] : [];
-            console.log('最新数据:', latestData);
-            const payload = {
-                data: latestData,
-                is2D: this.show_2D
-            }
-            this.$store.commit('syncData', payload);
+        const { success, error } = await service.initUserData();
+        if (success) {
             this.fuckRender(this.currentData);
+            this.initFormData();
+            this.showInfo = true;
             console.log('初始化用户信息成功');
-        } catch (error) {
+        } else {
             console.log('初始化用户信息失败:', error);
             this.$store.commit('auth/setToken', null);
         }
@@ -314,7 +301,7 @@ export default {
     },
     computed: {
         ...mapState(["functionData_2D", "functionData_3D"]),
-        ...mapState('auth', ['user', 'isAuthenticated']),
+        ...mapGetters('auth', ['userInfo', 'displayName', 'isAuthenticated']),
         currentInputExample() {
             return this.show_2D ? '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...'
                 : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
@@ -469,32 +456,18 @@ export default {
                 password: this.password
             }
             console.log('登录数据:', data);
-            try {
-                const loginRes = await authApi.login(data);
-                this.$store.commit('auth/setToken', loginRes.token);
-                const infoRes = await authApi.getUserInfo();
-                this.userInfo = infoRes.imformation;
-                console.log('登录成功:', this.userInfo);
-                this.$store.commit('auth/setUser', infoRes);
-                const fnRes = await fnApi.getFunctionData();
-                const fnData = utils.sortData(fnRes.mathdatas);
-                const latestData = fnData.length > 0 ? fnData[fnData.length - 1] : [];
-                const payload = {
-                    data: latestData,
-                    is2D: this.show_2D
-                }
-                console.log("负载:", payload);
-                this.$store.commit('syncData', payload);
+            const { success, error } = await service.login(data);
+            if (success) {
                 this.fuckRender(this.currentData);
                 document.getElementById('logInModal').checked = false;
+                this.initFormData();
                 setTimeout(() => {
                     this.showInfo = true;
                 }, 400);
-            } catch (error) {
+            } else {
                 console.log('登录失败:', error);
-            } finally {
-                this.loading = false;
             }
+            this.loading = false;
         },
         logout() {
             document.getElementById('logInModal').checked = false;
@@ -544,23 +517,14 @@ export default {
 
         async updateUserInfo() {
             this.loading = true;
-            const info = this.formData;
-            try {
-                const data = {
-                    email: info.email || '',
-                    nickname: info.nickname || '',
-                    username: info.username || ''
-                };
-                const res = await authApi.updateUserInfo(data);
-                this.$store.commit('auth/setUser', res);
-                this.userInfo = res.userinf;
+            const { success, error } = await service.updateUserInfo(this.formData);
+            if (success) {
                 this.initFormData();
-                console.log('更新用户信息成功:', res);
-            } catch (error) {
+                console.log('更新用户信息成功:', this.userInfo);
+            } else {
                 console.log('更新用户信息失败:', error);
-            } finally {
-                this.loading = false;
             }
+            this.loading = false;
         },
 
         initFormData() {

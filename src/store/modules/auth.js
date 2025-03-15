@@ -1,10 +1,5 @@
-import authApi from '../../api/auth';
 
 
-/**
- * 认证模块Vuex存储
- * 管理用户认证状态、令牌和相关操作
- */
 export default {
     // 指定命名空间，避免与其他模块的状态冲突
     namespaced: true,
@@ -21,27 +16,30 @@ export default {
         username: null
     },
     
+    getters: {
+        // 获取用户是否已认证
+        isAuthenticated: state => state.isAuthenticated,
+        // 获取完整的用户信息对象
+        userInfo: state => Object.freeze({
+            nickname: state.nickname,
+            email: state.email,
+            username: state.username
+        }),
+        // 获取显示名称（优先使用昵称）
+        displayName: state => state.nickname || state.username || null,
+    },
+    
     // 修改状态的方法
     mutations: {
-        /**
-         * 设置用户信息
-         * @param {Object} state - 当前状态
-         * @param {Object} user - 用户信息对象
-         */
         setUser(state, data) {
-            const nickname = !!data ? data.imformation?.nickname || data?.userinf?.nickname || "长期素食" : '';
-            const email = !!data ? data.imformation?.email || data?.userinf?.email || "未知邮箱" : '';
-            const username = !!data ? data.imformation?.username || data?.userinf?.username || "未知用户名" : '';
+            const nickname = data.nickname || "长期素食";
+            const email = data.email || "未知邮箱";
+            const username = data.username || "未知用户名";
             state.nickname = nickname;
             state.email = email;
             state.username = username;
         },
         
-        /**
-         * 设置认证令牌
-         * @param {Object} state - 当前状态
-         * @param {string} token - 认证令牌
-         */
         setToken(state, token) {
             state.token = token;
             state.isAuthenticated = !!token;
@@ -54,10 +52,6 @@ export default {
             }
         },
         
-        /**
-         * 注销用户
-         * @param {Object} state - 当前状态
-         */
         logout(state) {
             state.nickname = null;
             state.token = null;
@@ -67,8 +61,7 @@ export default {
         }
     },
     
-    // 异步操作方法
-    actions: {        
+    actions: {
         
     }
 };
