@@ -21,7 +21,8 @@ export async function initUserData(options = { is2D: true }) {
         // 更新数据
         const payload = {
             data: latestData,
-            is2D: options.is2D
+            is2D: options.is2D,
+            needUpload: false
         };
         store.commit('syncData', payload);
         return {
@@ -62,6 +63,32 @@ export async function updateUserInfo(info) {
         };
     } catch (error) {
         console.error('更新用户信息失败:', error);
+        return {
+            success: false,
+            error
+        };
+    }
+}
+
+export async function uploadFunctionData(data) {
+    if (!store.state.needUpload) {
+        return {
+            skip: true
+        }
+    }
+    try {
+        data = data.map(item => ({
+            fn: item.fn,
+            color: item.color,
+            nSamples: item.nSamples,
+            visible: item.visible,
+            dimension: item.dimension,
+        }));
+        await fnApi.uploadFunctionData(data);
+        return {
+            success: true
+        };
+    } catch (error) {
         return {
             success: false,
             error

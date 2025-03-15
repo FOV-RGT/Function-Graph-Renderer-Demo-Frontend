@@ -37,6 +37,7 @@ export class chartInstance {
         const payload = {
             data: newFunctionData,
             is2D: true,
+            needUpload: true,
         };
         store.commit("syncData", payload);
         return newFunctionData;

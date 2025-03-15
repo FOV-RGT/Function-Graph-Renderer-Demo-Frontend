@@ -255,7 +255,8 @@ export default {
                     newData[index].fn = formatInput;
                     const payload = {
                         data: newData,
-                        is2D: this.show_2D
+                        is2D: this.show_2D,
+                        needUpload: true
                     }
                     console.log("debouncedAddInput:", payload);
                     this.$store.commit('syncData', payload);
@@ -304,7 +305,7 @@ export default {
         ...mapGetters('auth', ['userInfo', 'displayName', 'isAuthenticated']),
         currentInputExample() {
             return this.show_2D ? '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...'
-                : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
+            : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
         },
         currentData() {
             console.log("💩");
@@ -336,19 +337,13 @@ export default {
         functionData_2D: {
             async handler(newVal) {
                 if (!this.isAuthenticated) return;
-                let data = markRaw(newVal);
-                data = data.map(item => ({
-                    fn: item.fn,
-                    color: item.color,
-                    nSamples: item.nSamples,
-                    visible: item.visible,
-                    dimension: item.dimension,
-                }));
-                try {
-                    await fnApi.uploadFunctionData(data);
-                    console.log('更新历史数据成功');
-                } catch (error) {
-                    console.log('更新历史数据失败:', error);
+                const { success, skip, error } = await service.uploadFunctionData(newVal);
+                if (success) {
+                    console.log('上传数据成功');
+                } else if (skip) {
+                    console.log('跳过本次更新');
+                } else {
+                    console.log('上传数据失败:', error);
                 }
             },
         }
@@ -431,7 +426,8 @@ export default {
             }
             const payload = {
                 data: updatedData,
-                is2D: this.show_2D
+                is2D: this.show_2D,
+                needUpload: true
             }
             this.$store.commit('syncData', payload);
         },
@@ -488,7 +484,8 @@ export default {
             data[index].nSamples = validSamples;
             const payload = {
                 data: data,
-                is2D: this.show_2D
+                is2D: this.show_2D,
+                needUpload: true
             }
             this.$store.commit('syncData', payload);
             if (this.currentData[index].visible) {
