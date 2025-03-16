@@ -203,7 +203,7 @@
                             <button type="submit" class="btn btn-success btn-soft mt-4">
                                 <div v-if="!loading.login" class="login-btn flex items-center gap-3">
                                     <span class="text-xl">登录</span>
-                                    <icon type="login" class="flex items-center" />
+                                    <icon type="login" />
                                 </div>
                                 <span v-else class="loading loading-spinner"></span>
                             </button>

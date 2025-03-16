@@ -45,9 +45,9 @@
                     两次输入的密码不一致
                 </p>
                 <button type="submit" class="btn btn-success btn-soft mt-4" :disabled="!isFormValid || loading">
-                    <div v-if="!loading" class="login-btn flex items-center gap-3">
+                    <div v-if="!loading" class="register-btn flex items-center gap-3">
                         <span class="text-xl">注册</span>
-                        <icon type="login" class="flex items-center" />
+                        <icon type="solution" />
                     </div>
                     <span v-else class="loading loading-spinner"></span>
                 </button>
@@ -130,4 +130,10 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+
+.register-btn .iconfont {
+    font-size: 1.8em;
+}
+
+</style>
