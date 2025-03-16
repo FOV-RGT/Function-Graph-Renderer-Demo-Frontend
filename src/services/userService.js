@@ -132,3 +132,17 @@ export async function delectFunctionData(id) {
         };
     }
 }
+
+export async function register(credentials) {
+    try {
+        await authApi.register(credentials);
+        return {
+            success: true
+        };
+    } catch (error) {
+        return {
+            success: false,
+            error
+        };
+    }
+}

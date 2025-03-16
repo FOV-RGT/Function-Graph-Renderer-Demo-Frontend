@@ -25,6 +25,7 @@ const map = {
     close: "icon-close",
     doubleLeft: "icon-doubleleft",
     doubleRight: "icon-doubleright",
+    smile: "icon-smile",
 };
 export default {
     props: {
@@ -46,5 +47,5 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://at.alicdn.com/t/c/font_4845730_aes10i1tt5v.css?spm=a313x.manage_type_myprojects.i1.9.7c703a81oVCRPt&file=font_4845730_aes10i1tt5v.css');
+@import url('https://at.alicdn.com/t/c/font_4845730_idisd9g8hw.css?spm=a313x.manage_type_myprojects.i1.9.7c703a81BePRJl&file=font_4845730_idisd9g8hw.css');
 </style>

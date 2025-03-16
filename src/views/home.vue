@@ -92,7 +92,7 @@
                 <ThreeDPlotCom ref="ThreeDPlotCom" v-show="!show_2D" class="renderComponent" />
             </div>
             <div class="foot h-1/20 flex justify-evenly items-center overflow-hidden">
-                <label class="btn btn-lg" for="logInModal">
+                <button class="btn btn-lg" @click="showLoginModal = !showLoginModal">
                     <div v-if="!isAuthenticated">
                         <div class="status status-info animate-bounce"></div>
                         请登录
@@ -101,51 +101,7 @@
                         <div aria-label="success" class="status status-success"></div>
                         <span class="text-2xl">{{ greetingMessage + userInfo.nickname }}</span>
                     </div>
-                </label>
-                <input type="checkbox" id="logInModal" class="modal-toggle"
-                    @change="$event.target.checked && initFormData()" />
-                <div class="modal" role="dialog">
-                    <div class="modal-box">
-                        <form @submit.prevent="userLogin" v-if="!showInfo">
-                            <fieldset
-                                class="fieldset w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
-                                <legend class="fieldset-legend cursor-default"><span>登录</span></legend>
-                                <label class="fieldset-label cursor-default"><span>账号</span></label>
-                                <input type="text" class="input w-auto" placeholder="Account" v-model="account"
-                                    autocomplete="username" />
-                                <label class="fieldset-label cursor-default"><span>密码</span></label>
-                                <input type="password" class="input w-auto" v-model="password" placeholder="Password"
-                                    autocomplete="current-password" />
-                                <button type="submit" class="btn btn-success btn-soft mt-4">
-                                    <div v-if="!loading.login">
-                                        <icon type="login" />
-                                        <span class="text-lg">登录</span>
-                                    </div>
-                                    <span v-else class="loading loading-spinner"></span>
-                                </button>
-                            </fieldset>
-                        </form>
-                        <div v-else
-                            class="fieldset user-info w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
-                            <icon type="logout" class="ml-auto text-error cursor-pointer" @click="logout" />
-                            <div class="cursor-default">用户信息</div>
-                            <div class="cursor-default flex items-center space-x-1"><span>昵称:</span><input type="text"
-                                    placeholder="昵称" class="input input-ghost text-xl rounded-sm pl-0.5"
-                                    v-model="formData.nickname" /></div>
-                            <div class="cursor-default flex items-center space-x-1"><span>邮箱:</span><input type="text"
-                                    placeholder="邮箱" class="input input-ghost text-xl rounded-sm pl-0.5"
-                                    v-model="formData.email" /></div>
-                            <div class="cursor-default flex items-center space-x-1"><span>账号:</span><input type="text"
-                                    placeholder="账号" class="input input-ghost text-xl rounded-sm pl-0.5"
-                                    v-model="formData.username" /></div>
-                            <button class="btn btn-block btn-lg btn-info btn-soft text-xl" @click="updateUserInfo">
-                                <span v-if="!loading.updateInfo">提交修改</span>
-                                <span v-else class="loading loading-spinner"></span>
-                            </button>
-                        </div>
-                    </div>
-                    <label class="modal-backdrop" for="logInModal">Close</label>
-                </div>
+                </button>
                 <!-- 缩放步长控制组件 -->
                 <div class="zoomFactorControl flex items-center">
                     <label class="text-xs mr-1 text-slate-300/80">缩放步长:</label>
@@ -213,7 +169,69 @@
                     class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
             bg-base-100 rounded-box border border-base-content/10 overflow-auto lg:w-5xl md:w-2xl sm:w-1xl h-auto z-80"
                     @changePage="getHisData" @renderFn="renderFn" @delectData="delectData"
-                    @closeTable="showTable=false" @deleteLocalData="deleteLocalData"/>
+                    @closeTable="showTable = false" @deleteLocalData="deleteLocalData" />
+            </transition>
+            <transition name="bg">
+                <div v-show="showLoginModal || showRegisterModal" class="fixed inset-0 z-40"
+                    @click="showLoginModal = false; showRegisterModal = false">
+                    <div class="absolute inset-0 bg-black/30"></div>
+                </div>
+            </transition>
+            <transition name="table">
+                <div v-show="showLoginModal" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] bg-base-100 rounded-box
+                border border-base-content/10 overflow-auto lg:w-2xl md:w-xl sm:w-md h-auto z-80">
+                    <form @submit.prevent="userLogin" v-if="!showInfo">
+                        <fieldset class="fieldset w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
+                            <div class="fieldset-label cursor-default flex items-center justify-center">
+                                <span class="text-center text-2xl text-amber-700/90 select-none">Login</span>
+                            </div>
+                            <div class="fieldset-label flex justify-between items-center">
+                                <span class="cursor-default select-none">账号</span>
+                                <button type="button" class="register-btn btn btn-soft btn-info btn-md w-[10em]
+                                    flex items-center justify-evenly p-0" @click="switchModal">
+                                    <span class="text-lg">注册账号</span>
+                                    <icon type="smile" />
+                                </button>
+                            </div>
+                            <input type="text" class="input w-auto" placeholder="Account" v-model="account"
+                                autocomplete="username" />
+                            <div class="fieldset-label cursor-default select-none">
+                                <span>密码</span>
+                            </div>
+                            <input type="password" class="input w-auto" v-model="password" placeholder="Password"
+                                autocomplete="current-password" />
+                            <button type="submit" class="btn btn-success btn-soft mt-4">
+                                <div v-if="!loading.login" class="login-btn flex items-center gap-3">
+                                    <span class="text-xl">登录</span>
+                                    <icon type="login" class="flex items-center" />
+                                </div>
+                                <span v-else class="loading loading-spinner"></span>
+                            </button>
+                        </fieldset>
+                    </form>
+                    <div v-else class="fieldset user-info w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
+                        <icon type="logout" class="ml-auto text-error cursor-pointer" @click="logout" />
+                        <div class="cursor-default">用户信息</div>
+                        <div class="cursor-default flex items-center space-x-1"><span>昵称:</span><input type="text"
+                                placeholder="昵称" class="input input-ghost text-xl rounded-sm pl-0.5"
+                                v-model="formData.nickname" /></div>
+                        <div class="cursor-default flex items-center space-x-1"><span>邮箱:</span><input type="text"
+                                placeholder="邮箱" class="input input-ghost text-xl rounded-sm pl-0.5"
+                                v-model="formData.email" /></div>
+                        <div class="cursor-default flex items-center space-x-1"><span>账号:</span><input type="text"
+                                placeholder="账号" class="input input-ghost text-xl rounded-sm pl-0.5"
+                                v-model="formData.username" /></div>
+                        <button class="btn btn-block btn-lg btn-info btn-soft text-xl" @click="updateUserInfo">
+                            <span v-if="!loading.updateInfo">提交修改</span>
+                            <span v-else class="loading loading-spinner"></span>
+                        </button>
+                    </div>
+                </div>
+            </transition>
+            <transition name="table">
+                    <register v-show="showRegisterModal" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] bg-base-100 rounded-box
+                    border border-base-content/10 overflow-auto lg:w-2xl md:w-xl sm:w-md h-auto z-80"
+                    @switchModal="switchModal"/>
             </transition>
         </div>
     </div>
@@ -230,6 +248,7 @@ import * as utils from '../assets/utils/componentUtils';
 import { parse } from 'mathjs';
 import * as service from '../services/userService';
 import hisDataTable from '../components/hisDataTable.vue';
+import register from '../components/register.vue';
 
 
 
@@ -239,7 +258,8 @@ export default {
         TwoDPlotCom,
         ThreeDPlotCom,
         icon,
-        hisDataTable
+        hisDataTable,
+        register
     },
     data() {
         return {
@@ -263,6 +283,8 @@ export default {
             fnData: [],
             pagination: {},
             localFnData: [],
+            showLoginModal: false,
+            showRegisterModal: false,
         };
     },
     created() {
@@ -519,7 +541,7 @@ export default {
                 this.$store.commit('setUpload', true);
                 await this.uploadUserData(this.localFnData);
                 await this.getHisData();
-                document.getElementById('logInModal').checked = false;
+                this.showLoginModal = false;
                 this.initFormData();
                 this.localFnData = [];
                 setTimeout(() => {
@@ -532,7 +554,7 @@ export default {
         },
 
         logout() {
-            document.getElementById('logInModal').checked = false;
+            this.showLoginModal = false;
             const data_2D = utils.deepClone(this.functionData_2D)
             const data_3D = utils.deepClone(this.functionData_3D)
             this.localFnData = [...data_2D, ...data_3D];
@@ -635,7 +657,12 @@ export default {
 
         deleteLocalData(deleteIds) {
             this.localFnData = this.localFnData.filter(item => !deleteIds.has(item.id));
-        }
+        },
+
+        switchModal() {
+            this.showLoginModal = !this.showLoginModal;
+            this.showRegisterModal = !this.showRegisterModal;
+        },
     }
 };
 </script>

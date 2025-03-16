@@ -4,7 +4,7 @@
             <thead>
                 <tr class="text-xl">
                     <th>
-                        <input type="checkbox" class="checkbox" :checked="isSelectedAll" @change="selectAll" />
+                        <input type="checkbox" class="checkbox border-2 checked:bg-amber-700/90 hover:border-amber-500/80" :checked="isSelectedAll" @change="selectAll" :disabled="!displayData.length" />
                     </th>
                     <th class="text-center">序列号</th>
                     <th class="text-center">方程</th>
@@ -20,7 +20,7 @@
             <tbody>
                 <tr v-for="(item, index) in displayData" :key="index">
                     <th>
-                        <input type="checkbox" class="checkbox" :checked="isSelected(item)"
+                        <input type="checkbox" class="checkbox border-2 checked:bg-amber-700/90 hover:border-amber-500/80" :checked="isSelected(item)"
                             @change="toggleSelect(item)" />
                     </th>
                     <td class="text-center text-lg">
@@ -163,6 +163,7 @@ export default {
             } else {
                 this.selection = [...this.displayData];
             }
+            console.log(this.selection);
         },
         clearSelection() {
             this.selection = [];

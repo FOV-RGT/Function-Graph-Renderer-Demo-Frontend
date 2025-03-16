@@ -115,3 +115,11 @@
     opacity: 0;
     transform: scale(0.8);
 }
+
+.register-btn .iconfont {
+    font-size: 1.8em;
+}
+
+.login-btn .iconfont {
+    font-size: 1.5em;
+}
