@@ -86,7 +86,7 @@
                 <li class="list-row text-4xl text-pink-800">若叶 睦</li>
             </ul>
         </div>
-        <div class="main-right flex-1 shrink-1 pt-6 pr-4 overflow-hidden">
+        <div class="main-right flex-1 shrink-1 pt-6 pr-4 overflow-hidden relative">
             <div class="plotComponents h-19/20">
                 <TwoDPlotCom ref="TwoDPlotCom" v-show="show_2D" class="renderComponent pl-2" />
                 <ThreeDPlotCom ref="ThreeDPlotCom" v-show="!show_2D" class="renderComponent" />
@@ -203,21 +203,20 @@
                     </button>
                 </div>
             </div>
+            <transition name="bg">
+                <div v-show="showTable" class="fixed inset-0 z-40" @click="showTable = false">
+                    <div class="absolute inset-0 bg-black/30"></div>
+                </div>
+            </transition>
+            <transition name="table">
+                <hisDataTable v-show="showTable" :fnData="fnData" :pagination="pagination" :localFnData="localFnData"
+                    class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
+            bg-base-100 rounded-box border border-base-content/10 overflow-auto lg:w-5xl md:w-2xl sm:w-1xl h-auto z-80"
+                    @changePage="getHisData" @renderFn="renderFn" @delectData="delectData"
+                    @closeTable="showTable=false" @deleteLocalData="deleteLocalData"/>
+            </transition>
         </div>
     </div>
-    <transition name="bg">
-    <div v-if="showTable" class="fixed inset-0 z-40" @click="showTable = false">
-        <div class="absolute inset-0 bg-black/30"></div>
-    </div>
-    </transition>
-    <transition name="table">
-        <hisDataTable v-if="showTable" :fnData="fnData" :pagination="pagination"
-            class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
-            bg-base-100 rounded-box border border-base-content/10 overflow-auto
-            lg:max-w-6xl md:max-w-3xl sm:max-w-1xl h-auto z-80"
-            @changePage="getHisData" @closeTable="showTable = false"
-            />
-    </transition>
 </template>
 
 <script>
@@ -263,6 +262,7 @@ export default {
             showTable: false,
             fnData: [],
             pagination: {},
+            localFnData: [],
         };
     },
     created() {
@@ -274,14 +274,18 @@ export default {
                     parse(formatInput);
                     const newData = [...toRaw(this.currentData)];
                     newData[index].fn = formatInput;
+                    if (!this.$store.state.auth.isAuthenticated) {
+                        this.localFnData.unshift(structuredClone(newData[index]));
+                    }
                     const payload = {
                         data: newData,
                         is2D: this.show_2D,
                         needUpload: true
                     }
-                    console.log("debouncedAddInput:", payload);
                     this.$store.commit('syncData', payload);
-                    this.fuckRender(newData);
+                    if (this.currentData[index].visible) {
+                        this.$refs.TwoDPlotCom.fuckRender(this.functionData_2D);
+                    }
                 } catch (error) {
                     console.log('输入错误:', error);
                     return;
@@ -295,6 +299,9 @@ export default {
             const validSamples = utils.clamp(samples, 500, 5000);
             const data = [...toRaw(this.currentData)];
             data[index].nSamples = validSamples;
+            if (!this.$store.state.auth.isAuthenticated) {
+                this.localFnData.unshift(structuredClone(data[index]));
+            }
             const payload = {
                 data: data,
                 is2D: this.show_2D,
@@ -317,7 +324,12 @@ export default {
         this.throttleupdateColor = utils.throttle((color, index) => {
             const currentData = [...toRaw(this.currentData)];
             currentData[index].color = color;
-            this.fuckRender(currentData);
+            if (!this.$store.state.auth.isAuthenticated) {
+                this.localFnData.unshift(structuredClone(currentData[index]));
+            }
+            if (this.currentData[index].visible) {
+                this.$refs.TwoDPlotCom.fuckRender(this.functionData_2D);
+            }
         }, 25);
     },
     async mounted() {
@@ -372,16 +384,8 @@ export default {
     },
     watch: {
         functionData_2D: {
-            async handler(newVal) {
-                if (!this.isAuthenticated) return;
-                const { success, skip, error } = await service.uploadFunctionData(newVal);
-                if (success) {
-                    console.log('上传数据成功');
-                } else if (skip) {
-                    console.log('跳过本次更新');
-                } else {
-                    console.log('上传数据失败:', error);
-                }
+            handler(newVal) {
+                this.uploadUserData(newVal);
             },
         }
     },
@@ -432,25 +436,33 @@ export default {
             const updatedData = [...toRaw(this.currentData)];
             switch (evt) {
                 case 'plus': {
-                    updatedData.splice(index + 1, 0, {
+                    const fnData = {
                         fn: '',
                         color: utils.generateRandomHarmoniousColor(),
                         visible: true,
                         graphType: 'polyline', // 添加默认图表类型
                         nSamples: 2025, // 确保有默认采样点数
                         dimension: 2
-                    });
+                    };
+                    if (!this.$store.state.auth.isAuthenticated) {
+                        this.localFnData.unshift(structuredClone(fnData));
+                    }
+                    updatedData.splice(index + 1, 0, fnData);
                     break;
                 }
                 case 'plus-b': {
-                    updatedData.push({
+                    const fnData = {
                         fn: '',
                         color: utils.generateRandomHarmoniousColor(),
                         visible: true,
                         graphType: 'polyline', // 添加默认图表类型
                         nSamples: 2025, // 确保有默认采样点数
                         dimension: 2
-                    });
+                    };
+                    if (!this.$store.state.auth.isAuthenticated) {
+                        this.localFnData.unshift(structuredClone(fnData));
+                    }
+                    updatedData.push(fnData);
                     break;
                 }
                 case 'minus': {
@@ -460,11 +472,17 @@ export default {
                 }
                 case 'delect': {
                     updatedData[index].fn = '';
+                    if (!this.$store.state.auth.isAuthenticated) {
+                        this.localFnData.unshift(structuredClone(updatedData[index]));
+                    }
                     this.fuckRender(updatedData);
                     break;
                 }
                 case 'visible': {
                     updatedData[index].visible = !updatedData[index].visible;
+                    if (!this.$store.state.auth.isAuthenticated) {
+                        this.localFnData.unshift(structuredClone(updatedData[index]));
+                    }
                     this.fuckRender(updatedData);
                     break;
                 }
@@ -475,12 +493,6 @@ export default {
                 needUpload: true
             }
             this.$store.commit('syncData', payload);
-        },
-
-        updateColor(color, index) {
-            const currentData = [...toRaw(this.currentData)];
-            currentData[index].color = color;
-            this.fuckRender(currentData);
         },
 
         switchHomeShow(evt) {
@@ -500,12 +512,16 @@ export default {
                 password: this.password
             }
             console.log('登录数据:', data);
-            const { success, error } = await service.login(data);
+            const needNewData = this.localFnData.length === 0 && this.currentData.length === 0;
+            const { success, error } = await service.login(data, needNewData);
             if (success) {
                 this.fuckRender(this.currentData);
+                this.$store.commit('setUpload', true);
+                await this.uploadUserData(this.localFnData);
+                await this.getHisData();
                 document.getElementById('logInModal').checked = false;
                 this.initFormData();
-                this.getHisData();
+                this.localFnData = [];
                 setTimeout(() => {
                     this.showInfo = true;
                 }, 400);
@@ -514,8 +530,12 @@ export default {
             }
             this.loading.login = false;
         },
+
         logout() {
             document.getElementById('logInModal').checked = false;
+            const data_2D = utils.deepClone(this.functionData_2D)
+            const data_3D = utils.deepClone(this.functionData_3D)
+            this.localFnData = [...data_2D, ...data_3D];
             setTimeout(() => {
                 this.$store.commit('auth/setToken', null);
                 this.$store.commit('auth/setUser', null);
@@ -567,14 +587,54 @@ export default {
 
         async getHisData(currentPage = 1) {
             const { success, data, error } = await service.getHistoricalData(currentPage);
+            console.log('获取历史数据:', data);
             if (success) {
                 this.fnData = data.fnData;
                 this.pagination = data.pagination;
                 console.log('获取历史数据成功:', data);
-
             } else {
                 console.log('获取历史数据失败:', error);
             }
+        },
+
+        renderFn(data) {
+            const data_2D = data.data_2D;
+            const data_3D = data.data_3D; // 开摆
+            const newData_2D = [...toRaw(this.functionData_2D)];
+            newData_2D.push(...data_2D);
+            this.$store.commit('syncData', {
+                data: newData_2D,
+                is2D: true,
+                needUpload: true
+            });
+            this.fuckRender(this.currentData);
+        },
+
+        async delectData(data, callback) {
+            const { success, error } = await service.delectFunctionData(data);
+            if (success) {
+                console.log('删除数据成功');
+                callback();
+                this.getHisData();
+            } else {
+                console.log('删除数据失败:', error);
+            }
+        },
+
+        async uploadUserData(data) {
+            if (!this.isAuthenticated || data.length === 0) return;
+            const { success, skip, error } = await service.uploadFunctionData(data);
+            if (success) {
+                console.log('上传数据成功');
+            } else if (skip) {
+                console.log('跳过本次更新');
+            } else {
+                console.log('上传数据失败:', error);
+            }
+        },
+
+        deleteLocalData(deleteIds) {
+            this.localFnData = this.localFnData.filter(item => !deleteIds.has(item.id));
         }
     }
 };

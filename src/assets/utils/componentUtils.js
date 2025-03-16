@@ -339,7 +339,7 @@ export const sha256 = async (input) => {
 
 export const sortData = (data) => {
     if (!data || !data.length) return [];
-    const newData = data.sort((a, b) => a.id - b.id);
+    const newData = data.sort((a, b) => b.id - a.id);
     let dataArray = [];
     newData.forEach((item) => {
         if (!dataArray[item.uploadId]) {

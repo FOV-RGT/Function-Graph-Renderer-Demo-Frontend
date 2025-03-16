@@ -27,6 +27,9 @@ const store = createStore({
             }
             state.needUpload = payload.needUpload;
         },
+        setUpload(state, needUpload) {
+            state.needUpload = needUpload
+        }
     },
     actions: {
         
