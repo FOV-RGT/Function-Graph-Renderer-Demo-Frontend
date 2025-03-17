@@ -308,11 +308,15 @@ export default {
             const formatInput = input.replace(/\s+/g, "");
             if (this.show_2D) {
                 try {
-                    parse(formatInput);
+                    console.log('输入:', formatInput);
+                    
+                    if (input) {
+                        parse(formatInput);
+                    }
                     const newData = [...toRaw(this.currentData)];
                     newData[index].fn = formatInput;
                     if (!this.$store.state.auth.isAuthenticated) {
-                        this.localFnData.unshift(structuredClone(newData[index]));
+                        this.localFnData.unshift(utils.deepClone(newData[index]));
                     } else {
                         this.uploadChangeData(newData[index]);
                     }
@@ -339,7 +343,7 @@ export default {
             const data = [...toRaw(this.currentData)];
             data[index].nSamples = validSamples;
             if (!this.$store.state.auth.isAuthenticated) {
-                this.localFnData.unshift(structuredClone(data[index]));
+                this.localFnData.unshift(utils.deepClone(data[index]));
             } else {
                 this.uploadChangeData(data[index]);
             }
@@ -367,7 +371,7 @@ export default {
             currentData[index].color = color;
             service.uploadChangeData()
             if (!this.$store.state.auth.isAuthenticated) {
-                this.localFnData.unshift(structuredClone(currentData[index]));
+                this.localFnData.unshift(utils.deepClone(currentData[index]));
             } else {
                 this.uploadChangeData(currentData[index]);
             }
@@ -489,7 +493,7 @@ export default {
                         dimension: 2
                     };
                     if (!this.$store.state.auth.isAuthenticated) {
-                        this.localFnData.unshift(structuredClone(fnData));
+                        this.localFnData.unshift(utils.deepClone(fnData));
                     } else {
                         this.uploadChangeData(fnData);
                     }
@@ -506,7 +510,7 @@ export default {
                         dimension: 2
                     };
                     if (!this.$store.state.auth.isAuthenticated) {
-                        this.localFnData.unshift(structuredClone(fnData));
+                        this.localFnData.unshift(utils.deepClone(fnData));
                     } else {
                         this.uploadChangeData(fnData);
                     }
@@ -521,7 +525,7 @@ export default {
                 case 'delect': {
                     updatedData[index].fn = '';
                     if (!this.$store.state.auth.isAuthenticated) {
-                        this.localFnData.unshift(structuredClone(updatedData[index]));
+                        this.localFnData.unshift(utils.deepClone(updatedData[index]));
                     } else {
                         this.uploadChangeData(updatedData[index]);
                     }
@@ -531,7 +535,7 @@ export default {
                 case 'visible': {
                     updatedData[index].visible = !updatedData[index].visible;
                     if (!this.$store.state.auth.isAuthenticated) {
-                        this.localFnData.unshift(structuredClone(updatedData[index]));
+                        this.localFnData.unshift(utils.deepClone(updatedData[index]));
                     } else {
                         service.uploadChangeData(updatedData[index]);
                     }
