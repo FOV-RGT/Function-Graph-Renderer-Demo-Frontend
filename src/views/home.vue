@@ -74,7 +74,7 @@
                         <icon type="plus" extraclass="cursor-pointer select-none" @click="fuckList('plus-b')" />
                     </div>
                 </li>
-                <li class="list-row text-4xl text-sky-600">千早 爱音</li>
+                <!-- <li class="list-row text-4xl text-sky-600">千早 爱音</li>
                 <li class="list-row text-4xl text-sky-600">长崎 素世</li>
                 <li class="list-row text-4xl text-sky-600">高松 灯</li>
                 <li class="list-row text-4xl text-sky-600">椎名 立希</li>
@@ -83,7 +83,7 @@
                 <li class="list-row text-4xl text-pink-800">八幡 海铃</li>
                 <li class="list-row text-4xl text-pink-800">三角 初华</li>
                 <li class="list-row text-4xl text-pink-800">祐天寺 若麦</li>
-                <li class="list-row text-4xl text-pink-800">若叶 睦</li>
+                <li class="list-row text-4xl text-pink-800">若叶 睦</li> -->
             </ul>
         </div>
         <div class="main-right flex-1 shrink-1 pt-6 pr-4 overflow-hidden relative">
