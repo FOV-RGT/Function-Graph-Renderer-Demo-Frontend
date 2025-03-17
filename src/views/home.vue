@@ -74,7 +74,7 @@
                         <icon type="plus" extraclass="cursor-pointer select-none" @click="fuckList('plus-b')" />
                     </div>
                 </li>
-                <!-- <li class="list-row text-4xl text-sky-600">千早 爱音</li>
+                <li class="list-row text-4xl text-sky-600">千早 爱音</li>
                 <li class="list-row text-4xl text-sky-600">长崎 素世</li>
                 <li class="list-row text-4xl text-sky-600">高松 灯</li>
                 <li class="list-row text-4xl text-sky-600">椎名 立希</li>
@@ -83,7 +83,7 @@
                 <li class="list-row text-4xl text-pink-800">八幡 海铃</li>
                 <li class="list-row text-4xl text-pink-800">三角 初华</li>
                 <li class="list-row text-4xl text-pink-800">祐天寺 若麦</li>
-                <li class="list-row text-4xl text-pink-800">若叶 睦</li> -->
+                <li class="list-row text-4xl text-pink-800">若叶 睦</li>
             </ul>
         </div>
         <div class="main-right flex-1 shrink-1 pt-6 pr-4 overflow-hidden relative">
@@ -168,7 +168,7 @@
                 <hisDataTable v-show="showTable" :fnData="fnData" :pagination="pagination" :localFnData="localFnData"
                     class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
             bg-base-100 rounded-box border border-base-content/10 overflow-auto lg:w-5xl md:w-2xl sm:w-1xl h-auto z-80"
-                    @changePage="getHisData" @renderFn="renderFn" @delectData="delectData"
+                    @changePage="getChangeData" @renderFn="renderFn" @delectData="delectData"
                     @closeTable="showTable = false" @deleteLocalData="deleteLocalData" />
             </transition>
             <transition name="bg">
@@ -180,7 +180,7 @@
             <transition name="table">
                 <div v-show="showLoginModal" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] bg-base-100 rounded-box
                 border border-base-content/10 overflow-auto lg:w-2xl md:w-xl sm:w-md h-auto z-80">
-                    <form @submit.prevent="userLogin({login: account, password: password})" v-if="!showInfo">
+                    <form @submit.prevent="userLogin({ login: account, password: password })" v-if="!showInfo">
                         <fieldset class="fieldset w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
                             <div class="fieldset-label cursor-default flex items-center justify-center">
                                 <span class="text-center text-2xl text-primary select-none">Login</span>
@@ -193,13 +193,13 @@
                                     <icon type="smile" />
                                 </button>
                             </div>
-                            <input type="text" required class="input w-auto validator" placeholder="Account" v-model="account"
-                                title="请输入账号或邮箱" autocomplete="username" />
+                            <input type="text" required class="input w-auto validator" placeholder="Account"
+                                v-model="account" title="请输入账号或邮箱" autocomplete="username" />
                             <div class="fieldset-label cursor-default select-none">
                                 <span>密码</span>
                             </div>
-                            <input type="password" required class="input w-auto validator" v-model="password" placeholder="Password"
-                            title="请输入密码" autocomplete="current-password" />
+                            <input type="password" required class="input w-auto validator" v-model="password"
+                                placeholder="Password" title="请输入密码" autocomplete="current-password" />
                             <button type="submit" class="btn btn-success btn-soft mt-4">
                                 <div v-if="!loading.login" class="login-btn flex items-center gap-3">
                                     <span class="text-xl">登录</span>
@@ -209,25 +209,29 @@
                             </button>
                         </fieldset>
                     </form>
-                    <div v-else class="fieldset user-info w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
-                        <icon type="logout" class="ml-auto text-error cursor-pointer" @click="logout" />
-                        <div class="cursor-default">用户信息</div>
-                        <div class="cursor-default flex items-center space-x-1">
-                            <span>昵称:</span>
-                            <input type="text" placeholder="昵称" class="input input-ghost text-xl rounded-sm pl-0.5"
-                            v-model="formData.nickname" />
+                    <div v-else class="user-info w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl
+                    flex flex-col justify-center space-y-3">
+                        <div class="cursor-default flex items-center justify-between">
+                            <span>用户信息</span>
+                            <button type="button" class="btn btn-soft btn-error btn-md flex items-center justify-evenly" @click="logout">
+                                <span class="text-xl">退出登录</span>
+                                <icon type="logout" class="text-error" />
+                            </button>
                         </div>
                         <div class="cursor-default flex items-center space-x-1">
-                            <span>邮箱:</span>
-                            <input type="text"
-                            placeholder="邮箱" class="input input-ghost text-xl rounded-sm pl-0.5"
-                            v-model="formData.email" />
+                            <span class="whitespace-nowrap">昵称:</span>
+                            <input type="text" placeholder="昵称" class="input input-ghost text-xl rounded-sm pl-0.5 w-full"
+                                v-model="formData.nickname" />
                         </div>
                         <div class="cursor-default flex items-center space-x-1">
-                            <span>账号:</span>
-                            <input type="text"
-                            placeholder="账号" class="input input-ghost text-xl rounded-sm pl-0.5"
-                            v-model="formData.username" />
+                            <span class="whitespace-nowrap">邮箱:</span>
+                            <input type="text" placeholder="邮箱" class="input input-ghost text-xl rounded-sm pl-0.5 w-full"
+                                v-model="formData.email" />
+                        </div>
+                        <div class="cursor-default flex items-center space-x-1">
+                            <span class="whitespace-nowrap">账号:</span>
+                            <input type="text" placeholder="账号" class="input input-ghost text-xl rounded-sm pl-0.5 w-full"
+                                v-model="formData.username" />
                         </div>
                         <button class="btn btn-block btn-lg btn-info btn-soft text-xl" @click="updateUserInfo">
                             <span v-if="!loading.updateInfo">提交修改</span>
@@ -237,11 +241,11 @@
                 </div>
             </transition>
             <transition name="table">
-                    <register ref="register" v-show="showRegisterModal" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] bg-base-100 rounded-box
-                    border border-base-content/10 overflow-auto h-auto z-80"
-                    @switchModal="switchModal" @login="userLogin"/>
+                <register ref="register" v-show="showRegisterModal" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] bg-base-100 rounded-box
+                    border border-base-content/10 overflow-auto h-auto z-80" @switchModal="switchModal"
+                    @login="userLogin" />
             </transition>
-            <popupWindow ref="popupWindow"/>
+            <popupWindow ref="popupWindow" />
         </div>
     </div>
 </template>
@@ -309,6 +313,8 @@ export default {
                     newData[index].fn = formatInput;
                     if (!this.$store.state.auth.isAuthenticated) {
                         this.localFnData.unshift(structuredClone(newData[index]));
+                    } else {
+                        this.uploadChangeData(newData[index]);
                     }
                     const payload = {
                         data: newData,
@@ -334,6 +340,8 @@ export default {
             data[index].nSamples = validSamples;
             if (!this.$store.state.auth.isAuthenticated) {
                 this.localFnData.unshift(structuredClone(data[index]));
+            } else {
+                this.uploadChangeData(data[index]);
             }
             const payload = {
                 data: data,
@@ -357,8 +365,11 @@ export default {
         this.throttleupdateColor = utils.throttle((color, index) => {
             const currentData = [...toRaw(this.currentData)];
             currentData[index].color = color;
+            service.uploadChangeData()
             if (!this.$store.state.auth.isAuthenticated) {
                 this.localFnData.unshift(structuredClone(currentData[index]));
+            } else {
+                this.uploadChangeData(currentData[index]);
             }
             if (this.currentData[index].visible) {
                 this.$refs.TwoDPlotCom.fuckRender(this.functionData_2D);
@@ -370,7 +381,7 @@ export default {
         if (success) {
             this.fuckRender(this.currentData);
             this.initFormData();
-            this.getHisData();
+            this.getChangeData();
             this.showInfo = true;
             console.log('初始化用户信息成功');
         } else {
@@ -479,6 +490,8 @@ export default {
                     };
                     if (!this.$store.state.auth.isAuthenticated) {
                         this.localFnData.unshift(structuredClone(fnData));
+                    } else {
+                        this.uploadChangeData(fnData);
                     }
                     updatedData.splice(index + 1, 0, fnData);
                     break;
@@ -494,6 +507,8 @@ export default {
                     };
                     if (!this.$store.state.auth.isAuthenticated) {
                         this.localFnData.unshift(structuredClone(fnData));
+                    } else {
+                        this.uploadChangeData(fnData);
                     }
                     updatedData.push(fnData);
                     break;
@@ -507,6 +522,8 @@ export default {
                     updatedData[index].fn = '';
                     if (!this.$store.state.auth.isAuthenticated) {
                         this.localFnData.unshift(structuredClone(updatedData[index]));
+                    } else {
+                        this.uploadChangeData(updatedData[index]);
                     }
                     this.fuckRender(updatedData);
                     break;
@@ -515,6 +532,8 @@ export default {
                     updatedData[index].visible = !updatedData[index].visible;
                     if (!this.$store.state.auth.isAuthenticated) {
                         this.localFnData.unshift(structuredClone(updatedData[index]));
+                    } else {
+                        service.uploadChangeData(updatedData[index]);
                     }
                     this.fuckRender(updatedData);
                     break;
@@ -547,7 +566,7 @@ export default {
                 this.fuckRender(this.currentData);
                 this.$store.commit('setUpload', true);
                 await this.uploadUserData(this.localFnData);
-                await this.getHisData();
+                await this.getChangeData();
                 this.showLoginModal = false;
                 this.initFormData();
                 this.localFnData = [];
@@ -561,7 +580,6 @@ export default {
                     target: '.main-right'
                 }
                 console.log(data);
-                
                 this.$refs.popupWindow.addMessage(data);
             }
             if (typeof callback === 'function') {
@@ -576,8 +594,7 @@ export default {
             const data_3D = utils.deepClone(this.functionData_3D)
             this.localFnData = [...data_2D, ...data_3D];
             setTimeout(() => {
-                this.$store.commit('auth/setToken', null);
-                this.$store.commit('auth/setUser', null);
+                this.$store.commit('auth/logout');
                 this.formData = {};
                 this.showInfo = false;
                 console.log(this.userInfo);
@@ -624,8 +641,8 @@ export default {
             }
         },
 
-        async getHisData(currentPage = 1) {
-            const { success, data, error } = await service.getHistoricalData(currentPage);
+        async getChangeData(currentPage = 1) {
+            const { success, data, error } = await service.getChangeData(currentPage);
             if (success) {
                 this.fnData = data.fnData;
                 this.pagination = data.pagination;
@@ -652,7 +669,7 @@ export default {
             if (success) {
                 console.log('删除数据成功');
                 callback();
-                this.getHisData();
+                this.getChangeData();
             } else {
                 console.log('删除数据失败:', error);
             }
@@ -681,6 +698,24 @@ export default {
                 this.$refs.register.init();
             }
         },
+
+        async uploadChangeData(data) {
+            const uploadData = JSON.stringify([{
+                fn: data.fn,
+                color: data.color,
+                nSamples: data.nSamples,
+                visible: data.visible,
+                dimension: data.dimension
+            }]);
+            console.log('上传变动数据:', uploadData);
+            const { success, error } = await service.uploadChangeData(uploadData);
+            if (success) {
+                console.log('上传变动数据成功');
+                this.getChangeData();
+            } else {
+                console.log('上传变动数据失败:', error);
+            }
+        }
     }
 };
 </script>

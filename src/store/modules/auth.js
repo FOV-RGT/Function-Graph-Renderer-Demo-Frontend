@@ -11,9 +11,9 @@ export default {
         isAuthenticated: !!localStorage.getItem('token'), // 是否已认证的标志
         // isAuthenticated: false,
         // 以下信息暂时用不到
-        nickname: null,
-        email: null,
-        username: null
+        nickname: localStorage.getItem('nickname') || null,
+        email: localStorage.getItem('email') || null,
+        username: localStorage.getItem('username') || null
     },
     
     getters: {
@@ -21,9 +21,9 @@ export default {
         isAuthenticated: state => state.isAuthenticated,
         // 获取完整的用户信息对象
         userInfo: state => Object.freeze({
-            nickname: state.nickname,
-            email: state.email,
-            username: state.username
+            nickname: state.nickname || '',
+            email: state.email || '',
+            username: state.username || ''
         }),
         // 获取显示名称（优先使用昵称）
         displayName: state => state.nickname || state.username || null,
@@ -32,12 +32,15 @@ export default {
     // 修改状态的方法
     mutations: {
         setUser(state, data) {
-            const nickname = data?.nickname || "长期素食";
-            const email = data?.email || "未知邮箱";
-            const username = data?.username || "未知用户名";
+            const nickname = data?.nickname || '';
+            const email = data?.email || '';
+            const username = data?.username || '';
             state.nickname = nickname;
             state.email = email;
             state.username = username;
+            localStorage.setItem('nickname', nickname);
+            localStorage.setItem('email', email);
+            localStorage.setItem('username', username);
         },
         
         setToken(state, token) {
@@ -55,8 +58,12 @@ export default {
         logout(state) {
             state.nickname = null;
             state.token = null;
+            state.email = null;
+            state.username = null;
             state.isAuthenticated = false;
-            // 清除本地存储的令牌
+            localStorage.removeItem('nickname');
+            localStorage.removeItem('email');
+            localStorage.removeItem('username');
             localStorage.removeItem('token');
         }
     },

@@ -68,7 +68,7 @@
 }
 
 .user-info .iconfont {
-    font-size: clamp(0.938rem, 0.793rem + 0.72vw, 1.875rem);
+    font-size: clamp(0.313rem, 0.168rem + 0.72vw, 1.25rem);
 }
 
 /* 缩放步长控制器样式 */

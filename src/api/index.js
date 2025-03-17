@@ -3,6 +3,7 @@ import store from '../store/index';
 
 const api = axios.create({
     baseURL: 'https://api.kz2006.top',
+    // baseURL: 'http://localhost:5005',
     timeout: 10000,                   // 请求超时时间：10秒
     headers: {
         'Content-Type': 'application/json' // 默认请求头设置

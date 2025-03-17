@@ -16,7 +16,7 @@ export async function initUserData(needNewData = true, options = { is2D: true })
         store.commit('auth/setUser', info);
         // 获取函数数据
         if (needNewData) {
-            const fnRes = await fnApi.getFunctionData();
+            const fnRes = await fnApi.getHistoricalData();
             const fnData = sortData(fnRes.mathdatas);
             const latestData = fnData.length > 0 ? fnData[fnData.length - 1] : [];
             // 更新数据
@@ -147,6 +147,42 @@ export async function register(credentials) {
             success: false,
             head,
             messages
+        };
+    }
+}
+
+export async function getChangeData(currentPage, pageSize) {
+    try {
+        const res = await fnApi.getChangeData(currentPage, pageSize);
+        let fnData = res.mathdatas;
+        if (res.mathdatas?.length > 2) fnData.sort((a, b) => b.id - a.id);
+        const pagination = res.pagination;
+        const data = {
+            fnData,
+            pagination
+        };
+        return {
+            success: true,
+            data
+        };
+    } catch (error) {
+        return {
+            success: false,
+            error
+        };
+    }
+}
+
+export async function uploadChangeData(data) {
+    try {
+        await fnApi.uploadChangeData(data);
+        return {
+            success: true
+        };
+    } catch (error) {
+        return {
+            success: false,
+            error
         };
     }
 }

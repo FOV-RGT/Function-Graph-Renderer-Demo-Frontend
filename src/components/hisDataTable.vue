@@ -186,7 +186,6 @@ export default {
             this.loading = true;
             this._saveCurrentSelection();
             if (this.$store.state.auth.isAuthenticated) {
-                // 登录用户：发送事件到父组件获取服务器数据
                 this.$emit('changePage', page);
             } else {
                 this.localPage = page;

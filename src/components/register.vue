@@ -10,6 +10,9 @@
                         <span class="cursor-default select-none">账号</span>
                         <!-- <button type="button" class="btn btn-warning"
                         @click="loading.registerSuccess = !loading.registerSuccess">666666
+                        </button>
+                        <button type="button" class="btn btn-warning"
+                        @click="fireWorks">555555
                         </button> -->
                         <button type="button" class="register-btn btn btn-soft btn-info btn-md w-[10em]
                             flex items-center justify-evenly p-0" @click="switchModal">
@@ -82,6 +85,7 @@
 import icon from './icon.vue';
 import { register } from '../services/userService';
 import popupWindow from './popupWindow.vue';
+import confetti from 'canvas-confetti';
 
 
 export default {
@@ -165,6 +169,7 @@ export default {
                 console.log('注册成功');
                 this.loading.registerSuccess = true;
                 this.login(registerData);
+                this.fireWorks();
             } else {
                 this.loading.registerSuccess = false;
                 const data = {
@@ -210,6 +215,40 @@ export default {
                 tryLogin: false,
                 loginSuccess: false,
             };
+        },
+        fire(particleRatio, opts) {
+            confetti({
+                origin: {
+                    y: 0.72,
+                    x: 0.58
+                },
+                ...opts,
+                particleCount: Math.floor(666 * particleRatio)
+            });
+        },
+        fireWorks() {
+            this.fire(0.25, {
+                spread: 66,
+                startVelocity: 75,
+                scalar: 0.8
+            });
+            this.fire(0.2, {
+                spread: 60
+            });
+            this.fire(0.35, {
+                spread: 100,
+                decay: 0.91
+            });
+            this.fire(0.3, {
+                spread: 130,
+                startVelocity: 66,
+                decay: 0.92,
+                scalar: 1.2
+            });
+            this.fire(0.4, {
+                spread: 120,
+                startVelocity: 45
+            });
         }
     }
 }

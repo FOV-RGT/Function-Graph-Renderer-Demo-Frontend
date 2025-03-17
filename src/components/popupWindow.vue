@@ -2,7 +2,7 @@
     <teleport :to=target>
         <transition name="popupWindow">
             <div v-show="showMessage" role="alert" class="alert alert-error alert-soft absolute top-4 left-[50%] z-1000 p-4 
-                transform -translate-x-[50%] min-w-80 max-w-7xl text-xl">
+                transform -translate-x-[50%] min-w-80 max-w-7xl text-xl select-none">
                 <span>{{ head }}</span>
                 <div class="flex flex-wrap gap-2">
                     <p v-for="(item, index) in messages" :key="index" v-text="item"></p>
