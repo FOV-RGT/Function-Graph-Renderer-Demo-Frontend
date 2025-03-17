@@ -45,9 +45,11 @@ export async function login(credentials, needNewData, options = { is2D: true }) 
         // 登录后获取完整数据
         return await initUserData(needNewData, options);
     } catch (error) {
+        const { head, messages } = error;
         return {
             success: false,
-            error
+            head,
+            messages
         };
     }
 }
@@ -140,9 +142,11 @@ export async function register(credentials) {
             success: true
         };
     } catch (error) {
+        const { head, messages } = error;
         return {
             success: false,
-            error
+            head,
+            messages
         };
     }
 }

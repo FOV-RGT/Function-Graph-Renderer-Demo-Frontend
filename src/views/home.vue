@@ -180,10 +180,10 @@
             <transition name="table">
                 <div v-show="showLoginModal" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] bg-base-100 rounded-box
                 border border-base-content/10 overflow-auto lg:w-2xl md:w-xl sm:w-md h-auto z-80">
-                    <form @submit.prevent="userLogin" v-if="!showInfo">
+                    <form @submit.prevent="userLogin({login: account, password: password})" v-if="!showInfo">
                         <fieldset class="fieldset w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
                             <div class="fieldset-label cursor-default flex items-center justify-center">
-                                <span class="text-center text-2xl text-amber-700/90 select-none">Login</span>
+                                <span class="text-center text-2xl text-primary select-none">Login</span>
                             </div>
                             <div class="fieldset-label flex justify-between items-center">
                                 <span class="cursor-default select-none">账号</span>
@@ -237,10 +237,11 @@
                 </div>
             </transition>
             <transition name="table">
-                    <register v-show="showRegisterModal" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] bg-base-100 rounded-box
-                    border border-base-content/10 overflow-auto lg:w-2xl md:w-xl sm:w-md h-auto z-80"
-                    @switchModal="switchModal"/>
+                    <register ref="register" v-show="showRegisterModal" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] bg-base-100 rounded-box
+                    border border-base-content/10 overflow-auto h-auto z-80"
+                    @switchModal="switchModal" @login="userLogin"/>
             </transition>
+            <popupWindow ref="popupWindow"/>
         </div>
     </div>
 </template>
@@ -257,6 +258,7 @@ import { parse } from 'mathjs';
 import * as service from '../services/userService';
 import hisDataTable from '../components/hisDataTable.vue';
 import register from '../components/register.vue';
+import popupWindow from '../components/popupWindow.vue';
 
 
 
@@ -267,7 +269,8 @@ export default {
         ThreeDPlotCom,
         icon,
         hisDataTable,
-        register
+        register,
+        popupWindow
     },
     data() {
         return {
@@ -535,15 +538,11 @@ export default {
             }
         },
 
-        async userLogin() {
+        async userLogin(data, callback) {
             this.loading.login = true;
-            const data = {
-                login: this.account,
-                password: this.password
-            }
             console.log('登录数据:', data);
             const needNewData = this.localFnData.length === 0 && this.currentData.length === 0;
-            const { success, error } = await service.login(data, needNewData);
+            const { success, messages } = await service.login(data, needNewData);
             if (success) {
                 this.fuckRender(this.currentData);
                 this.$store.commit('setUpload', true);
@@ -556,7 +555,17 @@ export default {
                     this.showInfo = true;
                 }, 400);
             } else {
-                console.log('登录失败:', error);
+                const data = {
+                    head: '登录失败：',
+                    messages,
+                    target: '.main-right'
+                }
+                console.log(data);
+                
+                this.$refs.popupWindow.addMessage(data);
+            }
+            if (typeof callback === 'function') {
+                callback(success);
             }
             this.loading.login = false;
         },
@@ -668,6 +677,9 @@ export default {
         switchModal() {
             this.showLoginModal = !this.showLoginModal;
             this.showRegisterModal = !this.showRegisterModal;
+            if (this.showRegisterModal) {
+                this.$refs.register.init();
+            }
         },
     }
 };
