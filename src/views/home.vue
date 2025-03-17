@@ -215,7 +215,7 @@
                             <span>用户信息</span>
                             <button type="button" class="btn btn-soft btn-error btn-md flex items-center justify-evenly" @click="logout">
                                 <span class="text-xl">退出登录</span>
-                                <icon type="logout" class="text-error" />
+                                <icon type="logout" />
                             </button>
                         </div>
                         <div class="cursor-default flex items-center space-x-1">
