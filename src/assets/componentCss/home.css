@@ -3,7 +3,7 @@
 }
 
 .plotComponents .renderComponent {
-    background-color:beige;
+    background-color: beige;
 }
 
 .foot-buttonsGroup .iconfont {
@@ -24,7 +24,7 @@
 
 .colorPicker {
     flex: 1 !important;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-items: center;
 }
@@ -32,6 +32,7 @@
 .colorPicker .vc-color-wrap {
     flex: 1 !important;
     margin-right: 0 !important;
+    display: inline-flex;
 }
 
 .current-color {
@@ -39,9 +40,12 @@
 }
 
 .top {
-    background: #BE93C5;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to bottom, #7BC6CC, #BE93C5);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to bottom, #7BC6CC, #BE93C5); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: #BE93C5;
+    /* fallback for old browsers */
+    background: -webkit-linear-gradient(to bottom, #7BC6CC, #BE93C5);
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to bottom, #7BC6CC, #BE93C5);
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     background-clip: text;
     -webkit-background-clip: text;
 }
@@ -54,11 +58,68 @@
     font-size: clamp(0.313rem, 0.072rem + 1.2vw, 1.875rem);
 }
 
-.top-buttonsGroup button{
+.top-buttonsGroup button {
     font-size: clamp(0.625rem, 0.481rem + 0.72vw, 1.563rem);
-    height: clamp(2em,6vh,4em);
+    height: clamp(2em, 6vh, 4em);
 }
 
 .li-top .iconfont {
     font-size: 1em;
+}
+
+.user-info .iconfont {
+    font-size: clamp(0.313rem, 0.168rem + 0.72vw, 1.25rem);
+}
+
+/* 缩放步长控制器样式 */
+.zoomFactorControl .input {
+    background-color: rgba(38, 27, 37, 1);
+    border-color: rgba(69, 54, 49, 1);
+    color: rgba(197, 159, 105);
+}
+
+.zoomFactorControl .input:focus {
+    border-color: rgba(197, 159, 105);
+    outline: none;
+}
+
+/* 移动步长控制器样式*/
+.moveStepControl .input {
+    background-color: rgba(38, 27, 37, 1);
+    border-color: rgba(69, 54, 49, 1);
+    color: rgba(197, 159, 105);
+}
+
+.moveStepControl .input:focus {
+    border-color: rgba(197, 159, 105);
+    outline: none;
+}
+
+.bg-enter-active,
+.bg-leave-active {
+    transition: opacity 0.3s ease;
+}
+
+.bg-enter-from,
+.bg-leave-to {
+    opacity: 0;
+}
+
+.table-enter-active,
+.table-leave-active {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.table-enter-from,
+.table-leave-to {
+    opacity: 0;
+    transform: scale(0.8);
+}
+
+.register-btn .iconfont {
+    font-size: 1.8em;
+}
+
+.login-btn .iconfont {
+    font-size: 1.5em;
 }

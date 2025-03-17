@@ -4,47 +4,33 @@
 
 <script>
 import { chartInstance } from '../assets/utils/chartSetter';
-import { authApi } from '../api/auth.js';
 
 export default {
   data() {
     return {
       chartInstance: null,
-      rendering: false,
     };
   },
   created() {
-
   },
   mounted() {
     // 绘制图表
     console.log("图表实例开始挂载");
     this.chartInstance = new chartInstance(this.$refs.canvas2D);
-    const currentData = this.$store.state.functionData_2D;
-    let fn = [];
-    if (currentData && currentData.length > 0) {
-      console.log(currentData);
-      fn = currentData.map(item => item.fn);
-      const payload = {
-        data: [],
-        is2D: true
-      }
-      this.$store.commit("syncData", payload);
-    }
-    this.chartInstance.addInput(fn, 0).then(() => {
-      console.log("图表实例初始化完成");
-    });
-    const data = {
-      login: "user1",
-      password: "123123"
-    }
-    authApi.login(data)
-      .then(function (response) {
-        console.log(JSON.stringify(response.data));
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    // const currentData = this.$store.state.functionData_2D;
+    // let fn = [];
+    // if (currentData && currentData.length > 0) {
+    //   console.log(currentData);
+    //   fn = currentData.map(item => item.fn);
+    //   const payload = {
+    //     data: [],
+    //     is2D: true
+    //   }
+    //   this.$store.commit("syncData", payload);
+    // }
+    // this.chartInstance.addInput(fn, 0).then(() => {
+    //   console.log("图表实例初始化完成");
+    // });
   },
   beforeUnmount() {
     console.log("销毁图表实例");
@@ -65,45 +51,57 @@ export default {
       });
     },
     // 重置视图
-    setView(evt) {
+    setView(evt, zoomStep, moveStep) {
       switch (evt) {
         case 'reset':
           console.log("触发:重置范围");
           this.chartInstance.resetView(this.$refs.canvas2D);
           break;
         case 'zoomIn':
-          console.log("触发:放大范围");
-          this.chartInstance.zoomView(evt);
-          break;
         case 'zoomOut':
-          console.log("触发:缩小范围");
-          this.chartInstance.zoomView(evt);
+          console.log(`触发:${evt === 'zoomIn' ? '放大' : '缩小'}范围`);
+          this.chartInstance.zoomView(evt, zoomStep);
           break;
         case 'moveLeft':
-          console.log("触发:左移视图");
-          this.chartInstance.moveView(evt);
-          break;
         case 'moveRight':
-          console.log("触发:右移视图");
-          this.chartInstance.moveView(evt);
-          break;
         case 'moveUp':
-          console.log("触发:上移视图");
-          this.chartInstance.moveView(evt);
-          break;
         case 'moveDown':
-          console.log("触发:下移视图");
-          this.chartInstance.moveView(evt);
+          console.log(`触发:${evt}视图`);
+          this.chartInstance.moveView(evt, moveStep);
           break;
         default:
           break;
       }
     },
+
+    // 更新图表实例的缩放因子
+    updateZoomFactor(zoomStep) {
+      this.chartInstance.setZoomFactor(zoomStep);
+    },
+
+    //更新图表实例的移动因子
+    updateMoveFactor(moveStep) {
+      this.chartInstance.setMoveFactor(moveStep);
+    },
+
     fuckRender(data) {
       this.chartInstance.setFunction(data);
     },
+
     fuckResize() {
       this.chartInstance.resize(this.$refs.canvas2D);
+    },
+
+    // 更新采样点数量
+    updateSamplePoints(samples, index) {
+      if (!this.chartInstance) return;
+      try {
+        if (typeof this.chartInstance.setSamplePoints === 'function') {
+          this.chartInstance.setSamplePoints(samples, index);
+        } 
+      } catch (error) {
+        console.error("采样点更新失败");
+      }
     }
   }
 };

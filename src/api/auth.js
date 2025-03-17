@@ -1,46 +1,138 @@
-/**
- * 认证相关API模块
- * 提供用户认证、注册和账户管理的API接口
- */
 import api from './index';
 
-/**
- * 认证API对象，包含所有认证相关的API方法
- */
-export const authApi = {
-    /**
-     * 用户登录
-     * @param {Object} credentials - 包含用户名和密码的登录凭证
-     * @returns {Promise} 登录请求的Promise对象
-     */
-    login(credentials) {
-        return api.post('/auth/signIn', credentials);
+const authApi = {
+    async login(credentials) {
+        try {
+            return await api.post('/auth/signIn', credentials);
+        } catch (error) {
+            console.log("登录错误：", error.status);
+            const messages = error.response.data.errors;
+            switch (error.status) {
+                case 401:
+                case 404: {
+                    const head = '登录失败：';
+                    const data = {
+                        head,
+                        messages
+                    }
+                    throw (data);
+                }
+                case 400: {
+                    const head = '请求错误：';
+                    const data = {
+                        head,
+                        messages
+                    }
+                    throw (data);
+                }
+                case 500: {
+                    const head = '服务器错误：';
+                    const data = {
+                        head,
+                        messages
+                    }
+                    throw (data);
+                }
+                default: {
+                    const head = '未知错误：';
+                    const data = {
+                        head,
+                        messages
+                    }
+                    throw (data);
+                }
+            }
+        }
     },
 
-    /**
-     * 用户注册
-     * @param {Object} userData - 包含用户信息的注册数据
-     * @returns {Promise} 注册请求的Promise对象
-     */
-    register(userData) {
-        return api.post('/auth/auth/sign_up', userData);
+    async register(userData) {
+        try {
+            return await api.post('/auth/sign_up', userData);
+        } catch (error) {
+            console.log("注册错误：", error.status);
+            const messages = error.response.data.errors;
+            switch (error.status) {
+                case 401:
+                case 404: {
+                    const head = '注册失败：';
+                    const data = {
+                        head,
+                        messages
+                    }
+                    throw (data);
+                }
+                case 400: {
+                    const head = '请求错误：';
+                    const data = {
+                        head,
+                        messages
+                    }
+                    throw (data);
+                }
+                case 500: {
+                    const head = '服务器错误：';
+                    const data = {
+                        head,
+                        messages
+                    }
+                    throw (data);
+                }
+                default: {
+                    const head = '未知错误：';
+                    const data = {
+                        head,
+                        messages
+                    }
+                    throw (data);
+                }
+            }
+        }
     },
 
-    /**
-     * 获取当前用户信息
-     * 要求用户已经登录，并在请求头中包含有效的认证令牌
-     * @returns {Promise} 获取用户信息的Promise对象
-     */
-    getCurrentUser() {
-        return api.get('/auth/me');
+    async getUserInfo() {
+        try {
+            return await api.get('/users/me');
+        } catch (error) {
+            console.log("获取用户信息错误：", error.status);
+            switch (error.status) {
+                case 401:
+                case 404: {
+                    throw ('未授权');
+                }
+                case 400: {
+                    throw ('请求错误');
+                }
+                case 500: {
+                    throw ('服务器错误');
+                }
+                default: {
+                    throw (`未知错误: ${error.response.status}`);
+                }
+            }
+        }
     },
-
-    /**
-     * 用户登出
-     * 清除服务器端的会话信息
-     * @returns {Promise} 登出请求的Promise对象
-     */
-    logout() {
-        return api.post('/auth/logout');
+    async updateUserInfo(data) {
+        try {
+            return await api.put('/users/account', data);
+        } catch (error) {
+            console.log("更新用户信息错误：", error.status);
+            switch (error.status) {
+                case 401:
+                case 404: {
+                    throw ('未授权');
+                }
+                case 400: {
+                    throw ('请求错误');
+                }
+                case 500: {
+                    throw ('服务器错误');
+                }
+                default: {
+                    throw (`未知错误: ${error.response.status}`);
+                }
+            }
+        }
     }
 };
+
+export default authApi;

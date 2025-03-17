@@ -1,7 +1,7 @@
 {
   "name": "demo",
   "private": true,
-  "version": "1.4.4",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,10 +11,12 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.0.9",
     "axios": "^1.7.7",
+    "canvas-confetti": "^1.9.3",
     "d3": "^7.9.0",
     "delaunay-fast": "^1.0.1",
     "function-plot": "^1.25.1",
-    "mathjs": "^14.0.0",
+    "gsap": "^3.12.7",
+    "mathjs": "^14.3.1",
     "plotly.js-dist": "^3.0.0",
     "tailwindcss": "^4.0.9",
     "three": "^0.174.0",
@@ -26,7 +28,7 @@
   "devDependencies": {
     "@types/three": "^0.174.0",
     "@vitejs/plugin-vue": "^5.1.4",
-    "daisyui": "^5.0.0",
+    "daisyui": "^5.0.2",
     "vite": "^6.0.3"
   },
   "engines": {

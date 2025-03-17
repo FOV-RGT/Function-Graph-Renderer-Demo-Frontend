@@ -4,8 +4,11 @@ import auth from './modules/auth';
 const store = createStore({
     state: {
         switch3D: false,
-        functionData_2D: [{ fn: '2sin(2x)' }, { fn: '3cos(log(x^10))' }, { fn: '8log(cos(sin(sqrt(x^3))))' }, { fn: '5' }, { fn: '-5' }],
+        // functionData_2D: [{ fn: '2sin(2x)' }, { fn: '3cos(log(x^10))' }, { fn: '8log(cos(sin(sqrt(x^3))))' }, { fn: '5' }, { fn: '-5' }],
         functionData_3D: [{ fn: 'x=1' }, { fn: 'y=x^2-z^2' }, { fn: 'log(cos(sin(sqrt(x^3))))' }, { fn: 'cube,width=5,height=5,depth=5' }, { fn: 'sphere,radius=10' }],
+        functionData_2D: [],
+        // functionData_3D: [],
+        needUpload: true
     },
     mutations: {
         switchRender(state, is2D) {
@@ -22,7 +25,11 @@ const store = createStore({
             else {
                 state.functionData_3D = payload.data;
             }
+            state.needUpload = payload.needUpload;
         },
+        setUpload(state, needUpload) {
+            state.needUpload = needUpload
+        }
     },
     actions: {
         

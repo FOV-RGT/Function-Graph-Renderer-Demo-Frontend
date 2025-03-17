@@ -3,7 +3,8 @@
 </template>
 
 <script>
-var map = {
+
+const map = {
     arrowLeft: "icon-arrowleft",
     arrowRight: "icon-arrowright",
     aim: "icon-aim",
@@ -21,6 +22,15 @@ var map = {
     rollBack: "icon-rollback",
     arrowUp: "icon-arrowup",
     arrowDown: "icon-arrowdown",
+    check: "icon-check",
+    close: "icon-close",
+    doubleLeft: "icon-doubleleft",
+    doubleRight: "icon-doubleright",
+    smile: "icon-smile",
+    solution: 'icon-solution',
+    smileFill: 'icon-smile-fill',
+    frown: 'icon-frown',
+    frownFill: 'icon-frown-fill',
 };
 export default {
     props: {
@@ -42,5 +52,5 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://at.alicdn.com/t/c/font_4845730_domrwa02osl.css?spm=a313x.manage_type_myprojects.i1.9.7c703a813bEmXz&file=font_4845730_domrwa02osl.css');
+@import url('https://at.alicdn.com/t/c/font_4845730_gmwvjmtf1m.css?spm=a313x.manage_type_myprojects.i1.9.7c703a81WRix4q&file=font_4845730_gmwvjmtf1m.css');
 </style>
