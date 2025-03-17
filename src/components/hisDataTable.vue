@@ -4,7 +4,9 @@
             <thead>
                 <tr class="text-xl">
                     <th>
-                        <input type="checkbox" class="checkbox border-2 checked:bg-amber-700/90 hover:border-amber-500/80" :checked="isSelectedAll" @change="selectAll" :disabled="!displayData.length" />
+                        <input type="checkbox"
+                            class="checkbox border-2 checked:bg-amber-700/90 hover:border-amber-500/80"
+                            :checked="isSelectedAll" @change="selectAll" :disabled="!displayData.length" />
                     </th>
                     <th class="text-center">序列号</th>
                     <th class="text-center">方程</th>
@@ -20,8 +22,9 @@
             <tbody>
                 <tr v-for="(item, index) in displayData" :key="index">
                     <th>
-                        <input type="checkbox" class="checkbox border-2 checked:bg-amber-700/90 hover:border-amber-500/80" :checked="isSelected(item)"
-                            @change="toggleSelect(item)" />
+                        <input type="checkbox"
+                            class="checkbox border-2 checked:bg-amber-700/90 hover:border-amber-500/80"
+                            :checked="isSelected(item)" @change="toggleSelect(item)" />
                     </th>
                     <td class="text-center text-lg">
                         {{ index + 1 + (currentPagination.currentPage - 1) * currentPagination.pageSize }}
@@ -94,7 +97,7 @@ export default {
             type: Object,
             default: () => ({
                 currentPage: 1,
-                pageSize: 10,
+                pageSize: 4,
                 totalPages: 1,
                 totalRecords: 0
             })
@@ -103,9 +106,10 @@ export default {
     data() {
         return {
             selection: [],
-            totalSelection: {},
             loading: false,
             localPage: 1,
+            totalSelection: new Map(),
+            localDataMap: new Map(),
         }
     },
     created() {
@@ -114,12 +118,17 @@ export default {
             this.changePage(page);
         }, 250)
     },
+    mounted() {
+        if (this.localFnData.length > 0) {
+            this.initLocalDataMap();
+        }
+    },
     computed: {
         isSelectedAll() {
             return this.displayData.length > 0 ? this.selection.length === this.displayData.length : false;
         },
         localDisplayFnData() {
-            const pageSize = 10; // 每页显示10条数据
+            const pageSize = 4;
             const startIndex = (this.currentPagination.currentPage - 1) * pageSize;
             const endIndex = startIndex + pageSize;
             return this.localFnData.slice(startIndex, endIndex);
@@ -131,7 +140,7 @@ export default {
             if (this.$store.state.auth.isAuthenticated) {
                 return this.pagination;
             } else {
-                const pageSize = 10;
+                const pageSize = 4;
                 return {
                     currentPage: this.localPage || 1,
                     pageSize: pageSize,
@@ -151,7 +160,18 @@ export default {
             handler(newVal) {
                 this.selection = this.totalSelection[newVal] || [];
             },
-        }
+        },
+        localFnData: {
+            handler(newVal) {
+                if (newVal.length > 0) {
+                    this.$nextTick(() => {
+                        this.initLocalDataMap();
+                    });
+                }
+                this.loading = false;
+            },
+            deep: true
+        },
     },
     methods: {
         isSelected(data) {
@@ -167,7 +187,7 @@ export default {
         },
         clearSelection() {
             this.selection = [];
-            this.totalSelection = {};
+            this.totalSelection.clear();
         },
         toggleSelect(data) {
             if (this.isSelected(data)) {
@@ -179,7 +199,11 @@ export default {
             this._saveCurrentSelection();
         },
         _saveCurrentSelection() {
-            this.totalSelection[this.pagination.currentPage] = this.selection;
+            if (this.selection.length > 0) {
+                this.totalSelection.set(this.currentPagination.currentPage, [...this.selection]);
+            } else {
+                this.totalSelection.delete(this.currentPagination.currentPage);
+            }
         },
         changePage(page) {
             if (this.loading) return;
@@ -198,11 +222,12 @@ export default {
             this.$emit('closeTable');
         },
         getAllSelection() {
-            const allSelections = { ...this.totalSelection };
-            if (this.selection.length > 0) {
-                allSelections[this.pagination.currentPage] = [...this.selection];
+            this._saveCurrentSelection();
+            const allData = [];
+            for (const selections of this.totalSelection.values()) {
+                allData.push(...selections);
             }
-            return Object.values(allSelections).flat();
+            return allData;
         },
         renderFn() {
             const allData = this.getAllSelection();
@@ -234,14 +259,21 @@ export default {
                 this.$emit('deleteLocalData', deleteIds);
                 this.clearSelection();
             }
+        },
+        initLocalDataMap() {
+            this.localDataMap.clear();
+            this.localFnData.forEach((item, index) => {
+                if (!item.id) {
+                    item.id = `local-${Date.now()}-${index}`;
+                }
+                this.localDataMap.set(item.id, item);
+            });
         }
     }
 }
 </script>
 
 <style scoped>
-
-
 .table .iconfont {
     font-size: 20px;
 }
@@ -249,6 +281,4 @@ export default {
 .table th {
     user-select: none;
 }
-
-
 </style>

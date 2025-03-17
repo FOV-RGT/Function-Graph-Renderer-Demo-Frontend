@@ -308,11 +308,7 @@ export default {
             const formatInput = input.replace(/\s+/g, "");
             if (this.show_2D) {
                 try {
-                    console.log('输入:', formatInput);
-                    
-                    if (input) {
-                        parse(formatInput);
-                    }
+                    parse(formatInput);
                     const newData = [...toRaw(this.currentData)];
                     newData[index].fn = formatInput;
                     if (!this.$store.state.auth.isAuthenticated) {
@@ -710,7 +706,6 @@ export default {
                 visible: data.visible,
                 dimension: data.dimension
             }]);
-            console.log('上传变动数据:', uploadData);
             const { success, error } = await service.uploadChangeData(uploadData);
             if (success) {
                 console.log('上传变动数据成功');

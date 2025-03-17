@@ -5,7 +5,7 @@ const fnApi = {
         try {
             return await api.post('/mathdata', data);
         } catch (error) {
-            console.log("更新函数数据错误：", error.status);
+            console.log("更新工作区数据错误：", error.status);
             switch (error.status) {
                 case 401:
                 case 404: {
