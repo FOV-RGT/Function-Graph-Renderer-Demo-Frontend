@@ -369,7 +369,6 @@ export default {
         this.throttleupdateColor = utils.throttle((color, index) => {
             const currentData = [...toRaw(this.currentData)];
             currentData[index].color = color;
-            service.uploadChangeData()
             if (!this.$store.state.auth.isAuthenticated) {
                 this.localFnData.unshift(utils.deepClone(currentData[index]));
             } else {

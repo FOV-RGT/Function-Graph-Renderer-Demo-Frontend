@@ -61,6 +61,8 @@ export default {
             state.email = null;
             state.username = null;
             state.isAuthenticated = false;
+            console.log("清除令牌", state.isAuthenticated);
+            
             localStorage.removeItem('nickname');
             localStorage.removeItem('email');
             localStorage.removeItem('username');
