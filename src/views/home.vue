@@ -617,7 +617,6 @@ export default {
 
         async getHisData(currentPage = 1) {
             const { success, data, error } = await service.getHistoricalData(currentPage);
-            console.log('获取历史数据:', data);
             if (success) {
                 this.fnData = data.fnData;
                 this.pagination = data.pagination;
@@ -628,8 +627,7 @@ export default {
         },
 
         renderFn(data) {
-            const data_2D = data.data_2D;
-            const data_3D = data.data_3D; // 开摆
+            const { data_2D, data_3D } = data; // 3D要重做，历史记录暂时不接入
             const newData_2D = [...toRaw(this.functionData_2D)];
             newData_2D.push(...data_2D);
             this.$store.commit('syncData', {
