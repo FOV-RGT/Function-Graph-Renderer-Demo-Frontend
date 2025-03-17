@@ -193,13 +193,13 @@
                                     <icon type="smile" />
                                 </button>
                             </div>
-                            <input type="text" class="input w-auto" placeholder="Account" v-model="account"
-                                autocomplete="username" />
+                            <input type="text" required class="input w-auto validator" placeholder="Account" v-model="account"
+                                title="请输入账号或邮箱" autocomplete="username" />
                             <div class="fieldset-label cursor-default select-none">
                                 <span>密码</span>
                             </div>
-                            <input type="password" class="input w-auto" v-model="password" placeholder="Password"
-                                autocomplete="current-password" />
+                            <input type="password" required class="input w-auto validator" v-model="password" placeholder="Password"
+                            title="请输入密码" autocomplete="current-password" />
                             <button type="submit" class="btn btn-success btn-soft mt-4">
                                 <div v-if="!loading.login" class="login-btn flex items-center gap-3">
                                     <span class="text-xl">登录</span>
@@ -212,15 +212,23 @@
                     <div v-else class="fieldset user-info w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
                         <icon type="logout" class="ml-auto text-error cursor-pointer" @click="logout" />
                         <div class="cursor-default">用户信息</div>
-                        <div class="cursor-default flex items-center space-x-1"><span>昵称:</span><input type="text"
-                                placeholder="昵称" class="input input-ghost text-xl rounded-sm pl-0.5"
-                                v-model="formData.nickname" /></div>
-                        <div class="cursor-default flex items-center space-x-1"><span>邮箱:</span><input type="text"
-                                placeholder="邮箱" class="input input-ghost text-xl rounded-sm pl-0.5"
-                                v-model="formData.email" /></div>
-                        <div class="cursor-default flex items-center space-x-1"><span>账号:</span><input type="text"
-                                placeholder="账号" class="input input-ghost text-xl rounded-sm pl-0.5"
-                                v-model="formData.username" /></div>
+                        <div class="cursor-default flex items-center space-x-1">
+                            <span>昵称:</span>
+                            <input type="text" placeholder="昵称" class="input input-ghost text-xl rounded-sm pl-0.5"
+                            v-model="formData.nickname" />
+                        </div>
+                        <div class="cursor-default flex items-center space-x-1">
+                            <span>邮箱:</span>
+                            <input type="text"
+                            placeholder="邮箱" class="input input-ghost text-xl rounded-sm pl-0.5"
+                            v-model="formData.email" />
+                        </div>
+                        <div class="cursor-default flex items-center space-x-1">
+                            <span>账号:</span>
+                            <input type="text"
+                            placeholder="账号" class="input input-ghost text-xl rounded-sm pl-0.5"
+                            v-model="formData.username" />
+                        </div>
                         <button class="btn btn-block btn-lg btn-info btn-soft text-xl" @click="updateUserInfo">
                             <span v-if="!loading.updateInfo">提交修改</span>
                             <span v-else class="loading loading-spinner"></span>

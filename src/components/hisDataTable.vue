@@ -241,5 +241,15 @@ export default {
 </script>
 
 <style scoped>
-@import url('../assets/componentCss/hisDataTable.css');
+
+
+.table .iconfont {
+    font-size: 20px;
+}
+
+.table th {
+    user-select: none;
+}
+
+
 </style>

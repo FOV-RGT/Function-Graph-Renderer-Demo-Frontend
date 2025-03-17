@@ -43,7 +43,6 @@ export default {
         setToken(state, token) {
             state.token = token;
             state.isAuthenticated = !!token;
-            console.log("是否已认证", state.isAuthenticated);
             // 持久化存储令牌
             if (token) {
                 console.log("存储令牌：", token);
