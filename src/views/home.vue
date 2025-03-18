@@ -295,6 +295,7 @@ export default {
             pagination: {},
             localFnData: [],
             isClosed: false,
+            selectedAvatarFile: null,
             userAvatarUrl: 'https://kz-avatar.oss-cn-guangzhou.aliyuncs.com/uploads/ed779048-6417-45dd-8b15-e75cea3c02cb'
         };
     },
@@ -703,13 +704,20 @@ export default {
                 });
                 return;
             }
-            this.uploadAvatar(file);
+            this.selectedAvatarFile = file;
         },
 
         async getAvatarUrl(file) {
+            if (!this.selectedAvatarFile) {
+                this.$refs.popupWindow.addMessage({
+                    head: '上传失败',
+                    messages: ['请先选择要上传的图片文件'],
+                    target: 'body'
+                });
+                return;
+            }
             const { success, res, error } = await service.getAvatarUrl();
             console.log('获取头像上传信息:', res);
-            
             if (success) {
                 this.uploadAvatar(res, file);
             } else {
@@ -736,7 +744,7 @@ export default {
             // });
             // const avatarUrl = res.url;
             // console.log('上传头像成功:', avatarUrl);
-            
+
         },
 
         async uploadAvatar(res, file) {
