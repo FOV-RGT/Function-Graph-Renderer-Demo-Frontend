@@ -152,7 +152,7 @@ export class chartInstance {
         const currentConfig = this.config;
         currentConfig.width = target.clientWidth;
         currentConfig.height = target.clientHeight;
-        currentConfig.id = '';
+        currentConfig.id = "";
         this.destroyInstance();
         this.instance = functionPlot(currentConfig);
         this.config = currentConfig;
