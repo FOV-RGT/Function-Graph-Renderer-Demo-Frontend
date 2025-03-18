@@ -34,7 +34,7 @@ export default {
       switch (evt) {
         case 'reset':
           console.log("触发:重置范围");
-          this.chartInstance.resetView(this.$refs.canvas2D);
+          this.chartInstance.resetView();
           break;
         case 'zoomIn':
         case 'zoomOut':
@@ -86,6 +86,14 @@ export default {
     switchChartType(type) {
       this.chartInstance.switchChartType(type);
     },
+
+    switchDash(dash) {
+      this.chartInstance.switchDash(dash);
+    },
+
+    switchGrid(grid) {
+      this.chartInstance.switchGrid(grid);
+    }
   }
 };
 </script>

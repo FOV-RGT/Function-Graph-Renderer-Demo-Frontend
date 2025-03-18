@@ -210,8 +210,9 @@
             </transition>
             <transition name="table">
                 <adjustWindow v-show="show.adjustWindow" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
-                bg-base-100 rounded-box border border-base-content/10 overflow-auto w-sm h-auto z-80"
-                @switchChartType="switchChartType"/>
+                bg-base-100 rounded-box border border-base-content/10 overflow-auto w-lg h-auto z-80"
+                @switchChartType="switchChartType" @close="show.adjustWindow = false" @switchClosed="switchClosed"
+                @setRenderRange="setRenderRange" @switchDash="switchDash" @switchGrid="switchGrid"/>
             </transition>
         </div>
     </div>
@@ -273,6 +274,7 @@ export default {
             fnData: [],
             pagination: {},
             localFnData: [],
+            isClosed: false
         };
     },
     created() {
@@ -285,12 +287,7 @@ export default {
                     const newData = [...toRaw(this.currentData)];
                     newData[index].fn = formatInput;
                     this.storeData(newData[index]);
-                    const payload = {
-                        data: newData,
-                        is2D: this.show.render2D,
-                        needUpload: true
-                    }
-                    this.$store.commit('syncData', payload);
+                    this.storeDataToVuex(newData);
                     if (this.currentData[index].visible) {
                         this.$refs.TwoDPlotCom.fuckRender(this.functionData_2D);
                     }
@@ -308,12 +305,7 @@ export default {
             const data = [...toRaw(this.currentData)];
             data[index].nSamples = validSamples;
             this.storeData(data[index]);
-            const payload = {
-                data: data,
-                is2D: this.show.render2D,
-                needUpload: true
-            }
-            this.$store.commit('syncData', payload);
+            this.storeDataToVuex(data);
             if (this.currentData[index].visible) {
                 this.$refs.TwoDPlotCom.fuckRender(this.functionData_2D);
             }
@@ -426,7 +418,8 @@ export default {
                         visible: true,
                         dimension: 2,
                         graphType: 'interval', // 添加默认图表类型
-                        closed: false
+                        closed: this.isClosed
+                        
                     };
                     this.storeData(fnData);
                     updatedData.splice(index + 1, 0, fnData);
@@ -440,7 +433,7 @@ export default {
                         visible: true,
                         dimension: 2,
                         graphType: 'interval', // 添加默认图表类型
-                        closed: false
+                        closed: this.isClosed
                     };
                     this.storeData(fnData);
                     updatedData.push(fnData);
@@ -464,12 +457,7 @@ export default {
                     break;
                 }
             }
-            const payload = {
-                data: updatedData,
-                is2D: this.show.render2D,
-                needUpload: true
-            }
-            this.$store.commit('syncData', payload);
+            this.storeDataToVuex(updatedData);
         },
 
         switchHomeShow(evt) {
@@ -569,12 +557,8 @@ export default {
             const { data_2D, data_3D } = data; // 3D要重做，历史记录暂时不接入
             const newData_2D = [...toRaw(this.functionData_2D)];
             newData_2D.push(...data_2D);
-            this.$store.commit('syncData', {
-                data: newData_2D,
-                is2D: true,
-                needUpload: true
-            });
             this.fuckRender(this.currentData);
+            this.storeDataToVuex(newData_2D);
         },
 
         async delectData(data, callback) {
@@ -630,6 +614,53 @@ export default {
 
         switchChartType(type) {
             this.$refs.TwoDPlotCom.switchChartType(type);
+        },
+
+        switchClosed(closed) {
+            this.isClosed = closed;
+            const newData = this.currentData.map(item => ({
+                fn: item.fn,
+                color: item.color,
+                nSamples: item.nSamples,
+                visible: item.visible,
+                dimension: item.dimension,
+                graphType: item.graphType,
+                closed
+            }));
+            this.fuckRender(newData);
+            this.storeDataToVuex(newData);
+        },
+
+        setRenderRange(range) {
+            const newData = this.currentData.map(item => ({
+                fn: item.fn,
+                color: item.color,
+                nSamples: item.nSamples,
+                visible: item.visible,
+                dimension: item.dimension,
+                graphType: item.graphType,
+                closed: item.closed,
+                range
+            }));
+            this.fuckRender(newData);
+            this.storeDataToVuex(newData);
+        },
+
+        storeDataToVuex(data) {
+            const payload = {
+                data,
+                is2D: this.show.render2D,
+                needUpload: true
+            };
+            this.$store.commit('syncData', payload);
+        },
+
+        switchDash(dash) {
+            this.$refs.TwoDPlotCom.switchDash(dash);
+        },
+
+        switchGrid(grid) {
+            this.$refs.TwoDPlotCom.switchGrid(grid);
         }
     }
 };

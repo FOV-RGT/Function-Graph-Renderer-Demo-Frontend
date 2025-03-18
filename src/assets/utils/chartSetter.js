@@ -10,6 +10,7 @@ export class chartInstance {
         this.target = target;
         this.config = chartConfig.defaultConfig(target); // 初始化图表配置
         this.zoomFactor = 0.5; // 默认缩放因子
+        this.type = 'linear'; // 默认坐标轴类型
         console.log("实例挂载:初始化配置完成");
         this.instance = functionPlot(this.config); // 初始化图表实例
         console.log("图表实例成功挂载");
@@ -69,17 +70,15 @@ export class chartInstance {
         this.instance = null;
     }
 
-    resetView(target) {
+    resetView() {
         const currentConfig = this.config;
-        const defaultConfig = chartConfig.defaultConfig(target);
-        currentConfig.xAxis.domain = [
-            defaultConfig.xAxis.domain[0],
-            defaultConfig.xAxis.domain[1],
-        ];
-        currentConfig.yAxis.domain = [
-            defaultConfig.yAxis.domain[0],
-            defaultConfig.yAxis.domain[1],
-        ];
+        if (this.type === 'log') {
+            currentConfig.xAxis.domain = [0.01, 1];
+            currentConfig.yAxis.domain = [-10, 10];
+        } else {
+            currentConfig.xAxis.domain = [-20, 20];
+            currentConfig.yAxis.domain = [-10, 10];
+        }
         currentConfig.id = '';
         this.destroyInstance();
         this.instance = functionPlot(currentConfig);
@@ -194,6 +193,7 @@ export class chartInstance {
 
     switchChartType(type) {
         let config = this.config;
+        this.type = type;
         config.xAxis.type = type;
         if (type === 'log') {
             config.xAxis.domain = [0.01, 1];
@@ -204,6 +204,28 @@ export class chartInstance {
         }
         config.id = '';
         this.destroyInstance();
+        this.instance = functionPlot(config);
+        this.config = config;
+        console.log("图表配置已更新:", this.config);
+    }
+
+    switchDash(dash) {
+        const config = this.config;
+        if (dash) {
+            config.tip.xLine = true;
+            config.tip.yLine = true;
+        } else {
+            config.tip.xLine = false;
+            config.tip.yLine = false;
+        }
+        this.instance = functionPlot(config);
+        this.config = config;
+        console.log("图表配置已更新:", this.config);
+    }
+
+    switchGrid(grid) {
+        const config = this.config;
+        config.grid = grid;
         this.instance = functionPlot(config);
         this.config = config;
         console.log("图表配置已更新:", this.config);

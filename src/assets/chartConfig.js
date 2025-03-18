@@ -7,6 +7,11 @@ export const defaultConfig = (target) => ({
     height: target.clientHeight,
     // width: 800,
     // height: 500,
+    tip: {
+        // renderer: (x, y, index) => {
+        //     return `(${x.toFixed(2)}, ${y.toFixed(2)})`;
+        // }
+    },
     xAxis: {
         type: 'linear',
         domain: [-20, 20]

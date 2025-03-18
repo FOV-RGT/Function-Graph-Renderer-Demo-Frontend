@@ -48,7 +48,7 @@ const fnApi = {
     async delectFunctionData(id) {
         console.log("id", id);
         try {
-            return await api.delete('/mathdata/', { data: id });
+            return await api.delete('/mathdata/change', { data: id });
         } catch (error) {
             console.log("删除函数数据错误：", error.status);
             switch (error.status) {
