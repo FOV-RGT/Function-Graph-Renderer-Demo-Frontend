@@ -6,10 +6,6 @@
     background-color: beige;
 }
 
-.foot-buttonsGroup .iconfont {
-    font-size: clamp(0.8em, 1.5vw, 1.5em);
-}
-
 .left-li-plus .iconfont {
     font-size: 1em;
 }

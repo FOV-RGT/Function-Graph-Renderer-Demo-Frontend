@@ -55,7 +55,7 @@ export default {
             }
         },
         
-        logout(state) {
+        cleanState(state) {
             state.nickname = null;
             state.token = null;
             state.email = null;

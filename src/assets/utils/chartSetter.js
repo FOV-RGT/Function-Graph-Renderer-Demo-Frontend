@@ -8,13 +8,15 @@ import { toRaw, markRaw } from "vue";
 export class chartInstance {
     constructor(target) {
         this.target = target;
-        this.config = markRaw(chartConfig.defaultConfig(target)); // 初始化图表配置
+        this.config = chartConfig.defaultConfig(target); // 初始化图表配置
         this.zoomFactor = 0.5; // 默认缩放因子
+        this.type = 'linear'; // 默认坐标轴类型
         console.log("实例挂载:初始化配置完成");
-        this.instance = markRaw(functionPlot(this.config)); // 初始化图表实例
+        this.instance = functionPlot(this.config); // 初始化图表实例
         console.log("图表实例成功挂载");
     }
 
+    //该函数暂时用不到，计划用于未来的工作区模板导入
     async createData(inputs, index = 0, num = 1) {
         const updatedData = [];
         const rawData = toRaw(store.state.functionData_2D);
@@ -25,10 +27,11 @@ export class chartInstance {
             updatedData.push({
                 fn: inputs[i], // 函数表达式
                 color, // 为每个函数生成唯一的颜色
-                graphType : 'polyline',
-                nSamples : 2025, // 采样点数
+                nSamples: 2025, // 采样点数
                 visible: true, // 是否可见
                 dimension: 2, // 函数维
+                graphType: 'interval',
+                closed: false, // 是否闭合
             });
         }
         console.log("将要插入数据:", updatedData);
@@ -52,14 +55,6 @@ export class chartInstance {
         this.destroyInstance();
         this.instance = markRaw(functionPlot(currentConfig));
         this.config = markRaw(currentConfig);
-        return currentConfig;
-    }
-
-    async addInput(inputs, index, num) {
-        await this.createData(inputs, index, num).then((data) => {
-            console.log("数据已更新");
-            this.setFunction(data); // 设置函数
-        });
     }
 
     getAxisDomain(target) {
@@ -75,18 +70,16 @@ export class chartInstance {
         this.instance = null;
     }
 
-    resetView(target) {
+    resetView() {
         const currentConfig = this.config;
-        const defaultConfig = chartConfig.defaultConfig(target);
-        currentConfig.xAxis.domain = [
-            defaultConfig.xAxis.domain[0],
-            defaultConfig.xAxis.domain[1],
-        ];
-        currentConfig.yAxis.domain = [
-            defaultConfig.yAxis.domain[0],
-            defaultConfig.yAxis.domain[1],
-        ];
-        currentConfig.id = "";
+        if (this.type === 'log') {
+            currentConfig.xAxis.domain = [0.01, 1];
+            currentConfig.yAxis.domain = [-10, 10];
+        } else {
+            currentConfig.xAxis.domain = [-20, 20];
+            currentConfig.yAxis.domain = [-10, 10];
+        }
+        currentConfig.id = '';
         this.destroyInstance();
         this.instance = functionPlot(currentConfig);
         this.config = currentConfig;
@@ -115,7 +108,7 @@ export class chartInstance {
             center[1] - newYHalfWidth,
             center[1] + newYHalfWidth,
         ];
-        currentConfig.id = "";
+        currentConfig.id = '';
         this.destroyInstance();
         this.instance = functionPlot(currentConfig);
         this.config = currentConfig;
@@ -132,27 +125,27 @@ export class chartInstance {
         const yRange = Math.abs(yDomain[1] - yDomain[0]);
         const xStep = xRange * step * 0.5;
         const yStep = yRange * step * 0.5;
-    
-    // 根据方向移动视图
-    switch (evt) {
-        case 'moveLeft':
-            currentConfig.xAxis.domain = [xDomain[0] - xStep, xDomain[1] - xStep];
-            break;
-        case 'moveRight':
-            currentConfig.xAxis.domain = [xDomain[0] + xStep, xDomain[1] + xStep];
-            break;
-        case 'moveUp':
-            currentConfig.yAxis.domain = [yDomain[0] + yStep, yDomain[1] + yStep];
-            break;
-        case 'moveDown':
-            currentConfig.yAxis.domain = [yDomain[0] - yStep, yDomain[1] - yStep];
-            break;
-    }
-    // 重新渲染图表
-    currentConfig.id = '';
-    this.destroyInstance();
-    this.instance = functionPlot(currentConfig);
-    this.config = currentConfig;
+
+        // 根据方向移动视图
+        switch (evt) {
+            case 'moveLeft':
+                currentConfig.xAxis.domain = [xDomain[0] - xStep, xDomain[1] - xStep];
+                break;
+            case 'moveRight':
+                currentConfig.xAxis.domain = [xDomain[0] + xStep, xDomain[1] + xStep];
+                break;
+            case 'moveUp':
+                currentConfig.yAxis.domain = [yDomain[0] + yStep, yDomain[1] + yStep];
+                break;
+            case 'moveDown':
+                currentConfig.yAxis.domain = [yDomain[0] - yStep, yDomain[1] - yStep];
+                break;
+        }
+        // 重新渲染图表
+        currentConfig.id = '';
+        this.destroyInstance();
+        this.instance = functionPlot(currentConfig);
+        this.config = currentConfig;
     }
 
     resize(target) {
@@ -174,12 +167,12 @@ export class chartInstance {
             this.config.data.forEach((item) => item && (item.nSamples = nSamples));
         }
         // 重新渲染图表
-        this.config.id = "";
+        this.config.id = '';
         this.destroyInstance();
         this.instance = functionPlot(this.config);
         return nSamples;
     }
-    
+
     // 设置缩放因子
     setZoomFactor(factor) {
         // 验证缩放因子范围
@@ -196,5 +189,45 @@ export class chartInstance {
         if (factor > 1) factor = 1.0;
         this.moveFactor = factor;
         return this.moveFactor;
+    }
+
+    switchChartType(type) {
+        let config = this.config;
+        this.type = type;
+        config.xAxis.type = type;
+        if (type === 'log') {
+            config.xAxis.domain = [0.01, 1];
+            config.yAxis.domain = [-10, 10];
+        } else {
+            config.xAxis.domain = [-20, 20];
+            config.yAxis.domain = [-10, 10];
+        }
+        config.id = '';
+        this.destroyInstance();
+        this.instance = functionPlot(config);
+        this.config = config;
+        console.log("图表配置已更新:", this.config);
+    }
+
+    switchDash(dash) {
+        const config = this.config;
+        if (dash) {
+            config.tip.xLine = true;
+            config.tip.yLine = true;
+        } else {
+            config.tip.xLine = false;
+            config.tip.yLine = false;
+        }
+        this.instance = functionPlot(config);
+        this.config = config;
+        console.log("图表配置已更新:", this.config);
+    }
+
+    switchGrid(grid) {
+        const config = this.config;
+        config.grid = grid;
+        this.instance = functionPlot(config);
+        this.config = config;
+        console.log("图表配置已更新:", this.config);
     }
 }

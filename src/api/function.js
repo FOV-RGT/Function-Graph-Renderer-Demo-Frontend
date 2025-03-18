@@ -5,7 +5,7 @@ const fnApi = {
         try {
             return await api.post('/mathdata', data);
         } catch (error) {
-            console.log("更新函数数据错误：", error.status);
+            console.log("更新工作区数据错误：", error.status);
             switch (error.status) {
                 case 401:
                 case 404: {
@@ -48,7 +48,7 @@ const fnApi = {
     async delectFunctionData(id) {
         console.log("id", id);
         try {
-            return await api.delete('/mathdata/', { data: id });
+            return await api.delete('/mathdata/change', { data: id });
         } catch (error) {
             console.log("删除函数数据错误：", error.status);
             switch (error.status) {
@@ -92,8 +92,6 @@ const fnApi = {
     },
     async uploadChangeData(data) {
         try {
-            console.error("狗屎变动数据", data);
-            
             return await api.post('/mathdata/change', data);
         } catch (error) {
             console.log("更新历史记录错误：", error.status);
