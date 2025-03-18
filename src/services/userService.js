@@ -2,6 +2,7 @@ import authApi from '../api/auth';
 import fnApi from '../api/function';
 import store from '../store';
 import { sortData } from '../assets/utils/componentUtils';
+import { sign } from 'mathjs';
 
 
 
@@ -187,6 +188,44 @@ export async function uploadChangeData(data) {
             closed: data.closed
         }]);
         await fnApi.uploadChangeData(uploadData);
+        return {
+            success: true
+        };
+    } catch (error) {
+        return {
+            success: false,
+            error
+        };
+    }
+}
+
+export async function getAvatarUrl() {
+    try {
+        const res = await authApi.getAvatarUrl();
+        console.log(res);
+        // store.commit('auth/setUser', res.userinf);
+        return {
+            success: true,
+            res
+        };
+    } catch (error) {
+        return {
+            success: false,
+            error
+        };
+    }
+}
+
+export async function uploadAvatar(res, file) {
+    try {
+        const data = {
+            key: res.key,
+            policy: res.policy,
+            OSSAccessKeyId: res.accessid,
+            signature: res.signature,
+            file
+        }
+        await authApi.uploadAvatar(data);
         return {
             success: true
         };

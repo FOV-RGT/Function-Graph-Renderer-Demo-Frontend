@@ -11,7 +11,7 @@
                         输入函数
                     </button>
                     <button class="btn btn-block" @click="show.adjustWindow = !show.adjustWindow">
-                        调整
+                        设置
                     </button>
                     <button class="btn btn-block" @click="switchRenderer">
                         切换模式
@@ -19,8 +19,8 @@
                     <button class="btn btn-block" @click="show.table = !show.table">
                         历史记录
                     </button>
-                    <button class="btn btn-block">
-                        设置
+                    <button class="btn btn-block" @click="show.loginModal = !show.loginModal">
+                        账户
                     </button>
                 </div>
             </div>
@@ -90,17 +90,20 @@
             <div class="plotComponents h-19/20 relative">
                 <TwoDPlotCom ref="TwoDPlotCom" v-show="show.render2D" class="renderComponent pl-2" />
                 <ThreeDPlotCom ref="ThreeDPlotCom" v-show="!show.render2D" class="renderComponent" />
+                <div class="user-avatar" :style="{ 'background-image': `url(${userAvatarUrl})` }"
+                    @click="show.loginModal = !show.loginModal">
+                </div>
             </div>
             <div class="foot h-1/20 flex justify-evenly items-center overflow-hidden">
                 <button class="btn btn-lg" @click="show.loginModal = !show.loginModal">
-                    <div v-if="!isAuthenticated">
+                    <!-- <div v-if="!isAuthenticated">
                         <div class="status status-info animate-bounce"></div>
                         请登录
                     </div>
                     <div v-else class="flex items-center space-x-3">
                         <div aria-label="success" class="status status-success"></div>
                         <span class="text-2xl">{{ greetingMessage + userInfo.nickname }}</span>
-                    </div>
+                    </div> -->
                 </button>
                 <!-- 缩放步长控制组件 -->
                 <div class="zoomFactorControl flex items-center">
@@ -124,8 +127,7 @@
             <transition name="table">
                 <hisDataTable v-if="show.table" :localFnData="localFnData"
                     class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
-                    bg-base-100 rounded-box border border-base-content/10 overflow-auto lg:w-3xl md:w-lg sm:w-md h-auto z-80"
-                    @renderFn="renderFn" @delectData="delectData"
+                    bg-base-100 rounded-box border border-base-content/10 overflow-auto lg:w-4xl md:w-xl sm:w-md h-auto z-80" @renderFn="renderFn" @delectData="delectData"
                     @closeTable="show.table = false" @deleteLocalData="deleteLocalData" />
             </transition>
             <transition name="bg">
@@ -168,27 +170,44 @@
                     </form>
                     <div v-else class="user-info w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl
                     flex flex-col justify-center space-y-3">
+                        <h1 class="text-3xl self-center">{{ greetingMessage + userInfo.nickname }}</h1>
                         <div class="cursor-default flex items-center justify-between">
                             <span>用户信息</span>
-                            <button type="button" class="btn btn-soft btn-error btn-md flex items-center justify-evenly" @click="logout">
+                            <button type="button" class="btn btn-soft btn-error btn-md flex items-center justify-evenly"
+                                @click="logout">
                                 <span class="text-xl">退出登录</span>
                                 <icon type="logout" />
                             </button>
                         </div>
                         <div class="cursor-default flex items-center space-x-1">
                             <span class="whitespace-nowrap">昵称:</span>
-                            <input type="text" placeholder="昵称" class="input input-ghost text-xl rounded-sm pl-0.5 w-full"
+                            <input type="text" placeholder="昵称"
+                                class="input input-ghost text-xl rounded-sm pl-0.5 w-full"
                                 v-model="formData.nickname" />
                         </div>
                         <div class="cursor-default flex items-center space-x-1">
                             <span class="whitespace-nowrap">邮箱:</span>
-                            <input type="text" placeholder="邮箱" class="input input-ghost text-xl rounded-sm pl-0.5 w-full"
-                                v-model="formData.email" />
+                            <input type="text" placeholder="邮箱"
+                                class="input input-ghost text-xl rounded-sm pl-0.5 w-full" v-model="formData.email" />
                         </div>
                         <div class="cursor-default flex items-center space-x-1">
                             <span class="whitespace-nowrap">账号:</span>
-                            <input type="text" placeholder="账号" class="input input-ghost text-xl rounded-sm pl-0.5 w-full"
+                            <input type="text" placeholder="账号"
+                                class="input input-ghost text-xl rounded-sm pl-0.5 w-full"
                                 v-model="formData.username" />
+                        </div>
+                        <div class="flex flex-row items-center space-x-1">
+                            <fieldset class="fieldset">
+                                <label class="fieldset-label">上传文件需小于5MB</label>
+                                <input type="file" accept="image/*" class="file-input" @change="handleAvatarSelected" />
+                                <label class="fieldset-label">&nbsp;</label>
+                            </fieldset>
+                            <button type="button"
+                                class="btn btn-soft btn-success btn-md flex items-center justify-evenly"
+                                @click="getAvatarUrl">
+                                <span class="text-xl">上传头像</span>
+                                <icon type="image" />
+                            </button>
                         </div>
                         <button class="btn btn-block btn-lg btn-info btn-soft text-xl" @click="updateUserInfo">
                             <span v-if="!loading.updateInfo">提交修改</span>
@@ -211,8 +230,8 @@
             <transition name="table">
                 <adjustWindow v-show="show.adjustWindow" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
                 bg-base-100 rounded-box border border-base-content/10 overflow-auto w-lg h-auto z-80"
-                @switchChartType="switchChartType" @close="show.adjustWindow = false" @switchClosed="switchClosed"
-                @setRenderRange="setRenderRange" @switchDash="switchDash" @switchGrid="switchGrid"/>
+                    @switchChartType="switchChartType" @close="show.adjustWindow = false" @switchClosed="switchClosed"
+                    @setRenderRange="setRenderRange" @switchDash="switchDash" @switchGrid="switchGrid" />
             </transition>
         </div>
     </div>
@@ -233,7 +252,8 @@ import register from '../components/register.vue';
 import popupWindow from '../components/popupWindow.vue';
 import adjustButtons from '../components/adjustButtons.vue';
 import adjustWindow from '../components/adjustWindow.vue';
-
+import { v4 as uuidv4 } from 'uuid';
+import OSS from 'ali-oss';
 
 
 
@@ -274,7 +294,8 @@ export default {
             fnData: [],
             pagination: {},
             localFnData: [],
-            isClosed: false
+            isClosed: false,
+            userAvatarUrl: 'https://kz-avatar.oss-cn-guangzhou.aliyuncs.com/uploads/ed779048-6417-45dd-8b15-e75cea3c02cb'
         };
     },
     created() {
@@ -419,7 +440,7 @@ export default {
                         dimension: 2,
                         graphType: 'interval', // 添加默认图表类型
                         closed: this.isClosed
-                        
+
                     };
                     this.storeData(fnData);
                     updatedData.splice(index + 1, 0, fnData);
@@ -661,6 +682,71 @@ export default {
 
         switchGrid(grid) {
             this.$refs.TwoDPlotCom.switchGrid(grid);
+        },
+
+        handleAvatarSelected(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) {
+                this.$refs.popupWindow.addMessage({
+                    head: '上传失败',
+                    messages: ['请选择图片文件'],
+                    target: 'body'
+                });
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                this.$refs.popupWindow.addMessage({
+                    head: '上传失败',
+                    messages: ['文件大小不能超过5MB'],
+                    target: 'body'
+                });
+                return;
+            }
+            this.uploadAvatar(file);
+        },
+
+        async getAvatarUrl(file) {
+            const { success, res, error } = await service.getAvatarUrl();
+            console.log('获取头像上传信息:', res);
+            
+            if (success) {
+                this.uploadAvatar(res, file);
+            } else {
+                console.log('获取头像上传信息失败：', error);
+            }
+            // const hostParts = res.host.split('.');
+            // const bucket = hostParts[0];
+            // const region = hostParts[1].replace('oss-', '');
+            // const client = new OSS({
+            //     region,
+            //     accessKeyId: res.accessid,
+            //     bucket,
+            //     secure: true,
+            //     stsToken: ''
+            // })
+            // const result = await client.put(res.key, file, {
+            //     headers: {
+            //         'x-oss-policy': res.policy,      // 传递policy
+            //         'x-oss-signature': res.signature // 传递signature
+            //     },
+            //     progress: (p) => {
+            //         console.log(`上传进度: ${Math.round(p * 100)}%`);
+            //     }
+            // });
+            // const avatarUrl = res.url;
+            // console.log('上传头像成功:', avatarUrl);
+            
+        },
+
+        async uploadAvatar(res, file) {
+            const { success, error } = await service.uploadAvatar(res, file);
+            if (success) {
+                console.log('上传头像成功');
+                this.userAvatarUrl = res.url;
+            } else {
+                console.log('上传头像失败:', error);
+            }
         }
     }
 };

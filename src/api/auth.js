@@ -1,4 +1,5 @@
 import api from './index';
+import axios from 'axios';
 
 const authApi = {
     async login(credentials) {
@@ -116,6 +117,50 @@ const authApi = {
             return await api.put('/users/account', data);
         } catch (error) {
             console.log("更新用户信息错误：", error.status);
+            switch (error.status) {
+                case 401:
+                case 404: {
+                    throw ('未授权');
+                }
+                case 400: {
+                    throw ('请求错误');
+                }
+                case 500: {
+                    throw ('服务器错误');
+                }
+                default: {
+                    throw (`未知错误: ${error.response.status}`);
+                }
+            }
+        }
+    },
+    async getAvatarUrl() {
+        try {
+            return await api.get('/avatar_direct');
+        } catch (error) {
+            console.log("获取上传链接错误：", error.status);
+            switch (error.status) {
+                case 401:
+                case 404: {
+                    throw ('未授权');
+                }
+                case 400: {
+                    throw ('请求错误');
+                }
+                case 500: {
+                    throw ('服务器错误');
+                }
+                default: {
+                    throw (`未知错误: ${error.response.status}`);
+                }
+            }
+        }
+    },
+    async uploadAvatar(data) {
+        try {
+            return await axios.post('https://kz-avatar.oss-cn-guangzhou.aliyuncs.com', data);
+        } catch (error) {
+            console.log("上传头像错误：", error.status);
             switch (error.status) {
                 case 401:
                 case 404: {

@@ -219,11 +219,11 @@ export default {
         fire(particleRatio, opts) {
             confetti({
                 origin: {
-                    y: 0.72,
-                    x: 0.58
+                    y: 0.75,
+                    x: 0.5
                 },
                 ...opts,
-                particleCount: Math.floor(666 * particleRatio)
+                particleCount: Math.floor(100 * particleRatio)
             });
         },
         fireWorks() {
