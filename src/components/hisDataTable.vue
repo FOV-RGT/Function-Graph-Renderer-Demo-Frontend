@@ -60,10 +60,10 @@
                     <icon type="doubleLeft" />
                 </button>
                 <label class="join-item input">
-                    <input v-show="!loading" type="number" class="join rounded-none w-12 text-center"
+                    <input v-show="!loading.getData" type="number" class="join rounded-none w-12 text-center"
                         :value="currentPagination.currentPage"
                         @input="debouncedUpdatePage($event.target.valueAsNumber)">
-                    <span v-show="loading" class="loading loading-spinner loading-lg"></span>
+                    <span v-show="loading.getData" class="loading loading-spinner loading-lg"></span>
                     </input>
                     <span>/</span>
                     <span>{{ currentPagination.totalPages }}</span>
@@ -96,7 +96,9 @@ export default {
     data() {
         return {
             selection: [],
-            loading: false,
+            loading: {
+                getData: false
+            },
             localPage: 1,
             totalSelection: new Map(),
             localDataMap: new Map(),
@@ -154,18 +156,6 @@ export default {
             }
         }
     },
-    watch: {
-        fnData: {
-            handler() {
-                this.loading = false;
-            },
-        },
-        'pagination.currentPage': {
-            handler(newVal) {
-                this.selection = this.totalSelection.get(newVal) || [];
-            },
-        },
-    },
     methods: {
         isSelected(data) {
             return this.selection.some(item => item.id === data.id);
@@ -198,17 +188,16 @@ export default {
                 this.totalSelection.delete(this.currentPagination.currentPage);
             }
         },
-        changePage(page) {
-            if (this.loading) return;
-            this.loading = true;
+        async changePage(page) {
+            if (this.loading.getData) return;
             this._saveCurrentSelection();
             if (this.isAuthenticated) {
-                this.getHisData(page);
+                await this.getHisData(page);
+                this.selection = this.totalSelection.get(page) || [];
             } else {
                 this.localPage = page;
                 setTimeout(() => {
                     this.selection = this.totalSelection.get(page) || [];
-                    this.loading = false;
                 }, 100);
             }
         },
@@ -265,6 +254,8 @@ export default {
             });
         },
         async getHisData(page) {
+            if (this.loading.getData) return;
+            this.loading.getData = true;
             const { success, data, error } = await service.getChangeData(page);
             if (success) {
                 this.fnData = data.fnData;
@@ -273,6 +264,7 @@ export default {
             } else {
                 console.log('获取历史数据失败:', error);
             }
+            this.loading.getData = false;
         }
     }
 }

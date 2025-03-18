@@ -92,8 +92,6 @@ const fnApi = {
     },
     async uploadChangeData(data) {
         try {
-            console.error("狗屎变动数据", data);
-            
             return await api.post('/mathdata/change', data);
         } catch (error) {
             console.log("更新历史记录错误：", error.status);

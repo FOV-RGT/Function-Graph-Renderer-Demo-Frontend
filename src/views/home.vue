@@ -1,7 +1,7 @@
 <template>
     <div class="main flex w-[100dvw] h-[100dvh] ">
         <div class="main-left w-1/6 min-w-52 shrink-1 overflow-y-auto bg-base-300">
-            <div v-show="showHome" class="w-full h-full flex justify-start flex-col">
+            <div v-show="show.home" class="w-full h-full flex justify-start flex-col">
                 <div class="top overflow-hidden text-center flex flex-col items-center mt-5 mb-10">
                     <h1 class="text-transparent select-none whitespace-nowrap">函数图形渲染程序</h1>
                     <p class="text-transparent select-none">demo-v{{ version }}</p>
@@ -10,13 +10,13 @@
                     <button class="btn btn-block" @click="switchHomeShow('list')">
                         输入函数
                     </button>
-                    <button class="btn btn-block">
+                    <button class="btn btn-block" @click="show.buttons = !show.buttons">
                         调整
                     </button>
                     <button class="btn btn-block" @click="switchRenderer">
                         切换模式
                     </button>
-                    <button class="btn btn-block" @click="showTable = !showTable">
+                    <button class="btn btn-block" @click="show.table = !show.table">
                         历史记录
                     </button>
                     <button class="btn btn-block">
@@ -24,7 +24,7 @@
                     </button>
                 </div>
             </div>
-            <ul class="list overflow-x-hidden" v-show="showList">
+            <ul class="list overflow-x-hidden" v-show="show.list">
                 <li class="flex justify-center border-b-2 border-b-slate-500/80 items-center">
                     <div
                         class="li-top p-2 pb-1 pl-8 text-[2em] text-slate-300/70 tracking-widest flex items-center justify-between select-none flex-1">
@@ -87,12 +87,13 @@
             </ul>
         </div>
         <div class="main-right flex-1 shrink-1 pt-6 pr-4 overflow-hidden relative">
-            <div class="plotComponents h-19/20">
-                <TwoDPlotCom ref="TwoDPlotCom" v-show="show_2D" class="renderComponent pl-2" />
-                <ThreeDPlotCom ref="ThreeDPlotCom" v-show="!show_2D" class="renderComponent" />
+            <div class="plotComponents h-19/20 relative">
+                <TwoDPlotCom ref="TwoDPlotCom" v-show="show.render2D" class="renderComponent pl-2" />
+                <ThreeDPlotCom ref="ThreeDPlotCom" v-show="!show.render2D" class="renderComponent" />
+                <adjustButtons v-if="show.buttons" @setView="setView" class="absolute right-12 bottom-12"/>
             </div>
             <div class="foot h-1/20 flex justify-evenly items-center overflow-hidden">
-                <button class="btn btn-lg" @click="showLoginModal = !showLoginModal">
+                <button class="btn btn-lg" @click="show.loginModal = !show.loginModal">
                     <div v-if="!isAuthenticated">
                         <div class="status status-info animate-bounce"></div>
                         请登录
@@ -114,73 +115,29 @@
                     <input type="number" v-model.number="moveStep" min="0.01" max="1.00" step="0.01"
                         class="input input-xs w-16 text-center" @change="updateMoveStep" />
                 </div>
-                <div class="foot-buttonsGroup join max-h-19/20 overflow-hidden">
-                    <!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513.56 394.43" width="100px" height="100px">
-                        <g id="_图层_1-2" data-name="图层 1">
-                            <polygon class="cls-1"
-                                points="225.69 5.23 505.11 271.11 284.52 389.29 19.81 359.74 5.11 182.48 93.34 20 225.69 5.23" />
-                            <polygon
-                                points="34.09 324.07 48.58 179.14 106.56 48.71 222.5 34.21 468.87 266.1 255.11 359.69 34.09 324.07" />
-                        </g>
-                    </svg> -->
-                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
-                    join-item rounded-l-none pl-1 pr-1" @click="setView('reset')">
-                        <icon type="aim" />
-                    </button>
-                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
-                    join-item pl-1 pr-1" @mousedown="startSetView('zoomIn')" @mouseup="endSetView"
-                        @mouseleave="endSetView">
-                        <icon type="z_in" />
-                    </button>
-                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
-                    join-item pl-1 pr-1" @mousedown="startSetView('zoomOut')" @mouseup="endSetView"
-                        @mouseleave="endSetView">
-                        <icon type="z_out" />
-                    </button>
-                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
-                    join-item pl-1 pr-1" @mousedown="startSetView('moveUp')" @mouseup="endSetView"
-                        @mouseleave="endSetView">
-                        <icon type="arrowUp" />
-                    </button>
-                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
-                    join-item pl-1 pr-1" @mousedown="startSetView('moveDown')" @mouseup="endSetView"
-                        @mouseleave="endSetView">
-                        <icon type="arrowDown" />
-                    </button>
-                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
-                    join-item pl-1 pr-1" @mousedown="startSetView('moveLeft')" @mouseup="endSetView"
-                        @mouseleave="endSetView">
-                        <icon type="arrowLeft" />
-                    </button>
-                    <button class="btn btn-soft btn-primary btn-xl h-[clamp(1em,4vh,3em)] w-[clamp(0.8em,2.5vw,2.5em)]
-                    join-item rounded-r-none pl-1 pr-1" @mousedown="startSetView('moveRight')" @mouseup="endSetView"
-                        @mouseleave="endSetView">
-                        <icon type="arrowRight" />
-                    </button>
-                </div>
             </div>
             <transition name="bg">
-                <div v-show="showTable" class="fixed inset-0 z-40" @click="showTable = false">
+                <div v-show="show.table" class="fixed inset-0 z-40" @click="show.table = false">
                     <div class="absolute inset-0 bg-black/30"></div>
                 </div>
             </transition>
             <transition name="table">
-                <hisDataTable v-if="showTable" :localFnData="localFnData"
+                <hisDataTable v-if="show.table" :localFnData="localFnData"
                     class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
                     bg-base-100 rounded-box border border-base-content/10 overflow-auto lg:w-5xl md:w-2xl sm:w-1xl h-auto z-80"
                     @renderFn="renderFn" @delectData="delectData"
-                    @closeTable="showTable = false" @deleteLocalData="deleteLocalData" />
+                    @closeTable="show.table = false" @deleteLocalData="deleteLocalData" />
             </transition>
             <transition name="bg">
-                <div v-show="showLoginModal || showRegisterModal" class="fixed inset-0 z-40"
-                    @click="showLoginModal = false; showRegisterModal = false">
+                <div v-show="show.loginModal || show.registerModal" class="fixed inset-0 z-40"
+                    @click="show.loginModal = false; show.registerModal = false">
                     <div class="absolute inset-0 bg-black/30"></div>
                 </div>
             </transition>
             <transition name="table">
-                <div v-show="showLoginModal" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] bg-base-100 rounded-box
+                <div v-show="show.loginModal" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] bg-base-100 rounded-box
                 border border-base-content/10 overflow-auto lg:w-2xl md:w-xl sm:w-md h-auto z-80">
-                    <form @submit.prevent="userLogin({ login: account, password: password })" v-if="!showInfo">
+                    <form @submit.prevent="userLogin({ login: account, password: password })" v-if="!show.info">
                         <fieldset class="fieldset w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
                             <div class="fieldset-label cursor-default flex items-center justify-center">
                                 <span class="text-center text-2xl text-primary select-none">Login</span>
@@ -241,7 +198,7 @@
                 </div>
             </transition>
             <transition name="table">
-                <register ref="register" v-show="showRegisterModal" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] bg-base-100 rounded-box
+                <register ref="register" v-show="show.registerModal" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] bg-base-100 rounded-box
                     border border-base-content/10 overflow-auto h-auto z-80" @switchModal="switchModal"
                     @login="userLogin" />
             </transition>
@@ -263,6 +220,10 @@ import * as service from '../services/userService';
 import hisDataTable from '../components/hisDataTable.vue';
 import register from '../components/register.vue';
 import popupWindow from '../components/popupWindow.vue';
+import adjustButtons from '../components/adjustButtons.vue';
+import AdjustButtons from '../components/adjustButtons.vue';
+
+
 
 
 
@@ -274,39 +235,41 @@ export default {
         icon,
         hisDataTable,
         register,
-        popupWindow
+        popupWindow,
+        adjustButtons
     },
     data() {
         return {
             version: packageJson.version,
-            show_2D: true,
-            viewTimeOut: null,
-            viewInterval: null,
-            showList: false,
-            showHome: true,
-            account: "",
-            password: "",
             loading: {
                 login: false,
                 updateInfo: false
             },
-            showInfo: false,
+            show: {
+                buttons: false,
+                table: false,
+                loginModal: false,
+                registerModal: false,
+                info: false,
+                list: false,
+                home: true,
+                render2D: true
+            },
+            account: "",
+            password: "",
             zoomStep: 0.5,
             moveStep: 0.2,
             formData: {},
-            showTable: false,
             fnData: [],
             pagination: {},
             localFnData: [],
-            showLoginModal: false,
-            showRegisterModal: false,
         };
     },
     created() {
         // 输入防抖
         this.debouncedAddInput = utils.debounce((input, index) => {
             const formatInput = input.replace(/\s+/g, "");
-            if (this.show_2D) {
+            if (this.show.render2D) {
                 try {
                     parse(formatInput);
                     const newData = [...toRaw(this.currentData)];
@@ -314,7 +277,7 @@ export default {
                     this.storeData(newData[index]);
                     const payload = {
                         data: newData,
-                        is2D: this.show_2D,
+                        is2D: this.show.render2D,
                         needUpload: true
                     }
                     this.$store.commit('syncData', payload);
@@ -330,14 +293,14 @@ export default {
             }
         }, 400);
         this.debouncedUpdateSamplePoints = utils.debounce((samples, index) => {
-            if (!this.show_2D) return
+            if (!this.show.render2D) return
             const validSamples = utils.clamp(samples, 500, 5000);
             const data = [...toRaw(this.currentData)];
             data[index].nSamples = validSamples;
             this.storeData(data[index]);
             const payload = {
                 data: data,
-                is2D: this.show_2D,
+                is2D: this.show.render2D,
                 needUpload: true
             }
             this.$store.commit('syncData', payload);
@@ -347,7 +310,7 @@ export default {
         }, 400);
         this.throttledResize = utils.throttle(() => {
             setTimeout(() => {
-                if (this.show_2D) {
+                if (this.show.render2D) {
                     this.$refs.TwoDPlotCom.fuckResize();
                 } else {
                     this.$refs.ThreeDPlotCom.fuckResize();
@@ -368,7 +331,7 @@ export default {
         if (success) {
             this.fuckRender(this.currentData);
             this.initFormData();
-            this.showInfo = true;
+            this.show.info = true;
             console.log('初始化用户信息成功');
         } else {
             console.log('初始化用户信息失败:', error);
@@ -383,7 +346,7 @@ export default {
         ...mapState(["functionData_2D", "functionData_3D"]),
         ...mapGetters('auth', ['userInfo', 'displayName', 'isAuthenticated']),
         currentInputExample() {
-            return this.show_2D ? '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...'
+            return this.show.render2D ? '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...'
                 : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
         },
         currentData() {
@@ -397,7 +360,7 @@ export default {
             //     })));
             //     console.log(payload);
             // }
-            return this.show_2D ? this.functionData_2D : this.functionData_3D;
+            return this.show.render2D ? this.functionData_2D : this.functionData_3D;
         },
         greetingMessage() {
             const time = new Date().getHours();
@@ -421,41 +384,21 @@ export default {
     },
     methods: {
         switchRenderer() {
-            this.show_2D = !this.show_2D;
+            this.show.render2D = !this.show.render2D;
             this.throttledResize();
-            this.$store.commit('switchRender', this.show_2D);
+            this.$store.commit('switchRender', this.show.render2D);
         },
 
         //将缩放步长和移动步长传递给2D图标实例
         setView(evt) {
-            if (this.show_2D) {
+            if (this.show.render2D) {
                 this.$refs.TwoDPlotCom.setView(evt, this.zoomStep, this.moveStep);
             }
         },
 
-        startSetView(evt) {
-            this.setView(evt);
-            this.viewTimeOut = setTimeout(() => {
-                this.viewInterval = requestAnimationFrame(() => this._runSetView(evt));
-            }, 150);
-        },
-
-        _runSetView(evt) {
-            this.setView(evt);
-            // 请求下一帧
-            this.viewInterval = requestAnimationFrame(() => this._runSetView(evt));
-        },
-
-        endSetView() {
-            clearTimeout(this.viewTimeOut);
-            cancelAnimationFrame(this.viewInterval);
-            this.viewTimeOut = null;
-            this.viewInterval = null;
-        },
-
         fuckRender(data) {
             console.log("fuckRender:", data);
-            if (this.show_2D) {
+            if (this.show.render2D) {
                 this.$refs.TwoDPlotCom.fuckRender(data);
             } else {
                 // this.$refs.ThreeDPlotCom.fuckRender(data);
@@ -511,17 +454,17 @@ export default {
             }
             const payload = {
                 data: updatedData,
-                is2D: this.show_2D,
+                is2D: this.show.render2D,
                 needUpload: true
             }
             this.$store.commit('syncData', payload);
         },
 
         switchHomeShow(evt) {
-            this.showHome = !this.showHome;
+            this.show.home = !this.show.home;
             switch (evt) {
                 case 'list': {
-                    this.showList = !this.showList;
+                    this.show.list = !this.show.list;
                     break;
                 }
             }
@@ -536,11 +479,11 @@ export default {
                 this.fuckRender(this.currentData);
                 this.$store.commit('setUpload', true);
                 await this.uploadUserData(this.localFnData);
-                this.showLoginModal = false;
+                this.show.loginModal = false;
                 this.initFormData();
                 this.localFnData = [];
                 setTimeout(() => {
-                    this.showInfo = true;
+                    this.show.info = true;
                 }, 400);
             } else {
                 const data = {
@@ -558,14 +501,14 @@ export default {
         },
 
         logout() {
-            this.showLoginModal = false;
+            this.show.loginModal = false;
             const data_2D = utils.deepClone(this.functionData_2D)
             const data_3D = utils.deepClone(this.functionData_3D)
             this.localFnData = [...data_2D, ...data_3D];
             setTimeout(() => {
                 this.$store.commit('auth/cleanState');
                 this.formData = {};
-                this.showInfo = false;
+                this.show.info = false;
                 console.log(this.userInfo);
             }, 400);
         },
@@ -575,7 +518,7 @@ export default {
             // 验证范围
             this.zoomStep = utils.clamp(this.zoomStep, 0.01, 1.00);
             // 更新图表实例的缩放因子
-            if (this.show_2D && this.$refs.TwoDPlotCom) {
+            if (this.show.render2D && this.$refs.TwoDPlotCom) {
                 this.$refs.TwoDPlotCom.updateZoomFactor(this.zoomStep);
             }
         },
@@ -585,7 +528,7 @@ export default {
             // 验证范围
             this.moveStep = utils.clamp(this.moveStep, 0.01, 1.00);
             // 更新图表实例的移动步长
-            if (this.show_2D && this.$refs.TwoDPlotCom) {
+            if (this.show.render2D && this.$refs.TwoDPlotCom) {
                 this.$refs.TwoDPlotCom.updateMoveFactor(this.moveStep);
             }
         },
@@ -649,9 +592,9 @@ export default {
         },
 
         switchModal() {
-            this.showLoginModal = !this.showLoginModal;
-            this.showRegisterModal = !this.showRegisterModal;
-            if (this.showRegisterModal) {
+            this.show.loginModal = !this.show.loginModal;
+            this.show.registerModal = !this.show.registerModal;
+            if (this.show.registerModal) {
                 this.$refs.register.init();
             }
         },
