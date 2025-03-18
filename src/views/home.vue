@@ -221,7 +221,6 @@ import hisDataTable from '../components/hisDataTable.vue';
 import register from '../components/register.vue';
 import popupWindow from '../components/popupWindow.vue';
 import adjustButtons from '../components/adjustButtons.vue';
-import AdjustButtons from '../components/adjustButtons.vue';
 
 
 
