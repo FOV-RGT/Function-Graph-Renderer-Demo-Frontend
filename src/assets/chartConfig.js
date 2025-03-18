@@ -8,7 +8,8 @@ export const defaultConfig = (target) => ({
     // width: 800,
     // height: 500,
     xAxis: {
-        domain: [-20, 20],
+        type: 'linear',
+        domain: [-20, 20]
     },
     yAxis: {
         domain: [-10, 10],

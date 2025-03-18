@@ -422,10 +422,11 @@ export default {
                     const fnData = {
                         fn: '',
                         color: utils.generateRandomHarmoniousColor(),
-                        visible: true,
-                        graphType: 'polyline', // 添加默认图表类型
                         nSamples: 2025, // 确保有默认采样点数
-                        dimension: 2
+                        visible: true,
+                        dimension: 2,
+                        graphType: 'interval', // 添加默认图表类型
+                        closed: false
                     };
                     this.storeData(fnData);
                     updatedData.splice(index + 1, 0, fnData);
@@ -435,10 +436,11 @@ export default {
                     const fnData = {
                         fn: '',
                         color: utils.generateRandomHarmoniousColor(),
-                        visible: true,
-                        graphType: 'polyline', // 添加默认图表类型
                         nSamples: 2025, // 确保有默认采样点数
-                        dimension: 2
+                        visible: true,
+                        dimension: 2,
+                        graphType: 'interval', // 添加默认图表类型
+                        closed: false
                     };
                     this.storeData(fnData);
                     updatedData.push(fnData);
@@ -610,14 +612,7 @@ export default {
         },
 
         async uploadChangeData(data) {
-            const uploadData = JSON.stringify([{
-                fn: data.fn,
-                color: data.color,
-                nSamples: data.nSamples,
-                visible: data.visible,
-                dimension: data.dimension
-            }]);
-            const { success, error } = await service.uploadChangeData(uploadData);
+            const { success, error } = await service.uploadChangeData(data);
             if (success) {
                 console.log('上传变动数据成功');
             } else {

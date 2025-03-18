@@ -84,6 +84,8 @@ export async function uploadFunctionData(data) {
                 nSamples: item.nSamples,
                 visible: item.visible,
                 dimension: item.dimension,
+                graphType: item.graphType,
+                closed: item.closed
             });
             return acc;
         }, []);
@@ -175,7 +177,16 @@ export async function getChangeData(currentPage, pageSize) {
 
 export async function uploadChangeData(data) {
     try {
-        await fnApi.uploadChangeData(data);
+        const uploadData = JSON.stringify([{
+            fn: data.fn,
+            color: data.color,
+            nSamples: data.nSamples,
+            visible: data.visible,
+            dimension: data.dimension,
+            graphType: data.graphType,
+            closed: data.closed
+        }]);
+        await fnApi.uploadChangeData(uploadData);
         return {
             success: true
         };

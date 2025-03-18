@@ -1,7 +1,7 @@
 import * as chartConfig from "../chartConfig";
 import functionPlot from "function-plot";
 import { generateRandomHarmoniousColor } from "./componentUtils";
-import { select, selectAll } from "d3";
+import { select } from "d3";
 import store from "../../store";
 import { toRaw, markRaw } from "vue";
 
@@ -26,10 +26,11 @@ export class chartInstance {
             updatedData.push({
                 fn: inputs[i], // 函数表达式
                 color, // 为每个函数生成唯一的颜色
-                graphType: 'polyline',
                 nSamples: 2025, // 采样点数
                 visible: true, // 是否可见
                 dimension: 2, // 函数维
+                graphType: 'interval',
+                closed: false, // 是否闭合
             });
         }
         console.log("将要插入数据:", updatedData);
@@ -53,7 +54,6 @@ export class chartInstance {
         this.destroyInstance();
         this.instance = markRaw(functionPlot(currentConfig));
         this.config = markRaw(currentConfig);
-        this.setupFunctionEvents((e) => { console.log(e) });
     }
 
     getAxisDomain(target) {
@@ -80,7 +80,7 @@ export class chartInstance {
             defaultConfig.yAxis.domain[0],
             defaultConfig.yAxis.domain[1],
         ];
-        currentConfig.id = "";
+        currentConfig.id = '';
         this.destroyInstance();
         this.instance = functionPlot(currentConfig);
         this.config = currentConfig;
@@ -109,7 +109,7 @@ export class chartInstance {
             center[1] - newYHalfWidth,
             center[1] + newYHalfWidth,
         ];
-        currentConfig.id = "";
+        currentConfig.id = '';
         this.destroyInstance();
         this.instance = functionPlot(currentConfig);
         this.config = currentConfig;
@@ -153,7 +153,7 @@ export class chartInstance {
         const currentConfig = this.config;
         currentConfig.width = target.clientWidth;
         currentConfig.height = target.clientHeight;
-        currentConfig.id = "";
+        currentConfig.id = '';
         this.destroyInstance();
         this.instance = functionPlot(currentConfig);
         this.config = currentConfig;
@@ -168,7 +168,7 @@ export class chartInstance {
             this.config.data.forEach((item) => item && (item.nSamples = nSamples));
         }
         // 重新渲染图表
-        this.config.id = "";
+        this.config.id = '';
         this.destroyInstance();
         this.instance = functionPlot(this.config);
         return nSamples;
@@ -190,23 +190,6 @@ export class chartInstance {
         if (factor > 1) factor = 1.0;
         this.moveFactor = factor;
         return this.moveFactor;
-    }
-
-    setupFunctionEvents(clickCallback) {
-        this.functionClickCallback = clickCallback;
-        const instance = this;
-        // 直接选择所有路径元素
-        console.log(selectAll('.function-plot .canvas .content .graph path.line'));
-        // forEach(element => {
-        //     select(element)
-        //     .style('cursor', 'pointer')
-        //     .on('click', function () {
-        //         console.log('函数被点击:', i);
-        //         if (instance.functionClickCallback) {
-        //             instance.functionClickCallback(instance.config.data[i], i);
-        //         }
-        //     });
-        // })
     }
 
     switchChartType(type) {
