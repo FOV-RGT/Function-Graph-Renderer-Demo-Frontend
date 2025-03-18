@@ -1,7 +1,7 @@
 import * as chartConfig from "../chartConfig";
 import functionPlot from "function-plot";
 import { generateRandomHarmoniousColor } from "./componentUtils";
-import { select } from "d3";
+import { select, selectAll } from "d3";
 import store from "../../store";
 import { toRaw, markRaw } from "vue";
 
@@ -15,6 +15,7 @@ export class chartInstance {
         console.log("图表实例成功挂载");
     }
 
+    //该函数暂时用不到，计划用于未来的工作区模板导入
     async createData(inputs, index = 0, num = 1) {
         const updatedData = [];
         const rawData = toRaw(store.state.functionData_2D);
@@ -25,8 +26,8 @@ export class chartInstance {
             updatedData.push({
                 fn: inputs[i], // 函数表达式
                 color, // 为每个函数生成唯一的颜色
-                graphType : 'polyline',
-                nSamples : 2025, // 采样点数
+                graphType: 'polyline',
+                nSamples: 2025, // 采样点数
                 visible: true, // 是否可见
                 dimension: 2, // 函数维
             });
@@ -52,14 +53,7 @@ export class chartInstance {
         this.destroyInstance();
         this.instance = markRaw(functionPlot(currentConfig));
         this.config = markRaw(currentConfig);
-        return currentConfig;
-    }
-
-    async addInput(inputs, index, num) {
-        await this.createData(inputs, index, num).then((data) => {
-            console.log("数据已更新");
-            this.setFunction(data); // 设置函数
-        });
+        this.setupFunctionEvents((e) => { console.log(e) });
     }
 
     getAxisDomain(target) {
@@ -132,27 +126,27 @@ export class chartInstance {
         const yRange = Math.abs(yDomain[1] - yDomain[0]);
         const xStep = xRange * step * 0.5;
         const yStep = yRange * step * 0.5;
-    
-    // 根据方向移动视图
-    switch (evt) {
-        case 'moveLeft':
-            currentConfig.xAxis.domain = [xDomain[0] - xStep, xDomain[1] - xStep];
-            break;
-        case 'moveRight':
-            currentConfig.xAxis.domain = [xDomain[0] + xStep, xDomain[1] + xStep];
-            break;
-        case 'moveUp':
-            currentConfig.yAxis.domain = [yDomain[0] + yStep, yDomain[1] + yStep];
-            break;
-        case 'moveDown':
-            currentConfig.yAxis.domain = [yDomain[0] - yStep, yDomain[1] - yStep];
-            break;
-    }
-    // 重新渲染图表
-    currentConfig.id = '';
-    this.destroyInstance();
-    this.instance = functionPlot(currentConfig);
-    this.config = currentConfig;
+
+        // 根据方向移动视图
+        switch (evt) {
+            case 'moveLeft':
+                currentConfig.xAxis.domain = [xDomain[0] - xStep, xDomain[1] - xStep];
+                break;
+            case 'moveRight':
+                currentConfig.xAxis.domain = [xDomain[0] + xStep, xDomain[1] + xStep];
+                break;
+            case 'moveUp':
+                currentConfig.yAxis.domain = [yDomain[0] + yStep, yDomain[1] + yStep];
+                break;
+            case 'moveDown':
+                currentConfig.yAxis.domain = [yDomain[0] - yStep, yDomain[1] - yStep];
+                break;
+        }
+        // 重新渲染图表
+        currentConfig.id = '';
+        this.destroyInstance();
+        this.instance = functionPlot(currentConfig);
+        this.config = currentConfig;
     }
 
     resize(target) {
@@ -179,7 +173,7 @@ export class chartInstance {
         this.instance = functionPlot(this.config);
         return nSamples;
     }
-    
+
     // 设置缩放因子
     setZoomFactor(factor) {
         // 验证缩放因子范围
@@ -196,5 +190,23 @@ export class chartInstance {
         if (factor > 1) factor = 1.0;
         this.moveFactor = factor;
         return this.moveFactor;
+    }
+
+    setupFunctionEvents(clickCallback) {
+        this.functionClickCallback = clickCallback;
+        const graphContainer = select('.function-plot .canvas .content');
+        const instance = this;
+        // 直接选择所有路径元素
+        console.log(graphContainer.selectAll('.graph path.line'));
+        // forEach(element => {
+        //     select(element)
+        //     .style('cursor', 'pointer')
+        //     .on('click', function () {
+        //         console.log('函数被点击:', i);
+        //         if (instance.functionClickCallback) {
+        //             instance.functionClickCallback(instance.config.data[i], i);
+        //         }
+        //     });
+        // })
     }
 }
