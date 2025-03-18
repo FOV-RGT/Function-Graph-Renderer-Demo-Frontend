@@ -441,7 +441,6 @@ export default {
                         dimension: 2,
                         graphType: 'interval', // 添加默认图表类型
                         closed: this.isClosed
-
                     };
                     this.storeData(fnData);
                     updatedData.splice(index + 1, 0, fnData);
@@ -744,7 +743,6 @@ export default {
             // });
             // const avatarUrl = res.url;
             // console.log('上传头像成功:', avatarUrl);
-
         },
 
         async uploadAvatar(res, file) {

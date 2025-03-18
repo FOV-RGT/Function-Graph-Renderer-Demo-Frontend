@@ -3,7 +3,7 @@
         <div class="flex flex-col item-start w-full h-full gap-4">
             <div class="flex relative items-center">
                 <h1 class="text-3xl absolute left-1/2 transform -translate-x-1/2">全局设置</h1>
-                <button class="btn btn-soft ml-auto mr-4 btn-primary" @click="selfClose">
+                <button class="btn btn-soft ml-auto mr-1 btn-primary" @click="selfClose">
                     <icon type="close" />
                 </button>
             </div>
@@ -31,6 +31,9 @@
             <div class="flex flex-row items-center justify-start">
                 <p class="mr-4 text-2xl">绘制函数阴影</p>
                 <input type="checkbox" checked="checked" class="toggle toggle-primary" v-model="closed" @change="switchClosed"/>
+                <div class="warningCircle tooltip tooltip-warning tooltip-right ml-5" data-tip="该选项极其消耗性能">
+                    <icon type="warningCircle" class="self-center text-warning"/>
+                </div>
             </div>
             <div class="flex flex-row items-center justify-start">
                 <p class="mr-4 text-2xl">辅助虚线</p>
@@ -95,4 +98,13 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.warningCircle .iconfont {
+    font-size: 1.5em;
+}
+
+.warningCircle::before {
+    font-size: large;
+}
+
+</style>
