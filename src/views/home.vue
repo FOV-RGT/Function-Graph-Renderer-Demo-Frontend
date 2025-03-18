@@ -165,10 +165,10 @@
                 </div>
             </transition>
             <transition name="table">
-                <hisDataTable v-show="showTable" :fnData="fnData" :pagination="pagination" :localFnData="localFnData"
+                <hisDataTable v-if="showTable" :localFnData="localFnData"
                     class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
-            bg-base-100 rounded-box border border-base-content/10 overflow-auto lg:w-5xl md:w-2xl sm:w-1xl h-auto z-80"
-                    @changePage="getChangeData" @renderFn="renderFn" @delectData="delectData"
+                    bg-base-100 rounded-box border border-base-content/10 overflow-auto lg:w-5xl md:w-2xl sm:w-1xl h-auto z-80"
+                    @renderFn="renderFn" @delectData="delectData"
                     @closeTable="showTable = false" @deleteLocalData="deleteLocalData" />
             </transition>
             <transition name="bg">
@@ -311,11 +311,7 @@ export default {
                     parse(formatInput);
                     const newData = [...toRaw(this.currentData)];
                     newData[index].fn = formatInput;
-                    if (!this.$store.state.auth.isAuthenticated) {
-                        this.localFnData.unshift(utils.deepClone(newData[index]));
-                    } else {
-                        this.uploadChangeData(newData[index]);
-                    }
+                    this.storeData(newData[index]);
                     const payload = {
                         data: newData,
                         is2D: this.show_2D,
@@ -338,11 +334,7 @@ export default {
             const validSamples = utils.clamp(samples, 500, 5000);
             const data = [...toRaw(this.currentData)];
             data[index].nSamples = validSamples;
-            if (!this.$store.state.auth.isAuthenticated) {
-                this.localFnData.unshift(utils.deepClone(data[index]));
-            } else {
-                this.uploadChangeData(data[index]);
-            }
+            this.storeData(data[index]);
             const payload = {
                 data: data,
                 is2D: this.show_2D,
@@ -365,11 +357,7 @@ export default {
         this.throttleupdateColor = utils.throttle((color, index) => {
             const currentData = [...toRaw(this.currentData)];
             currentData[index].color = color;
-            if (!this.$store.state.auth.isAuthenticated) {
-                this.localFnData.unshift(utils.deepClone(currentData[index]));
-            } else {
-                this.uploadChangeData(currentData[index]);
-            }
+            this.storeData(currentData[index]);
             if (this.currentData[index].visible) {
                 this.$refs.TwoDPlotCom.fuckRender(this.functionData_2D);
             }
@@ -380,12 +368,11 @@ export default {
         if (success) {
             this.fuckRender(this.currentData);
             this.initFormData();
-            this.getChangeData();
             this.showInfo = true;
             console.log('初始化用户信息成功');
         } else {
             console.log('初始化用户信息失败:', error);
-            this.$store.commit('auth/setToken', null);
+            this.$store.commit('auth/cleanState', null);
         }
         window.addEventListener('resize', this.throttledResize);
     },
@@ -487,11 +474,7 @@ export default {
                         nSamples: 2025, // 确保有默认采样点数
                         dimension: 2
                     };
-                    if (!this.$store.state.auth.isAuthenticated) {
-                        this.localFnData.unshift(utils.deepClone(fnData));
-                    } else {
-                        this.uploadChangeData(fnData);
-                    }
+                    this.storeData(fnData);
                     updatedData.splice(index + 1, 0, fnData);
                     break;
                 }
@@ -504,11 +487,7 @@ export default {
                         nSamples: 2025, // 确保有默认采样点数
                         dimension: 2
                     };
-                    if (!this.$store.state.auth.isAuthenticated) {
-                        this.localFnData.unshift(utils.deepClone(fnData));
-                    } else {
-                        this.uploadChangeData(fnData);
-                    }
+                    this.storeData(fnData);
                     updatedData.push(fnData);
                     break;
                 }
@@ -519,21 +498,13 @@ export default {
                 }
                 case 'delect': {
                     updatedData[index].fn = '';
-                    if (!this.$store.state.auth.isAuthenticated) {
-                        this.localFnData.unshift(utils.deepClone(updatedData[index]));
-                    } else {
-                        this.uploadChangeData(updatedData[index]);
-                    }
+                    this.storeData(updatedData[index]);
                     this.fuckRender(updatedData);
                     break;
                 }
                 case 'visible': {
                     updatedData[index].visible = !updatedData[index].visible;
-                    if (!this.$store.state.auth.isAuthenticated) {
-                        this.localFnData.unshift(utils.deepClone(updatedData[index]));
-                    } else {
-                        service.uploadChangeData(updatedData[index]);
-                    }
+                    this.storeData(updatedData[index]);
                     this.fuckRender(updatedData);
                     break;
                 }
@@ -565,7 +536,6 @@ export default {
                 this.fuckRender(this.currentData);
                 this.$store.commit('setUpload', true);
                 await this.uploadUserData(this.localFnData);
-                await this.getChangeData();
                 this.showLoginModal = false;
                 this.initFormData();
                 this.localFnData = [];
@@ -593,7 +563,7 @@ export default {
             const data_3D = utils.deepClone(this.functionData_3D)
             this.localFnData = [...data_2D, ...data_3D];
             setTimeout(() => {
-                this.$store.commit('auth/logout');
+                this.$store.commit('auth/cleanState');
                 this.formData = {};
                 this.showInfo = false;
                 console.log(this.userInfo);
@@ -640,17 +610,6 @@ export default {
             }
         },
 
-        async getChangeData(currentPage = 1) {
-            const { success, data, error } = await service.getChangeData(currentPage);
-            if (success) {
-                this.fnData = data.fnData;
-                this.pagination = data.pagination;
-                console.log('获取历史数据成功:', data);
-            } else {
-                console.log('获取历史数据失败:', error);
-            }
-        },
-
         renderFn(data) {
             const { data_2D, data_3D } = data; // 3D要重做，历史记录暂时不接入
             const newData_2D = [...toRaw(this.functionData_2D)];
@@ -668,7 +627,6 @@ export default {
             if (success) {
                 console.log('删除数据成功');
                 callback();
-                this.getChangeData();
             } else {
                 console.log('删除数据失败:', error);
             }
@@ -709,9 +667,16 @@ export default {
             const { success, error } = await service.uploadChangeData(uploadData);
             if (success) {
                 console.log('上传变动数据成功');
-                this.getChangeData();
             } else {
                 console.log('上传变动数据失败:', error);
+            }
+        },
+
+        storeData(data) {
+            if (!this.isAuthenticated) {
+                this.localFnData.unshift(utils.deepClone(data));
+            } else {
+                this.uploadChangeData(data);
             }
         }
     }

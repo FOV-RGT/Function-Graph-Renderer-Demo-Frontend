@@ -60,8 +60,9 @@
                     <icon type="doubleLeft" />
                 </button>
                 <label class="join-item input">
-                    <input v-show="!loading" type="text" class="join rounded-none w-12 text-center"
-                        :value.number="currentPagination.currentPage" @input="debouncedUpdatePage($event.target.value)">
+                    <input v-show="!loading" type="number" class="join rounded-none w-12 text-center"
+                        :value="currentPagination.currentPage"
+                        @input="debouncedUpdatePage($event.target.valueAsNumber)">
                     <span v-show="loading" class="loading loading-spinner loading-lg"></span>
                     </input>
                     <span>/</span>
@@ -79,6 +80,8 @@
 <script>
 import icon from './icon.vue'
 import { debounce, clamp } from '../assets/utils/componentUtils'
+import * as service from '../services/userService'
+import { mapGetters } from 'vuex'
 
 export default {
     components: {
@@ -89,19 +92,6 @@ export default {
             type: Array,
             default: []
         },
-        fnData: {
-            type: Array,
-            default: []
-        },
-        pagination: {
-            type: Object,
-            default: () => ({
-                currentPage: 1,
-                pageSize: 4,
-                totalPages: 1,
-                totalRecords: 0
-            })
-        }
     },
     data() {
         return {
@@ -110,20 +100,34 @@ export default {
             localPage: 1,
             totalSelection: new Map(),
             localDataMap: new Map(),
+            pagination: {
+                currentPage: 1,
+                pageSize: 4,
+                totalPages: 1,
+                totalRecords: 0
+            },
+            fnData: []
         }
     },
     created() {
         this.debouncedUpdatePage = debounce((page) => {
-            page = clamp(page, 1, this.currentPagination.totalPages);
+            if (isNaN(page)) {
+                page = this.currentPagination.currentPage;
+            } else {
+                page = Math.floor(clamp(page, 1, this.currentPagination.totalPages));
+            }
             this.changePage(page);
         }, 250)
     },
     mounted() {
-        if (this.localFnData.length > 0) {
+        if (this.localFnData.length > 0 || !this.isAuthenticated) {
             this.initLocalDataMap();
+        } else {
+            this.getHisData();
         }
     },
     computed: {
+        ...mapGetters('auth', ['isAuthenticated']),
         isSelectedAll() {
             return this.displayData.length > 0 ? this.selection.length === this.displayData.length : false;
         },
@@ -134,10 +138,10 @@ export default {
             return this.localFnData.slice(startIndex, endIndex);
         },
         displayData() {
-            return this.$store.state.auth.isAuthenticated ? this.fnData : this.localDisplayFnData;
+            return this.isAuthenticated ? this.fnData : this.localDisplayFnData;
         },
         currentPagination() {
-            if (this.$store.state.auth.isAuthenticated) {
+            if (this.isAuthenticated) {
                 return this.pagination;
             } else {
                 const pageSize = 4;
@@ -158,19 +162,8 @@ export default {
         },
         'pagination.currentPage': {
             handler(newVal) {
-                this.selection = this.totalSelection[newVal] || [];
+                this.selection = this.totalSelection.get(newVal) || [];
             },
-        },
-        localFnData: {
-            handler(newVal) {
-                if (newVal.length > 0) {
-                    this.$nextTick(() => {
-                        this.initLocalDataMap();
-                    });
-                }
-                this.loading = false;
-            },
-            deep: true
         },
     },
     methods: {
@@ -209,11 +202,12 @@ export default {
             if (this.loading) return;
             this.loading = true;
             this._saveCurrentSelection();
-            if (this.$store.state.auth.isAuthenticated) {
-                this.$emit('changePage', page);
+            if (this.isAuthenticated) {
+                this.getHisData(page);
             } else {
                 this.localPage = page;
                 setTimeout(() => {
+                    this.selection = this.totalSelection.get(page) || [];
                     this.loading = false;
                 }, 100);
             }
@@ -248,10 +242,11 @@ export default {
         delectData() {
             const allData = this.getAllSelection();
             if (allData.length === 0) return;
-            if (this.$store.state.auth.isAuthenticated) {
+            if (this.isAuthenticated) {
                 const idJSON = JSON.parse(JSON.stringify(allData.map(item => ({ id: item.id }))));
                 const callback = () => {
                     this.clearSelection();
+                    this.getHisData(1);
                 }
                 this.$emit('delectData', idJSON, callback);
             } else {
@@ -268,6 +263,16 @@ export default {
                 }
                 this.localDataMap.set(item.id, item);
             });
+        },
+        async getHisData(page) {
+            const { success, data, error } = await service.getChangeData(page);
+            if (success) {
+                this.fnData = data.fnData;
+                this.pagination = data.pagination;
+                console.log('获取历史数据成功:', data);
+            } else {
+                console.log('获取历史数据失败:', error);
+            }
         }
     }
 }
