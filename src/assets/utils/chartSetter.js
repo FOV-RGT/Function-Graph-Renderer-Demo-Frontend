@@ -8,10 +8,10 @@ import { toRaw, markRaw } from "vue";
 export class chartInstance {
     constructor(target) {
         this.target = target;
-        this.config = markRaw(chartConfig.defaultConfig(target)); // 初始化图表配置
+        this.config = chartConfig.defaultConfig(target); // 初始化图表配置
         this.zoomFactor = 0.5; // 默认缩放因子
         console.log("实例挂载:初始化配置完成");
-        this.instance = markRaw(functionPlot(this.config)); // 初始化图表实例
+        this.instance = functionPlot(this.config); // 初始化图表实例
         console.log("图表实例成功挂载");
     }
 
@@ -194,10 +194,9 @@ export class chartInstance {
 
     setupFunctionEvents(clickCallback) {
         this.functionClickCallback = clickCallback;
-        const graphContainer = select('.function-plot .canvas .content');
         const instance = this;
         // 直接选择所有路径元素
-        console.log(graphContainer.selectAll('.graph path.line'));
+        console.log(selectAll('.function-plot .canvas .content .graph path.line'));
         // forEach(element => {
         //     select(element)
         //     .style('cursor', 'pointer')
@@ -208,5 +207,22 @@ export class chartInstance {
         //         }
         //     });
         // })
+    }
+
+    switchChartType(type) {
+        let config = this.config;
+        config.xAxis.type = type;
+        if (type === 'log') {
+            config.xAxis.domain = [0.01, 1];
+            config.yAxis.domain = [-10, 10];
+        } else {
+            config.xAxis.domain = [-20, 20];
+            config.yAxis.domain = [-10, 10];
+        }
+        config.id = '';
+        this.destroyInstance();
+        this.instance = functionPlot(config);
+        this.config = config;
+        console.log("图表配置已更新:", this.config);
     }
 }

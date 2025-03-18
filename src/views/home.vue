@@ -10,7 +10,7 @@
                     <button class="btn btn-block" @click="switchHomeShow('list')">
                         输入函数
                     </button>
-                    <button class="btn btn-block" @click="show.buttons = !show.buttons">
+                    <button class="btn btn-block" @click="show.adjustWindow = !show.adjustWindow">
                         调整
                     </button>
                     <button class="btn btn-block" @click="switchRenderer">
@@ -86,11 +86,10 @@
                 <li class="list-row text-4xl text-pink-800">若叶 睦</li>
             </ul>
         </div>
-        <div class="main-right flex-1 shrink-1 pt-6 pr-4 overflow-hidden relative">
+        <div class="main-right flex-1 shrink-1 pt-6 pr-4 overflow-hidden">
             <div class="plotComponents h-19/20 relative">
                 <TwoDPlotCom ref="TwoDPlotCom" v-show="show.render2D" class="renderComponent pl-2" />
                 <ThreeDPlotCom ref="ThreeDPlotCom" v-show="!show.render2D" class="renderComponent" />
-                <adjustButtons v-if="show.buttons" @setView="setView" class="absolute right-12 bottom-12"/>
             </div>
             <div class="foot h-1/20 flex justify-evenly items-center overflow-hidden">
                 <button class="btn btn-lg" @click="show.loginModal = !show.loginModal">
@@ -115,6 +114,7 @@
                     <input type="number" v-model.number="moveStep" min="0.01" max="1.00" step="0.01"
                         class="input input-xs w-16 text-center" @change="updateMoveStep" />
                 </div>
+                <adjustButtons @setView="setView" />
             </div>
             <transition name="bg">
                 <div v-show="show.table" class="fixed inset-0 z-40" @click="show.table = false">
@@ -124,7 +124,7 @@
             <transition name="table">
                 <hisDataTable v-if="show.table" :localFnData="localFnData"
                     class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
-                    bg-base-100 rounded-box border border-base-content/10 overflow-auto lg:w-5xl md:w-2xl sm:w-1xl h-auto z-80"
+                    bg-base-100 rounded-box border border-base-content/10 overflow-auto lg:w-3xl md:w-lg sm:w-md h-auto z-80"
                     @renderFn="renderFn" @delectData="delectData"
                     @closeTable="show.table = false" @deleteLocalData="deleteLocalData" />
             </transition>
@@ -203,6 +203,16 @@
                     @login="userLogin" />
             </transition>
             <popupWindow ref="popupWindow" />
+            <transition name="bg">
+                <div v-show="show.adjustWindow" class="fixed inset-0 z-40" @click="show.adjustWindow = false">
+                    <div class="absolute inset-0 bg-black/30"></div>
+                </div>
+            </transition>
+            <transition name="table">
+                <adjustWindow v-show="show.adjustWindow" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
+                bg-base-100 rounded-box border border-base-content/10 overflow-auto w-sm h-auto z-80"
+                @switchChartType="switchChartType"/>
+            </transition>
         </div>
     </div>
 </template>
@@ -221,7 +231,7 @@ import hisDataTable from '../components/hisDataTable.vue';
 import register from '../components/register.vue';
 import popupWindow from '../components/popupWindow.vue';
 import adjustButtons from '../components/adjustButtons.vue';
-
+import adjustWindow from '../components/adjustWindow.vue';
 
 
 
@@ -235,7 +245,8 @@ export default {
         hisDataTable,
         register,
         popupWindow,
-        adjustButtons
+        adjustButtons,
+        adjustWindow
     },
     data() {
         return {
@@ -245,14 +256,14 @@ export default {
                 updateInfo: false
             },
             show: {
-                buttons: false,
                 table: false,
                 loginModal: false,
                 registerModal: false,
                 info: false,
                 list: false,
                 home: true,
-                render2D: true
+                render2D: true,
+                adjustWindow: false
             },
             account: "",
             password: "",
@@ -620,6 +631,10 @@ export default {
             } else {
                 this.uploadChangeData(data);
             }
+        },
+
+        switchChartType(type) {
+            this.$refs.TwoDPlotCom.switchChartType(type);
         }
     }
 };

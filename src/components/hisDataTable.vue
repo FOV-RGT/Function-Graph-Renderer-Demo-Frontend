@@ -1,5 +1,5 @@
 <template>
-    <div class="overflow-x-auto">
+    <div class="overflow-auto">
         <table class="table table-zebra table-md">
             <thead>
                 <tr class="text-xl">

@@ -14,7 +14,11 @@ export const defaultConfig = (target) => ({
         domain: [-10, 10],
     },
     grid: true,
-    data: [],
+    // data: [{
+    //     fn: '1/x * cos(1/x)',
+    //     closed: true
+    // }],
+    data: []
 })
 
 

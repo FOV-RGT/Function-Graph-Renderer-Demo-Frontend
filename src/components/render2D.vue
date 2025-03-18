@@ -81,7 +81,11 @@ export default {
       } catch (error) {
         console.error("采样点更新失败");
       }
-    }
+    },
+
+    switchChartType(type) {
+      this.chartInstance.switchChartType(type);
+    },
   }
 };
 </script>
