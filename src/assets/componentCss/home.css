@@ -146,3 +146,17 @@
     object-fit: contain;
     cursor: pointer;
 }
+
+.listControl .iconfont {
+    font-size: 1.5em;
+}
+
+.leftList-enter-active,
+.leftList-leave-active {
+    transition: transform 0.2s ease;
+}
+
+.leftList-enter-from,
+.leftList-leave-to {
+    transform: translateX(-100%); 
+}

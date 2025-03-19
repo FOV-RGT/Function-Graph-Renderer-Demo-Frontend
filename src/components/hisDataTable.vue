@@ -80,7 +80,7 @@
 <script>
 import icon from './icon.vue'
 import { debounce, clamp } from '../assets/utils/componentUtils'
-import * as service from '../services/userService'
+import { getChangeData } from '../services/userService'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -256,7 +256,7 @@ export default {
         async getHisData(page) {
             if (this.loading.getData) return;
             this.loading.getData = true;
-            const { success, data, error } = await service.getChangeData(page);
+            const { success, data, error } = await getChangeData(page);
             if (success) {
                 this.fnData = data.fnData;
                 this.pagination = data.pagination;

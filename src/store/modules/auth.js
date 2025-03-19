@@ -14,6 +14,7 @@ export default {
         nickname: localStorage.getItem('nickname') || null,
         email: localStorage.getItem('email') || null,
         username: localStorage.getItem('username') || null,
+        avatarUrl: localStorage.getItem('avatarUrl') || null,
         userConfig: {
             chartType: 'linear',
             closed: false,
@@ -32,7 +33,8 @@ export default {
         userInfo: state => Object.freeze({
             nickname: state.nickname || '',
             email: state.email || '',
-            username: state.username || ''
+            username: state.username || '',
+            avatarUrl: state.avatarUrl || ''
         }),
         // 获取显示名称（优先使用昵称）
         displayName: state => state.nickname || state.username || null,
@@ -48,15 +50,18 @@ export default {
     // 修改状态的方法
     mutations: {
         setUser(state, data) {
-            const nickname = data?.nickname || '';
-            const email = data?.email || '';
-            const username = data?.username || '';
+            const nickname = data.nickname || '';
+            const email = data.email || '';
+            const username = data.username || '';
+            const avatarUrl = data.avatarUrl || '';
             state.nickname = nickname;
             state.email = email;
             state.username = username;
+            state.avatarUrl = avatarUrl;
             localStorage.setItem('nickname', nickname);
             localStorage.setItem('email', email);
             localStorage.setItem('username', username);
+            localStorage.setItem('avatarUrl', avatarUrl);
         },
         
         setToken(state, token) {
@@ -81,10 +86,16 @@ export default {
             localStorage.removeItem('email');
             localStorage.removeItem('username');
             localStorage.removeItem('token');
+            localStorage.removeItem('avatarUrl');
         },
 
         updateUserConfig(state, config) {
             state.userConfig = config;
+        },
+
+        setUserAvatarUrl(state, avatarUrl) {
+            state.avatarUrl = avatarUrl;
+            localStorage.setItem('avatarUrl', avatarUrl);
         }
     },
     

@@ -1,3 +1,4 @@
+import { uploadAvatar } from '../services/userService';
 import api from './index';
 import axios from 'axios';
 
@@ -136,7 +137,7 @@ const authApi = {
     },
     async getAvatarUrl() {
         try {
-            return await api.get('/avatar_direct');
+            return await api.get('/avatar_url');
         } catch (error) {
             console.log("获取上传链接错误：", error.status);
             switch (error.status) {
@@ -161,6 +162,50 @@ const authApi = {
             return await axios.post('https://kz-avatar.oss-cn-guangzhou.aliyuncs.com', data);
         } catch (error) {
             console.log("上传头像错误：", error.status);
+            switch (error.status) {
+                case 401:
+                case 404: {
+                    throw ('未授权');
+                }
+                case 400: {
+                    throw ('请求错误');
+                }
+                case 500: {
+                    throw ('服务器错误');
+                }
+                default: {
+                    throw (`未知错误: ${error.response.status}`);
+                }
+            }
+        }
+    },
+    async uploadUserConfig(config) {
+        try {
+            return await api.put('/users/userconfig', config);
+        } catch (error) {
+            console.log("上传用户配置错误：", error.status);
+            switch (error.status) {
+                case 401:
+                case 404: {
+                    throw ('未授权');
+                }
+                case 400: {
+                    throw ('请求错误');
+                }
+                case 500: {
+                    throw ('服务器错误');
+                }
+                default: {
+                    throw (`未知错误: ${error.response.status}`);
+                }
+            }
+        }
+    },
+    async uploadAvatarUrl(url) {
+        try {
+            return await api.put('/avatar_url', url);
+        } catch (error) {
+            console.log("上传头像链接错误：", error.status);
             switch (error.status) {
                 case 401:
                 case 404: {

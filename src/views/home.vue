@@ -1,108 +1,115 @@
 <template>
     <div class="main flex w-[100vw] h-[100vh] ">
-        <div v-if="show.leftList" class="main-left w-1/6 min-w-52 shrink-1 overflow-y-auto bg-base-300 absolute
-        left-0 transform z-10 h-screen">
-            <div v-show="show.home" class="w-full h-full flex justify-start flex-col">
-                <div class="top overflow-hidden text-center flex flex-col items-center mt-5 mb-10">
-                    <h1 class="text-transparent select-none whitespace-nowrap">函数图形渲染程序</h1>
-                    <p class="text-transparent select-none">demo-v{{ version }}</p>
-                </div>
-                <div class="top-buttonsGroup flex flex-col justify-between grow-1 pb-50">
-                    <button class="btn btn-block" @click="switchHomeShow('list')">
-                        输入函数
-                    </button>
-                    <button class="btn btn-block" @click="show.adjustWindow = !show.adjustWindow">
-                        设置
-                    </button>
-                    <button class="btn btn-block" @click="switchRenderer">
-                        切换模式
-                    </button>
-                    <button class="btn btn-block" @click="show.table = !show.table">
-                        历史记录
-                    </button>
-                    <button class="btn btn-block" @click="show.loginModal = !show.loginModal">
-                        账户
-                    </button>
-                </div>
-            </div>
-            <ul class="list overflow-x-hidden" v-show="show.list">
-                <li class="flex justify-center border-b-2 border-b-slate-500/80 items-center">
-                    <div
-                        class="li-top p-2 pb-1 pl-8 text-[2em] text-slate-300/70 tracking-widest flex items-center justify-between select-none flex-1">
-                        <p>函数<span class="inline-block">列表</span></p>
-                        <icon type="rollBack" extraclass="cursor-pointer select-none pr-4"
-                            @click="switchHomeShow('list')" />
+        <transition name="leftList">
+            <div v-if="show.leftList" class="main-left w-1/6 min-w-52 shrink-1 overflow-y-auto bg-base-300 absolute
+            left-0 transform z-10 h-screen">
+                <div v-show="show.home" class="w-full h-full flex justify-start flex-col">
+                    <div class="top overflow-hidden text-center flex flex-col items-center mt-5 mb-10">
+                        <h1 class="text-transparent select-none whitespace-nowrap">函数图形渲染程序</h1>
+                        <p class="text-transparent select-none">demo-v{{ version }}</p>
                     </div>
-                </li>
-                <li v-for="(item, index) in currentData" :key="index" class="list-row pl-1 pr-1 pb-0 flex">
-                    <div class="flex-col select-none flex-1">
-                        <!-- 函数表达式输入区 -->
-                        <div class="join flex pb-0.5">
-                            <label class="li-input input flex-1 text-lg items-center pr-0 justify-start">
-                                <span>f(x)=</span>
-                                <input :value="item.fn" spellcheck="false" type="text" :placeholder=currentInputExample
-                                    class="join-item text-slate-300/80 flex-auto"
-                                    @input="debouncedAddInput($event.target.value, index)">
-                                <icon type="close_c" extraclass="cursor-pointer select-none pr-4 text-orange-800"
-                                    @click="fuckList('delect', index)" />
-                            </label>
+                    <div class="top-buttonsGroup flex flex-col justify-between grow-1 pb-50">
+                        <button class="btn btn-block" @click="switchHomeShow('list')">
+                            输入函数
+                        </button>
+                        <button class="btn btn-block" @click="show.adjustWindow = !show.adjustWindow">
+                            设置
+                        </button>
+                        <button class="btn btn-block" @click="switchRenderer">
+                            切换模式
+                        </button>
+                        <button class="btn btn-block" @click="show.table = !show.table">
+                            历史记录
+                        </button>
+                        <button class="btn btn-block" @click="show.loginModal = !show.loginModal">
+                            账户
+                        </button>
+                    </div>
+                </div>
+                <ul class="list overflow-x-hidden" v-show="show.list">
+                    <li class="flex justify-center border-b-2 border-b-slate-500/80 items-center">
+                        <div
+                            class="li-top p-2 pb-1 pl-8 text-[2em] text-slate-300/70 tracking-widest flex items-center justify-between select-none flex-1">
+                            <p>函数<span class="inline-block">列表</span></p>
+                            <icon type="rollBack" extraclass="cursor-pointer select-none pr-4"
+                                @click="switchHomeShow('list')" />
                         </div>
-                        <!-- 采样点数量的控制输入框 -->
-                        <div class="samplePoints flex items-center">
-                            <label class="text-xs mr-1">采样点数：</label>
-                            <input type="number" :value.number="item.nSamples" min="500" max="5000" step="1"
-                                class="input input-xs w-16 text-center"
-                                @input="debouncedUpdateSamplePoints($event.target.valueAsNumber, index)" />
-                        </div>
-                        <!-- 其他操作区域 -->
-                        <div class="li-b flex gap-4">
-                            <icon type="plus" extraclass="cursor-pointer select-none"
-                                @click="fuckList('plus', index)" />
-                            <icon type="minus" extraclass="cursor-pointer select-none"
-                                @click="fuckList('minus', index)" />
-                            <icon :type="item.visible == true ? 'eye' : 'eye_c'" extraclass="cursor-pointer select-none"
-                                @click="fuckList('visible', index)" />
-                            <div class="colorPicker">
-                                <ColorPicker format="rgb" shape="square" :debounce="0" lang="ZH-cn"
-                                    v-model:pureColor="item.color"
-                                    @update:pureColor="throttleupdateColor($event, index)" />
+                    </li>
+                    <li v-for="(item, index) in currentData" :key="index" class="list-row pl-1 pr-1 pb-0 flex">
+                        <div class="flex-col select-none flex-1">
+                            <!-- 函数表达式输入区 -->
+                            <div class="join flex pb-0.5">
+                                <label class="li-input input flex-1 text-lg items-center pr-0 justify-start">
+                                    <span>f(x)=</span>
+                                    <input :value="item.fn" spellcheck="false" type="text"
+                                        :placeholder=currentInputExample class="join-item text-slate-300/80 flex-auto"
+                                        @input="debouncedAddInput($event.target.value, index)">
+                                    <icon type="close_c" extraclass="cursor-pointer select-none pr-4 text-orange-800"
+                                        @click="fuckList('delect', index)" />
+                                </label>
+                            </div>
+                            <!-- 采样点数量的控制输入框 -->
+                            <div class="samplePoints flex items-center">
+                                <label class="text-xs mr-1">采样点数：</label>
+                                <input type="number" :value.number="item.nSamples" min="500" max="5000" step="1"
+                                    class="input input-xs w-16 text-center"
+                                    @input="debouncedUpdateSamplePoints($event.target.valueAsNumber, index)" />
+                            </div>
+                            <!-- 其他操作区域 -->
+                            <div class="li-b flex gap-4">
+                                <icon type="plus" extraclass="cursor-pointer select-none"
+                                    @click="fuckList('plus', index)" />
+                                <icon type="minus" extraclass="cursor-pointer select-none"
+                                    @click="fuckList('minus', index)" />
+                                <icon :type="item.visible == true ? 'eye' : 'eye_c'"
+                                    extraclass="cursor-pointer select-none" @click="fuckList('visible', index)" />
+                                <div class="colorPicker">
+                                    <ColorPicker format="rgb" shape="square" :debounce="0" lang="ZH-cn"
+                                        v-model:pureColor="item.color"
+                                        @update:pureColor="throttleupdateColor($event, index)" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </li>
-                <li class="flex list-row text-4xl justify-center p-2">
-                    <div class="left-li-plus items-center flex h-[2rem] justify-center">
-                        <icon type="plus" extraclass="cursor-pointer select-none" @click="fuckList('plus-b')" />
-                    </div>
-                </li>
-                <li class="list-row text-4xl text-sky-600">千早 爱音</li>
-                <li class="list-row text-4xl text-sky-600">长崎 素世</li>
-                <li class="list-row text-4xl text-sky-600">高松 灯</li>
-                <li class="list-row text-4xl text-sky-600">椎名 立希</li>
-                <li class="list-row text-4xl text-sky-600">要 乐奈</li>
-                <li class="list-row text-4xl text-pink-800">丰川 祥子</li>
-                <li class="list-row text-4xl text-pink-800">八幡 海铃</li>
-                <li class="list-row text-4xl text-pink-800">三角 初华</li>
-                <li class="list-row text-4xl text-pink-800">祐天寺 若麦</li>
-                <li class="list-row text-4xl text-pink-800">若叶 睦</li>
-            </ul>
-        </div>
+                    </li>
+                    <li class="flex list-row text-4xl justify-center p-2">
+                        <div class="left-li-plus items-center flex h-[2rem] justify-center">
+                            <icon type="plus" extraclass="cursor-pointer select-none" @click="fuckList('plus-b')" />
+                        </div>
+                    </li>
+                    <li class="list-row text-4xl text-sky-600">千早 爱音</li>
+                    <li class="list-row text-4xl text-sky-600">长崎 素世</li>
+                    <li class="list-row text-4xl text-sky-600">高松 灯</li>
+                    <li class="list-row text-4xl text-sky-600">椎名 立希</li>
+                    <li class="list-row text-4xl text-sky-600">要 乐奈</li>
+                    <li class="list-row text-4xl text-pink-800">丰川 祥子</li>
+                    <li class="list-row text-4xl text-pink-800">八幡 海铃</li>
+                    <li class="list-row text-4xl text-pink-800">三角 初华</li>
+                    <li class="list-row text-4xl text-pink-800">祐天寺 若麦</li>
+                    <li class="list-row text-4xl text-pink-800">若叶 睦</li>
+                </ul>
+            </div>
+        </transition>
         <div class="main-right flex-1 shrink-1 pt-6 pr-4 overflow-hidden">
-            <div class="plotComponents h-19/20 relative">
+            <div class="plotComponents h-19/20 pl-8 relative">
                 <TwoDPlotCom ref="TwoDPlotCom" v-show="show.render2D" class="renderComponent pl-2" />
                 <ThreeDPlotCom ref="ThreeDPlotCom" v-show="!show.render2D" class="renderComponent" />
-                <div class="user-avatar" :style="{ 'background-image': `url(${userAvatarUrl})` }"
+                <div class="user-avatar" :style="{ 'background-image': `url(${userInfo.avatarUrl})` }"
                     @click="show.loginModal = !show.loginModal">
                 </div>
             </div>
             <div class="h-1/20 self-end w-5/6 ml-auto flex flex-row justify-between overflow-hidden">
-                <button class="btn btn-soft btn-primary rounded-none" @click="show.leftList = !show.leftList">
-                    <icon type="doubleRight" />
+                <button class="listControl btn btn-soft btn-primary rounded-none btn-xl
+                h-full w-[clamp(0.8em,2.5vw,2.5em)] ml-0.5" @click="show.leftList = !show.leftList">
+                    <label class="swap swap-flip pointer-events-none">
+                        <input type="checkbox" v-model="show.leftList"/>
+                        <icon class="swap-on fill-current" type="doubleRight" />
+                        <icon class="swap-off fill-current" type="doubleLeft" />
+                    </label>
                 </button>
-                <adjustButtons @setView="setView"/>
+                <adjustButtons @setView="setView" />
             </div>
             <transition name="bg">
-                <div v-show="show.table" class="fixed inset-0 z-40" @click="show.table = false">
+                <div v-if="show.table" class="fixed inset-0 z-40" @click="show.table = false">
                     <div class="absolute inset-0 bg-black/30"></div>
                 </div>
             </transition>
@@ -113,7 +120,7 @@
                     @closeTable="show.table = false" @deleteLocalData="deleteLocalData" />
             </transition>
             <transition name="bg">
-                <div v-show="show.loginModal || show.registerModal" class="fixed inset-0 z-40"
+                <div v-if="show.loginModal || show.registerModal" class="fixed inset-0 z-40"
                     @click="show.loginModal = false; show.registerModal = false">
                     <div class="absolute inset-0 bg-black/30"></div>
                 </div>
@@ -205,13 +212,14 @@
             </transition>
             <popupWindow ref="popupWindow" />
             <transition name="bg">
-                <div v-show="show.adjustWindow" class="fixed inset-0 z-40" @click="show.adjustWindow = false">
+                <div v-if="show.adjustWindow" class="fixed inset-0 z-40" @click="show.adjustWindow = false">
                     <div class="absolute inset-0 bg-black/30"></div>
                 </div>
             </transition>
             <transition name="table">
                 <adjustWindow v-show="show.adjustWindow" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
-                bg-base-100 rounded-box border border-base-content/10 overflow-auto w-lg h-auto z-80" @close="show.adjustWindow = false"/>
+                bg-base-100 rounded-box border border-base-content/10 overflow-auto w-lg h-auto z-80"
+                    @close="show.adjustWindow = false" />
             </transition>
         </div>
     </div>
@@ -232,7 +240,6 @@ import register from '../components/register.vue';
 import popupWindow from '../components/popupWindow.vue';
 import adjustButtons from '../components/adjustButtons.vue';
 import adjustWindow from '../components/adjustWindow.vue';
-import Icon from '../components/icon.vue';
 
 
 
@@ -273,7 +280,6 @@ export default {
             pagination: {},
             localFnData: [],
             selectedAvatarFile: null,
-            userAvatarUrl: ''
         };
     },
     created() {
@@ -399,11 +405,11 @@ export default {
                     dimension: item.dimension,
                     graphType: item.graphType,
                     closed: newVal,
-                    range: item.range || null
+                    range: item.range
                 }));
                 this.fuckRender(newData);
                 this.storeDataToVuex(newData);
-                
+
             },
         },
         range: {
@@ -415,7 +421,7 @@ export default {
                     visible: item.visible,
                     dimension: item.dimension,
                     graphType: item.graphType,
-                    closed: item.closed || false,
+                    closed: item.closed,
                     range: newVal
                 }));
                 this.fuckRender(newData);
@@ -725,8 +731,11 @@ export default {
             const { success, error } = await service.uploadAvatar(res, file);
             if (success) {
                 console.log('上传头像成功');
-                this.userAvatarUrl = res.url;
-                console.log('头像地址:', this.userAvatarUrl);
+                console.log('头像地址:', res.url);
+                const url = {
+                    avatarUrl: res.url
+                }
+                await service.uploadAvatarUrl(url);
             } else {
                 console.log('上传头像失败:', error);
             }

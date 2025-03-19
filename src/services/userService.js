@@ -2,7 +2,6 @@ import authApi from '../api/auth';
 import fnApi from '../api/function';
 import store from '../store';
 import { sortData } from '../assets/utils/componentUtils';
-import { sign } from 'mathjs';
 
 
 
@@ -86,7 +85,8 @@ export async function uploadFunctionData(data) {
                 visible: item.visible,
                 dimension: item.dimension,
                 graphType: item.graphType,
-                closed: item.closed
+                closed: item.closed,
+                // range: item.range
             });
             return acc;
         }, []);
@@ -190,7 +190,8 @@ export async function uploadChangeData(data) {
             visible: data.visible,
             dimension: data.dimension,
             graphType: data.graphType,
-            closed: data.closed
+            closed: data.closed,
+            // range: data.range
         }]);
         await fnApi.uploadChangeData(uploadData);
         return {
@@ -208,7 +209,6 @@ export async function getAvatarUrl() {
     try {
         const res = await authApi.getAvatarUrl();
         console.log(res);
-        // store.commit('auth/setUser', res.userinf);
         return {
             success: true,
             res
@@ -230,6 +230,35 @@ export async function uploadAvatar(res, file) {
         formData.append('signature', res.signature);
         formData.append('file', file);
         await authApi.uploadAvatar(formData);
+        store.commit('auth/setUserAvatarUrl', res.url);
+        return {
+            success: true
+        };
+    } catch (error) {
+        return {
+            success: false,
+            error
+        };
+    }
+}
+
+export async function uploadUserConfig(config) {
+    try {
+        await authApi.uploadUserConfig(config);
+        return {
+            success: true
+        };
+    } catch (error) {
+        return {
+            success: false,
+            error
+        };
+    }
+}
+
+export async function uploadAvatarUrl(url) {
+    try {
+        await authApi.uploadAvatarUrl(url);
         return {
             success: true
         };
