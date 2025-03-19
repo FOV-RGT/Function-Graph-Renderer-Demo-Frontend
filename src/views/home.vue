@@ -746,5 +746,4 @@ export default {
 
 <style>
 @import url('../assets/componentCss/home.css');
-@import url('../assets/componentCss/icon1.css');
 </style>

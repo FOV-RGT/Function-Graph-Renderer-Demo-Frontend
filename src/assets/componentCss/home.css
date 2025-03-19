@@ -127,7 +127,7 @@
     right: 0;
     width: 100px;
     height: 100px;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0);
     clip-path: polygon(100% 0, 100% 100%, 0 0);
     z-index: 10;
 }
