@@ -97,10 +97,10 @@
                     @click="show.avatarPreview = !show.avatarPreview">
                 </div>
                 <transition name="bg">
-                    <div v-if="show.avatarPreview" class="fixed inset-0 z-50" @click="show.avatarPreview = false">
+                    <div v-if="show.avatarPreview" class="fixed inset-0 z-50 select-none" @click="show.avatarPreview = false">
                         <div class="absolute inset-0 bg-black/70"></div>
                         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                            <img :src="userInfo.avatarUrl" class="max-h-[80vh] max-w-[80vw] rounded-lg shadow-lg select-none"
+                            <img :src="userInfo.avatarUrl" class="max-h-[80vh] max-w-[80vw] rounded-lg shadow-lg"
                                 alt="用户头像" />
                         </div>
                     </div>
@@ -118,7 +118,7 @@
                 <adjustButtons @setView="setView" />
             </div>
             <transition name="bg">
-                <div v-if="show.table" class="fixed inset-0 z-40" @click="show.table = false">
+                <div v-if="show.table" class="fixed inset-0 z-40 select-none" @click="show.table = false">
                     <div class="absolute inset-0 bg-black/30"></div>
                 </div>
             </transition>
@@ -129,7 +129,7 @@
                     @closeTable="show.table = false" @deleteLocalData="deleteLocalData" />
             </transition>
             <transition name="bg">
-                <div v-if="show.loginModal || show.registerModal" class="fixed inset-0 z-40"
+                <div v-if="show.loginModal || show.registerModal" class="fixed inset-0 z-40 select-none"
                     @click="show.loginModal = false; show.registerModal = false">
                     <div class="absolute inset-0 bg-black/30"></div>
                 </div>
@@ -221,7 +221,7 @@
             </transition>
             <popupWindow ref="popupWindow" />
             <transition name="bg">
-                <div v-if="show.adjustWindow" class="fixed inset-0 z-40" @click="show.adjustWindow = false">
+                <div v-if="show.adjustWindow" class="fixed inset-0 z-40 select-none" @click="show.adjustWindow = false">
                     <div class="absolute inset-0 bg-black/30"></div>
                 </div>
             </transition>
