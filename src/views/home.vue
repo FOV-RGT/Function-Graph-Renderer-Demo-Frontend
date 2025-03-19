@@ -296,7 +296,7 @@ export default {
             localFnData: [],
             isClosed: false,
             selectedAvatarFile: null,
-            userAvatarUrl: 'https://kz-avatar.oss-cn-guangzhou.aliyuncs.com/uploads/ed779048-6417-45dd-8b15-e75cea3c02cb'
+            userAvatarUrl: ''
         };
     },
     created() {
@@ -440,7 +440,8 @@ export default {
                         visible: true,
                         dimension: 2,
                         graphType: 'interval', // 添加默认图表类型
-                        closed: this.isClosed
+                        closed: this.isClosed,
+                        range: null
                     };
                     this.storeData(fnData);
                     updatedData.splice(index + 1, 0, fnData);
@@ -454,7 +455,8 @@ export default {
                         visible: true,
                         dimension: 2,
                         graphType: 'interval', // 添加默认图表类型
-                        closed: this.isClosed
+                        closed: this.isClosed,
+                        range: null
                     };
                     this.storeData(fnData);
                     updatedData.push(fnData);
@@ -524,7 +526,8 @@ export default {
         logout() {
             this.show.loginModal = false;
             const data_2D = utils.deepClone(this.functionData_2D)
-            const data_3D = utils.deepClone(this.functionData_3D)
+            // const data_3D = utils.deepClone(this.functionData_3D)
+            const data_3D = [];
             this.localFnData = [...data_2D, ...data_3D];
             setTimeout(() => {
                 this.$store.commit('auth/cleanState');
@@ -639,28 +642,29 @@ export default {
 
         switchClosed(closed) {
             this.isClosed = closed;
-            const newData = this.currentData.map(item => ({
+            const newData = toRaw(this.currentData).map(item => ({
                 fn: item.fn,
                 color: item.color,
                 nSamples: item.nSamples,
                 visible: item.visible,
                 dimension: item.dimension,
                 graphType: item.graphType,
-                closed
+                closed,
+                range: item.range || null
             }));
             this.fuckRender(newData);
             this.storeDataToVuex(newData);
         },
 
         setRenderRange(range) {
-            const newData = this.currentData.map(item => ({
+            const newData = toRaw(this.currentData).map(item => ({
                 fn: item.fn,
                 color: item.color,
                 nSamples: item.nSamples,
                 visible: item.visible,
                 dimension: item.dimension,
                 graphType: item.graphType,
-                closed: item.closed,
+                closed: item.closed || false,
                 range
             }));
             this.fuckRender(newData);
@@ -706,7 +710,7 @@ export default {
             this.selectedAvatarFile = file;
         },
 
-        async getAvatarUrl(file) {
+        async getAvatarUrl() {
             if (!this.selectedAvatarFile) {
                 this.$refs.popupWindow.addMessage({
                     head: '上传失败',
@@ -718,31 +722,11 @@ export default {
             const { success, res, error } = await service.getAvatarUrl();
             console.log('获取头像上传信息:', res);
             if (success) {
+                const file = this.selectedAvatarFile;
                 this.uploadAvatar(res, file);
             } else {
                 console.log('获取头像上传信息失败：', error);
             }
-            // const hostParts = res.host.split('.');
-            // const bucket = hostParts[0];
-            // const region = hostParts[1].replace('oss-', '');
-            // const client = new OSS({
-            //     region,
-            //     accessKeyId: res.accessid,
-            //     bucket,
-            //     secure: true,
-            //     stsToken: ''
-            // })
-            // const result = await client.put(res.key, file, {
-            //     headers: {
-            //         'x-oss-policy': res.policy,      // 传递policy
-            //         'x-oss-signature': res.signature // 传递signature
-            //     },
-            //     progress: (p) => {
-            //         console.log(`上传进度: ${Math.round(p * 100)}%`);
-            //     }
-            // });
-            // const avatarUrl = res.url;
-            // console.log('上传头像成功:', avatarUrl);
         },
 
         async uploadAvatar(res, file) {
@@ -750,6 +734,8 @@ export default {
             if (success) {
                 console.log('上传头像成功');
                 this.userAvatarUrl = res.url;
+                console.log('头像地址:', this.userAvatarUrl);
+                
             } else {
                 console.log('上传头像失败:', error);
             }

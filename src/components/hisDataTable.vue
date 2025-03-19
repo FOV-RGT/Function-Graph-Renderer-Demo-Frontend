@@ -131,7 +131,7 @@ export default {
     computed: {
         ...mapGetters('auth', ['isAuthenticated']),
         isSelectedAll() {
-            return this.displayData.length > 0 ? this.selection.length === this.displayData.length : false;
+            return this.displayData?.length > 0 ? this.selection.length === this.displayData.length : false;
         },
         localDisplayFnData() {
             const pageSize = 4;

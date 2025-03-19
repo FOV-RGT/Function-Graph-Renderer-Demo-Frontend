@@ -157,9 +157,14 @@ export async function register(credentials) {
 export async function getChangeData(currentPage, pageSize) {
     try {
         const res = await fnApi.getChangeData(currentPage, pageSize);
-        let fnData = res.mathdatas;
+        let fnData = res.mathdatas || [];
         if (res.mathdatas?.length > 2) fnData.sort((a, b) => b.id - a.id);
-        const pagination = res.pagination;
+        const pagination = res.pagination || {
+            "currentPage": 1,
+            "pageSize": 4,
+            "totalRecords": 0,
+            "totalPages": 1
+        };
         const data = {
             fnData,
             pagination
@@ -218,14 +223,13 @@ export async function getAvatarUrl() {
 
 export async function uploadAvatar(res, file) {
     try {
-        const data = {
-            key: res.key,
-            policy: res.policy,
-            OSSAccessKeyId: res.accessid,
-            signature: res.signature,
-            file
-        }
-        await authApi.uploadAvatar(data);
+        const formData = new FormData();
+        formData.append('key', res.key);
+        formData.append('policy', res.policy);
+        formData.append('OSSAccessKeyId', res.accessid);
+        formData.append('signature', res.signature);
+        formData.append('file', file);
+        await authApi.uploadAvatar(formData);
         return {
             success: true
         };
