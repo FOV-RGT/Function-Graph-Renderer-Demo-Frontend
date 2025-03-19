@@ -94,14 +94,23 @@
                 <TwoDPlotCom ref="TwoDPlotCom" v-show="show.render2D" class="renderComponent pl-2" />
                 <ThreeDPlotCom ref="ThreeDPlotCom" v-show="!show.render2D" class="renderComponent" />
                 <div class="user-avatar" :style="{ 'background-image': `url(${userInfo.avatarUrl})` }"
-                    @click="show.loginModal = !show.loginModal">
+                    @click="show.avatarPreview = !show.avatarPreview">
                 </div>
+                <transition name="bg">
+                    <div v-if="show.avatarPreview" class="fixed inset-0 z-50" @click="show.avatarPreview = false">
+                        <div class="absolute inset-0 bg-black/70"></div>
+                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                            <img :src="userInfo.avatarUrl" class="max-h-[80vh] max-w-[80vw] rounded-lg shadow-lg select-none"
+                                alt="用户头像" />
+                        </div>
+                    </div>
+                </transition>
             </div>
             <div class="h-1/20 self-end w-5/6 ml-auto flex flex-row justify-between overflow-hidden">
                 <button class="listControl btn btn-soft btn-primary rounded-none btn-xl
                 h-full w-[clamp(0.8em,2.5vw,2.5em)] ml-0.5" @click="show.leftList = !show.leftList">
                     <label class="swap swap-flip pointer-events-none">
-                        <input type="checkbox" v-model="show.leftList"/>
+                        <input type="checkbox" v-model="show.leftList" />
                         <icon class="swap-on fill-current" type="doubleRight" />
                         <icon class="swap-off fill-current" type="doubleLeft" />
                     </label>
@@ -271,7 +280,8 @@ export default {
                 home: true,
                 render2D: true,
                 adjustWindow: false,
-                leftList: true
+                leftList: true,
+                avatarPreview: false
             },
             account: "",
             password: "",

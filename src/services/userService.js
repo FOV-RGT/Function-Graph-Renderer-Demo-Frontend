@@ -56,9 +56,11 @@ export async function login(credentials, needNewData, options = { is2D: true }) 
 
 export async function updateUserInfo(info) {
     try {
-        const res = await authApi.updateUserInfo(info);
-        const resInfo = res.userinf;
-        store.commit('auth/setUser', resInfo);
+        await authApi.updateUserInfo(info);
+        // const resInfo = res.userinf;
+        // store.commit('auth/setUser', resInfo);
+        const authRes = await authApi.getUserInfo();
+        store.commit('auth/setUser', authRes.imformation);
         return {
             success: true
         };

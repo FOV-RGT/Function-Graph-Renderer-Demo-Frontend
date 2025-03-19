@@ -34,7 +34,7 @@ export default {
             nickname: state.nickname || '',
             email: state.email || '',
             username: state.username || '',
-            avatarUrl: state.avatarUrl || ''
+            avatarUrl: state.avatarUrl || '爱门.jpg'
         }),
         // 获取显示名称（优先使用昵称）
         displayName: state => state.nickname || state.username || null,
@@ -82,6 +82,7 @@ export default {
             state.email = null;
             state.username = null;
             state.isAuthenticated = false;
+            state.avatarUrl = null;
             localStorage.removeItem('nickname');
             localStorage.removeItem('email');
             localStorage.removeItem('username');
