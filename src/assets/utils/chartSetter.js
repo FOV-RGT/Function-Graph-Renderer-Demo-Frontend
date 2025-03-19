@@ -227,4 +227,44 @@ export class chartInstance {
         this.config = config;
         console.log("图表配置已更新:", this.config);
     }
+
+    switchChartType(type) {
+        let config = this.config;
+        this.type = type;
+        config.xAxis.type = type;
+        if (type === 'log') {
+            config.xAxis.domain = [0.01, 1];
+            config.yAxis.domain = [-10, 10];
+        } else {
+            config.xAxis.domain = [-20, 20];
+            config.yAxis.domain = [-10, 10];
+        }
+        config.id = '';
+        this.destroyInstance();
+        this.instance = functionPlot(config);
+        this.config = config;
+        console.log("图表配置已更新:", this.config);
+    }
+
+    switchDash(dash) {
+        const config = this.config;
+        if (dash) {
+            config.tip.xLine = true;
+            config.tip.yLine = true;
+        } else {
+            config.tip.xLine = false;
+            config.tip.yLine = false;
+        }
+        this.instance = functionPlot(config);
+        this.config = config;
+        console.log("图表配置已更新:", this.config);
+    }
+
+    switchGrid(grid) {
+        const config = this.config;
+        config.grid = grid;
+        this.instance = functionPlot(config);
+        this.config = config;
+        console.log("图表配置已更新:", this.config);
+    }
 }
