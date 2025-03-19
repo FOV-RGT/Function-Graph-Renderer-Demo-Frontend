@@ -10,6 +10,7 @@ export class chartInstance {
         this.target = target;
         this.config = chartConfig.defaultConfig(target); // 初始化图表配置
         this.zoomFactor = 0.5; // 默认缩放因子
+        this.moveFactor = 0.2; // 默认移动因子
         this.type = 'linear'; // 默认坐标轴类型
         console.log("实例挂载:初始化配置完成");
         this.instance = functionPlot(this.config); // 初始化图表实例
@@ -86,7 +87,7 @@ export class chartInstance {
         console.log("图表配置已更新:", this.config);
     }
 
-    zoomView(evt, ZoomStep = 0.5) {
+    zoomView(evt) {
         const currentConfig = this.config;
         const xDomain = currentConfig.xAxis.domain;
         const yDomain = currentConfig.yAxis.domain;
@@ -115,12 +116,12 @@ export class chartInstance {
         console.log("图表配置已更新:", this.config);
     }
 
-    moveView(evt, moveStep = 0.5) {
+    moveView(evt) {
         const currentConfig = this.config;
         const xDomain = currentConfig.xAxis.domain;
         const yDomain = currentConfig.yAxis.domain;
         // 使用传入的移动步长
-        const step = moveStep;
+        const step = this.moveFactor;
         const xRange = Math.abs(xDomain[1] - xDomain[0]);
         const yRange = Math.abs(yDomain[1] - yDomain[0]);
         const xStep = xRange * step * 0.5;
@@ -170,7 +171,6 @@ export class chartInstance {
         this.config.id = '';
         this.destroyInstance();
         this.instance = functionPlot(this.config);
-        return nSamples;
     }
 
     // 设置缩放因子
@@ -179,7 +179,6 @@ export class chartInstance {
         if (factor < 0.01) factor = 0.01;
         if (factor > 1) factor = 1.0;
         this.zoomFactor = factor;
-        return this.zoomFactor;
     }
 
     //设置移动因子
@@ -188,7 +187,45 @@ export class chartInstance {
         if (factor < 0.01) factor = 0.01;
         if (factor > 1) factor = 1.0;
         this.moveFactor = factor;
-        return this.moveFactor;
+    }
+
+    switchChartType(type) {
+        let config = this.config;
+        this.type = type;
+        config.xAxis.type = type;
+        if (type === 'log') {
+            config.xAxis.domain = [0.01, 1];
+            config.yAxis.domain = [-10, 10];
+        } else {
+            config.xAxis.domain = [-20, 20];
+            config.yAxis.domain = [-10, 10];
+        }
+        config.id = '';
+        this.destroyInstance();
+        this.instance = functionPlot(config);
+        this.config = config;
+    }
+
+    switchDash(dash) {
+        const config = this.config;
+        if (dash) {
+            config.tip.xLine = true;
+            config.tip.yLine = true;
+        } else {
+            config.tip.xLine = false;
+            config.tip.yLine = false;
+        }
+        this.instance = functionPlot(config);
+        this.config = config;
+        console.log("图表配置已更新:", this.config);
+    }
+
+    switchGrid(grid) {
+        const config = this.config;
+        config.grid = grid;
+        this.instance = functionPlot(config);
+        this.config = config;
+        console.log("图表配置已更新:", this.config);
     }
 
     switchChartType(type) {

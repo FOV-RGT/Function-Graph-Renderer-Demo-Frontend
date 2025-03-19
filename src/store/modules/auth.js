@@ -13,7 +13,17 @@ export default {
         // 以下信息暂时用不到
         nickname: localStorage.getItem('nickname') || null,
         email: localStorage.getItem('email') || null,
-        username: localStorage.getItem('username') || null
+        username: localStorage.getItem('username') || null,
+        avatarUrl: localStorage.getItem('avatarUrl') || null,
+        userConfig: {
+            chartType: 'linear',
+            closed: false,
+            range: null,
+            dash: false,
+            grid: true,
+            zoomFactor: 0.5,
+            moveFactor: 0.2,
+        }
     },
     
     getters: {
@@ -23,24 +33,35 @@ export default {
         userInfo: state => Object.freeze({
             nickname: state.nickname || '',
             email: state.email || '',
-            username: state.username || ''
+            username: state.username || '',
+            avatarUrl: state.avatarUrl || '爱门.jpg'
         }),
         // 获取显示名称（优先使用昵称）
         displayName: state => state.nickname || state.username || null,
+        chartType: state => state.userConfig.chartType,
+        closed: state => state.userConfig.closed,
+        range: state => state.userConfig.range,
+        dash: state => state.userConfig.dash,
+        grid: state => state.userConfig.grid,
+        zoomFactor: state => state.userConfig.zoomFactor,
+        moveFactor: state => state.userConfig.moveFactor,
     },
     
     // 修改状态的方法
     mutations: {
         setUser(state, data) {
-            const nickname = data?.nickname || '';
-            const email = data?.email || '';
-            const username = data?.username || '';
+            const nickname = data.nickname || '';
+            const email = data.email || '';
+            const username = data.username || '';
+            const avatarUrl = data.avatarUrl || '';
             state.nickname = nickname;
             state.email = email;
             state.username = username;
+            state.avatarUrl = avatarUrl;
             localStorage.setItem('nickname', nickname);
             localStorage.setItem('email', email);
             localStorage.setItem('username', username);
+            localStorage.setItem('avatarUrl', avatarUrl);
         },
         
         setToken(state, token) {
@@ -61,10 +82,21 @@ export default {
             state.email = null;
             state.username = null;
             state.isAuthenticated = false;
+            state.avatarUrl = null;
             localStorage.removeItem('nickname');
             localStorage.removeItem('email');
             localStorage.removeItem('username');
             localStorage.removeItem('token');
+            localStorage.removeItem('avatarUrl');
+        },
+
+        updateUserConfig(state, config) {
+            state.userConfig = config;
+        },
+
+        setUserAvatarUrl(state, avatarUrl) {
+            state.avatarUrl = avatarUrl;
+            localStorage.setItem('avatarUrl', avatarUrl);
         }
     },
     

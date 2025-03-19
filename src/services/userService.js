@@ -56,9 +56,11 @@ export async function login(credentials, needNewData, options = { is2D: true }) 
 
 export async function updateUserInfo(info) {
     try {
-        const res = await authApi.updateUserInfo(info);
-        const resInfo = res.userinf;
-        store.commit('auth/setUser', resInfo);
+        await authApi.updateUserInfo(info);
+        // const resInfo = res.userinf;
+        // store.commit('auth/setUser', resInfo);
+        const authRes = await authApi.getUserInfo();
+        store.commit('auth/setUser', authRes.imformation);
         return {
             success: true
         };
@@ -85,7 +87,8 @@ export async function uploadFunctionData(data) {
                 visible: item.visible,
                 dimension: item.dimension,
                 graphType: item.graphType,
-                closed: item.closed
+                closed: item.closed,
+                // range: item.range
             });
             return acc;
         }, []);
@@ -156,9 +159,14 @@ export async function register(credentials) {
 export async function getChangeData(currentPage, pageSize) {
     try {
         const res = await fnApi.getChangeData(currentPage, pageSize);
-        let fnData = res.mathdatas;
+        let fnData = res.mathdatas || [];
         if (res.mathdatas?.length > 2) fnData.sort((a, b) => b.id - a.id);
-        const pagination = res.pagination;
+        const pagination = res.pagination || {
+            "currentPage": 1,
+            "pageSize": 4,
+            "totalRecords": 0,
+            "totalPages": 1
+        };
         const data = {
             fnData,
             pagination
@@ -184,9 +192,75 @@ export async function uploadChangeData(data) {
             visible: data.visible,
             dimension: data.dimension,
             graphType: data.graphType,
-            closed: data.closed
+            closed: data.closed,
+            // range: data.range
         }]);
         await fnApi.uploadChangeData(uploadData);
+        return {
+            success: true
+        };
+    } catch (error) {
+        return {
+            success: false,
+            error
+        };
+    }
+}
+
+export async function getAvatarUrl() {
+    try {
+        const res = await authApi.getAvatarUrl();
+        console.log(res);
+        return {
+            success: true,
+            res
+        };
+    } catch (error) {
+        return {
+            success: false,
+            error
+        };
+    }
+}
+
+export async function uploadAvatar(res, file) {
+    try {
+        const formData = new FormData();
+        formData.append('key', res.key);
+        formData.append('policy', res.policy);
+        formData.append('OSSAccessKeyId', res.accessid);
+        formData.append('signature', res.signature);
+        formData.append('file', file);
+        await authApi.uploadAvatar(formData);
+        store.commit('auth/setUserAvatarUrl', res.url);
+        return {
+            success: true
+        };
+    } catch (error) {
+        return {
+            success: false,
+            error
+        };
+    }
+}
+
+export async function uploadUserConfig(config) {
+    try {
+        await authApi.uploadUserConfig(config);
+        return {
+            success: true
+        };
+    } catch (error) {
+        return {
+            success: false,
+            error
+        };
+    }
+}
+
+export async function uploadAvatarUrl(url) {
+    try {
+        await authApi.uploadAvatarUrl(url);
         return {
             success: true
         };

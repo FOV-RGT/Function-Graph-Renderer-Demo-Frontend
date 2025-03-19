@@ -3,6 +3,8 @@
 </template>
 
 <script>
+import { image } from 'd3';
+
 
 const map = {
     arrowLeft: "icon-arrowleft",
@@ -31,6 +33,8 @@ const map = {
     smileFill: 'icon-smile-fill',
     frown: 'icon-frown',
     frownFill: 'icon-frown-fill',
+    image: 'icon-image',
+    warningCircle: 'icon-warning-circle',
 };
 export default {
     props: {
@@ -52,5 +56,5 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://at.alicdn.com/t/c/font_4845730_gmwvjmtf1m.css?spm=a313x.manage_type_myprojects.i1.9.7c703a81WRix4q&file=font_4845730_gmwvjmtf1m.css');
+@import url('https://at.alicdn.com/t/c/font_4845730_5d6865owh0r.css?spm=a313x.manage_type_myprojects.i1.9.7c703a81ZTkwgt&file=font_4845730_5d6865owh0r.css');
 </style>

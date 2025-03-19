@@ -1,135 +1,135 @@
 <template>
-    <div class="main flex w-[100dvw] h-[100dvh] ">
-        <div class="main-left w-1/6 min-w-52 shrink-1 overflow-y-auto bg-base-300">
-            <div v-show="show.home" class="w-full h-full flex justify-start flex-col">
-                <div class="top overflow-hidden text-center flex flex-col items-center mt-5 mb-10">
-                    <h1 class="text-transparent select-none whitespace-nowrap">函数图形渲染程序</h1>
-                    <p class="text-transparent select-none">demo-v{{ version }}</p>
-                </div>
-                <div class="top-buttonsGroup flex flex-col justify-between grow-1 pb-50">
-                    <button class="btn btn-block" @click="switchHomeShow('list')">
-                        输入函数
-                    </button>
-                    <button class="btn btn-block" @click="show.adjustWindow = !show.adjustWindow">
-                        调整
-                    </button>
-                    <button class="btn btn-block" @click="switchRenderer">
-                        切换模式
-                    </button>
-                    <button class="btn btn-block" @click="show.table = !show.table">
-                        历史记录
-                    </button>
-                    <button class="btn btn-block">
-                        设置
-                    </button>
-                </div>
-            </div>
-            <ul class="list overflow-x-hidden" v-show="show.list">
-                <li class="flex justify-center border-b-2 border-b-slate-500/80 items-center">
-                    <div
-                        class="li-top p-2 pb-1 pl-8 text-[2em] text-slate-300/70 tracking-widest flex items-center justify-between select-none flex-1">
-                        <p>函数<span class="inline-block">列表</span></p>
-                        <icon type="rollBack" extraclass="cursor-pointer select-none pr-4"
-                            @click="switchHomeShow('list')" />
+    <div class="main flex w-[100vw] h-[100vh] ">
+        <transition name="leftList">
+            <div v-if="show.leftList" class="main-left w-1/6 min-w-52 shrink-1 overflow-y-auto bg-base-300 absolute
+            left-0 transform z-10 h-screen">
+                <div v-show="show.home" class="w-full h-full flex justify-start flex-col">
+                    <div class="top overflow-hidden text-center flex flex-col items-center mt-5 mb-10">
+                        <h1 class="text-transparent select-none whitespace-nowrap">函数图形渲染程序</h1>
+                        <p class="text-transparent select-none">demo-v{{ version }}</p>
                     </div>
-                </li>
-                <li v-for="(item, index) in currentData" :key="index" class="list-row pl-1 pr-1 pb-0 flex">
-                    <div class="flex-col select-none flex-1">
-                        <!-- 函数表达式输入区 -->
-                        <div class="join flex pb-0.5">
-                            <label class="li-input input flex-1 text-lg items-center pr-0 justify-start">
-                                <span>f(x)=</span>
-                                <input :value="item.fn" spellcheck="false" type="text" :placeholder=currentInputExample
-                                    class="join-item text-slate-300/80 flex-auto"
-                                    @input="debouncedAddInput($event.target.value, index)">
-                                <icon type="close_c" extraclass="cursor-pointer select-none pr-4 text-orange-800"
-                                    @click="fuckList('delect', index)" />
-                            </label>
+                    <div class="top-buttonsGroup flex flex-col justify-between grow-1 pb-50">
+                        <button class="btn btn-block" @click="switchHomeShow('list')">
+                            输入函数
+                        </button>
+                        <button class="btn btn-block" @click="show.adjustWindow = !show.adjustWindow">
+                            设置
+                        </button>
+                        <button class="btn btn-block" @click="switchRenderer">
+                            切换模式
+                        </button>
+                        <button class="btn btn-block" @click="show.table = !show.table">
+                            历史记录
+                        </button>
+                        <button class="btn btn-block" @click="show.loginModal = !show.loginModal">
+                            账户
+                        </button>
+                    </div>
+                </div>
+                <ul class="list overflow-x-hidden" v-show="show.list">
+                    <li class="flex justify-center border-b-2 border-b-slate-500/80 items-center">
+                        <div
+                            class="li-top p-2 pb-1 pl-8 text-[2em] text-slate-300/70 tracking-widest flex items-center justify-between select-none flex-1">
+                            <p>函数<span class="inline-block">列表</span></p>
+                            <icon type="rollBack" extraclass="cursor-pointer select-none pr-4"
+                                @click="switchHomeShow('list')" />
                         </div>
-                        <!-- 采样点数量的控制输入框 -->
-                        <div class="samplePoints flex items-center">
-                            <label class="text-xs mr-1">采样点数：</label>
-                            <input type="number" :value.number="item.nSamples" min="500" max="5000" step="1"
-                                class="input input-xs w-16 text-center"
-                                @input="debouncedUpdateSamplePoints($event.target.valueAsNumber, index)" />
-                        </div>
-                        <!-- 其他操作区域 -->
-                        <div class="li-b flex gap-4">
-                            <icon type="plus" extraclass="cursor-pointer select-none"
-                                @click="fuckList('plus', index)" />
-                            <icon type="minus" extraclass="cursor-pointer select-none"
-                                @click="fuckList('minus', index)" />
-                            <icon :type="item.visible == true ? 'eye' : 'eye_c'" extraclass="cursor-pointer select-none"
-                                @click="fuckList('visible', index)" />
-                            <div class="colorPicker">
-                                <ColorPicker format="rgb" shape="square" :debounce="0" lang="ZH-cn"
-                                    v-model:pureColor="item.color"
-                                    @update:pureColor="throttleupdateColor($event, index)" />
+                    </li>
+                    <li v-for="(item, index) in currentData" :key="index" class="list-row pl-1 pr-1 pb-0 flex">
+                        <div class="flex-col select-none flex-1">
+                            <!-- 函数表达式输入区 -->
+                            <div class="join flex pb-0.5">
+                                <label class="li-input input flex-1 text-lg items-center pr-0 justify-start">
+                                    <span>f(x)=</span>
+                                    <input :value="item.fn" spellcheck="false" type="text"
+                                        :placeholder=currentInputExample class="join-item text-slate-300/80 flex-auto"
+                                        @input="debouncedAddInput($event.target.value, index)">
+                                    <icon type="close_c" extraclass="cursor-pointer select-none pr-4 text-orange-800"
+                                        @click="fuckList('delect', index)" />
+                                </label>
+                            </div>
+                            <!-- 采样点数量的控制输入框 -->
+                            <div class="samplePoints flex items-center">
+                                <label class="text-xs mr-1">采样点数：</label>
+                                <input type="number" :value.number="item.nSamples" min="500" max="5000" step="1"
+                                    class="input input-xs w-16 text-center"
+                                    @input="debouncedUpdateSamplePoints($event.target.valueAsNumber, index)" />
+                            </div>
+                            <!-- 其他操作区域 -->
+                            <div class="li-b flex gap-4">
+                                <icon type="plus" extraclass="cursor-pointer select-none"
+                                    @click="fuckList('plus', index)" />
+                                <icon type="minus" extraclass="cursor-pointer select-none"
+                                    @click="fuckList('minus', index)" />
+                                <icon :type="item.visible == true ? 'eye' : 'eye_c'"
+                                    extraclass="cursor-pointer select-none" @click="fuckList('visible', index)" />
+                                <div class="colorPicker">
+                                    <ColorPicker format="rgb" shape="square" :debounce="0" lang="ZH-cn"
+                                        v-model:pureColor="item.color"
+                                        @update:pureColor="throttleupdateColor($event, index)" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </li>
-                <li class="flex list-row text-4xl justify-center p-2">
-                    <div class="left-li-plus items-center flex h-[2rem] justify-center">
-                        <icon type="plus" extraclass="cursor-pointer select-none" @click="fuckList('plus-b')" />
-                    </div>
-                </li>
-                <li class="list-row text-4xl text-sky-600">千早 爱音</li>
-                <li class="list-row text-4xl text-sky-600">长崎 素世</li>
-                <li class="list-row text-4xl text-sky-600">高松 灯</li>
-                <li class="list-row text-4xl text-sky-600">椎名 立希</li>
-                <li class="list-row text-4xl text-sky-600">要 乐奈</li>
-                <li class="list-row text-4xl text-pink-800">丰川 祥子</li>
-                <li class="list-row text-4xl text-pink-800">八幡 海铃</li>
-                <li class="list-row text-4xl text-pink-800">三角 初华</li>
-                <li class="list-row text-4xl text-pink-800">祐天寺 若麦</li>
-                <li class="list-row text-4xl text-pink-800">若叶 睦</li>
-            </ul>
-        </div>
+                    </li>
+                    <li class="flex list-row text-4xl justify-center p-2">
+                        <div class="left-li-plus items-center flex h-[2rem] justify-center">
+                            <icon type="plus" extraclass="cursor-pointer select-none" @click="fuckList('plus-b')" />
+                        </div>
+                    </li>
+                    <li class="list-row text-4xl text-sky-600">千早 爱音</li>
+                    <li class="list-row text-4xl text-sky-600">长崎 素世</li>
+                    <li class="list-row text-4xl text-sky-600">高松 灯</li>
+                    <li class="list-row text-4xl text-sky-600">椎名 立希</li>
+                    <li class="list-row text-4xl text-sky-600">要 乐奈</li>
+                    <li class="list-row text-4xl text-pink-800">丰川 祥子</li>
+                    <li class="list-row text-4xl text-pink-800">八幡 海铃</li>
+                    <li class="list-row text-4xl text-pink-800">三角 初华</li>
+                    <li class="list-row text-4xl text-pink-800">祐天寺 若麦</li>
+                    <li class="list-row text-4xl text-pink-800">若叶 睦</li>
+                </ul>
+            </div>
+        </transition>
         <div class="main-right flex-1 shrink-1 pt-6 pr-4 overflow-hidden">
-            <div class="plotComponents h-19/20 relative">
+            <div class="plotComponents h-19/20 pl-8 relative">
                 <TwoDPlotCom ref="TwoDPlotCom" v-show="show.render2D" class="renderComponent pl-2" />
                 <ThreeDPlotCom ref="ThreeDPlotCom" v-show="!show.render2D" class="renderComponent" />
+                <div class="user-avatar" :style="{ 'background-image': `url(${userInfo.avatarUrl})` }"
+                    @click="show.avatarPreview = !show.avatarPreview">
+                </div>
+                <transition name="bg">
+                    <div v-if="show.avatarPreview" class="fixed inset-0 z-50 select-none" @click="show.avatarPreview = false">
+                        <div class="absolute inset-0 bg-black/70"></div>
+                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                            <img :src="userInfo.avatarUrl" class="max-h-[80vh] max-w-[80vw] rounded-lg shadow-lg"
+                                alt="用户头像" />
+                        </div>
+                    </div>
+                </transition>
             </div>
-            <div class="foot h-1/20 flex justify-evenly items-center overflow-hidden">
-                <button class="btn btn-lg" @click="show.loginModal = !show.loginModal">
-                    <div v-if="!isAuthenticated">
-                        <div class="status status-info animate-bounce"></div>
-                        请登录
-                    </div>
-                    <div v-else class="flex items-center space-x-3">
-                        <div aria-label="success" class="status status-success"></div>
-                        <span class="text-2xl">{{ greetingMessage + userInfo.nickname }}</span>
-                    </div>
+            <div class="h-1/20 self-end w-5/6 ml-auto flex flex-row justify-between overflow-hidden">
+                <button class="listControl btn btn-soft btn-primary rounded-none btn-xl
+                h-full w-[clamp(0.8em,2.5vw,2.5em)] ml-0.5" @click="show.leftList = !show.leftList">
+                    <label class="swap swap-flip pointer-events-none">
+                        <input type="checkbox" v-model="show.leftList" />
+                        <icon class="swap-on fill-current" type="doubleRight" />
+                        <icon class="swap-off fill-current" type="doubleLeft" />
+                    </label>
                 </button>
-                <!-- 缩放步长控制组件 -->
-                <div class="zoomFactorControl flex items-center">
-                    <label class="text-xs mr-1 text-slate-300/80">缩放步长:</label>
-                    <input type="number" v-model.number="zoomStep" min="0.01" max="1.00" step="0.01"
-                        class="input input-xs w-16 text-center" @change="updateZoomFactor" />
-                </div>
-                <!-- 移动步长控制组件 -->
-                <div class="moveStepControl flex items-center">
-                    <label class="text-xs mr-1 text-slate-300/80">移动步长:</label>
-                    <input type="number" v-model.number="moveStep" min="0.01" max="1.00" step="0.01"
-                        class="input input-xs w-16 text-center" @change="updateMoveStep" />
-                </div>
                 <adjustButtons @setView="setView" />
             </div>
             <transition name="bg">
-                <div v-show="show.table" class="fixed inset-0 z-40" @click="show.table = false">
+                <div v-if="show.table" class="fixed inset-0 z-40 select-none" @click="show.table = false">
                     <div class="absolute inset-0 bg-black/30"></div>
                 </div>
             </transition>
             <transition name="table">
                 <hisDataTable v-if="show.table" :localFnData="localFnData"
                     class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
-                    bg-base-100 rounded-box border border-base-content/10 overflow-auto lg:w-3xl md:w-lg sm:w-md h-auto z-80"
-                    @renderFn="renderFn" @delectData="delectData"
+                    bg-base-100 rounded-box border border-base-content/10 overflow-auto lg:w-4xl md:w-xl sm:w-md h-auto z-80" @renderFn="renderFn" @delectData="delectData"
                     @closeTable="show.table = false" @deleteLocalData="deleteLocalData" />
             </transition>
             <transition name="bg">
-                <div v-show="show.loginModal || show.registerModal" class="fixed inset-0 z-40"
+                <div v-if="show.loginModal || show.registerModal" class="fixed inset-0 z-40 select-none"
                     @click="show.loginModal = false; show.registerModal = false">
                     <div class="absolute inset-0 bg-black/30"></div>
                 </div>
@@ -168,27 +168,44 @@
                     </form>
                     <div v-else class="user-info w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl
                     flex flex-col justify-center space-y-3">
+                        <h1 class="text-3xl self-center">{{ greetingMessage + userInfo.nickname }}</h1>
                         <div class="cursor-default flex items-center justify-between">
                             <span>用户信息</span>
-                            <button type="button" class="btn btn-soft btn-error btn-md flex items-center justify-evenly" @click="logout">
+                            <button type="button" class="btn btn-soft btn-error btn-md flex items-center justify-evenly"
+                                @click="logout">
                                 <span class="text-xl">退出登录</span>
                                 <icon type="logout" />
                             </button>
                         </div>
                         <div class="cursor-default flex items-center space-x-1">
                             <span class="whitespace-nowrap">昵称:</span>
-                            <input type="text" placeholder="昵称" class="input input-ghost text-xl rounded-sm pl-0.5 w-full"
+                            <input type="text" placeholder="昵称"
+                                class="input input-ghost text-xl rounded-sm pl-0.5 w-full"
                                 v-model="formData.nickname" />
                         </div>
                         <div class="cursor-default flex items-center space-x-1">
                             <span class="whitespace-nowrap">邮箱:</span>
-                            <input type="text" placeholder="邮箱" class="input input-ghost text-xl rounded-sm pl-0.5 w-full"
-                                v-model="formData.email" />
+                            <input type="text" placeholder="邮箱"
+                                class="input input-ghost text-xl rounded-sm pl-0.5 w-full" v-model="formData.email" />
                         </div>
                         <div class="cursor-default flex items-center space-x-1">
                             <span class="whitespace-nowrap">账号:</span>
-                            <input type="text" placeholder="账号" class="input input-ghost text-xl rounded-sm pl-0.5 w-full"
+                            <input type="text" placeholder="账号"
+                                class="input input-ghost text-xl rounded-sm pl-0.5 w-full"
                                 v-model="formData.username" />
+                        </div>
+                        <div class="flex flex-row items-center space-x-1">
+                            <fieldset class="fieldset">
+                                <label class="fieldset-label">上传文件需小于5MB</label>
+                                <input type="file" accept="image/*" class="file-input" @change="handleAvatarSelected" />
+                                <label class="fieldset-label">&nbsp;</label>
+                            </fieldset>
+                            <button type="button"
+                                class="btn btn-soft btn-success btn-md flex items-center justify-evenly"
+                                @click="getAvatarUrl">
+                                <span class="text-xl">上传头像</span>
+                                <icon type="image" />
+                            </button>
                         </div>
                         <button class="btn btn-block btn-lg btn-info btn-soft text-xl" @click="updateUserInfo">
                             <span v-if="!loading.updateInfo">提交修改</span>
@@ -204,15 +221,14 @@
             </transition>
             <popupWindow ref="popupWindow" />
             <transition name="bg">
-                <div v-show="show.adjustWindow" class="fixed inset-0 z-40" @click="show.adjustWindow = false">
+                <div v-if="show.adjustWindow" class="fixed inset-0 z-40 select-none" @click="show.adjustWindow = false">
                     <div class="absolute inset-0 bg-black/30"></div>
                 </div>
             </transition>
             <transition name="table">
                 <adjustWindow v-show="show.adjustWindow" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
                 bg-base-100 rounded-box border border-base-content/10 overflow-auto w-lg h-auto z-80"
-                @switchChartType="switchChartType" @close="show.adjustWindow = false" @switchClosed="switchClosed"
-                @setRenderRange="setRenderRange" @switchDash="switchDash" @switchGrid="switchGrid"/>
+                    @close="show.adjustWindow = false" />
             </transition>
         </div>
     </div>
@@ -233,7 +249,6 @@ import register from '../components/register.vue';
 import popupWindow from '../components/popupWindow.vue';
 import adjustButtons from '../components/adjustButtons.vue';
 import adjustWindow from '../components/adjustWindow.vue';
-
 
 
 
@@ -264,17 +279,17 @@ export default {
                 list: false,
                 home: true,
                 render2D: true,
-                adjustWindow: false
+                adjustWindow: false,
+                leftList: true,
+                avatarPreview: false
             },
             account: "",
             password: "",
-            zoomStep: 0.5,
-            moveStep: 0.2,
             formData: {},
             fnData: [],
             pagination: {},
             localFnData: [],
-            isClosed: false
+            selectedAvatarFile: null,
         };
     },
     created() {
@@ -346,7 +361,9 @@ export default {
     },
     computed: {
         ...mapState(["functionData_2D", "functionData_3D"]),
-        ...mapGetters('auth', ['userInfo', 'displayName', 'isAuthenticated']),
+        ...mapGetters('auth', ['userInfo', 'displayName', 'isAuthenticated',
+            'chartType', 'closed', 'range', 'dash', 'grid', 'zoomFactor', 'moveFactor'
+        ]),
         currentInputExample() {
             return this.show.render2D ? '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...'
                 : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
@@ -381,6 +398,68 @@ export default {
         functionData_2D: {
             handler(newVal) {
                 this.uploadUserData(newVal);
+            },
+        },
+        chartType: {
+            handler(newVal) {
+                this.$refs.TwoDPlotCom.switchChartType(newVal);
+            },
+        },
+        closed: {
+            handler(newVal) {
+                const newData = toRaw(this.currentData).map(item => ({
+                    fn: item.fn,
+                    color: item.color,
+                    nSamples: item.nSamples,
+                    visible: item.visible,
+                    dimension: item.dimension,
+                    graphType: item.graphType,
+                    closed: newVal,
+                    range: item.range
+                }));
+                this.fuckRender(newData);
+                this.storeDataToVuex(newData);
+
+            },
+        },
+        range: {
+            handler(newVal) {
+                const newData = toRaw(this.currentData).map(item => ({
+                    fn: item.fn,
+                    color: item.color,
+                    nSamples: item.nSamples,
+                    visible: item.visible,
+                    dimension: item.dimension,
+                    graphType: item.graphType,
+                    closed: item.closed,
+                    range: newVal
+                }));
+                this.fuckRender(newData);
+                this.storeDataToVuex(newData);
+            },
+        },
+        dash: {
+            handler(newVal) {
+                this.$refs.TwoDPlotCom.switchDash(newVal);
+            },
+        },
+        grid: {
+            handler(newVal) {
+                this.$refs.TwoDPlotCom.switchGrid(newVal);
+            },
+        },
+        zoomFactor: {
+            handler(newVal) {
+                if (this.show.render2D) {
+                    this.$refs.TwoDPlotCom.updateZoomFactor(newVal);
+                }
+            },
+        },
+        moveFactor: {
+            handler(newVal) {
+                if (this.show.render2D) {
+                    this.$refs.TwoDPlotCom.updateMoveFactor(newVal);
+                }
             },
         }
     },
@@ -418,8 +497,8 @@ export default {
                         visible: true,
                         dimension: 2,
                         graphType: 'interval', // 添加默认图表类型
-                        closed: this.isClosed
-                        
+                        closed: this.closed,
+                        range: this.range
                     };
                     this.storeData(fnData);
                     updatedData.splice(index + 1, 0, fnData);
@@ -433,7 +512,8 @@ export default {
                         visible: true,
                         dimension: 2,
                         graphType: 'interval', // 添加默认图表类型
-                        closed: this.isClosed
+                        closed: this.closed,
+                        range: this.range
                     };
                     this.storeData(fnData);
                     updatedData.push(fnData);
@@ -503,7 +583,8 @@ export default {
         logout() {
             this.show.loginModal = false;
             const data_2D = utils.deepClone(this.functionData_2D)
-            const data_3D = utils.deepClone(this.functionData_3D)
+            // const data_3D = utils.deepClone(this.functionData_3D)
+            const data_3D = [];
             this.localFnData = [...data_2D, ...data_3D];
             setTimeout(() => {
                 this.$store.commit('auth/cleanState');
@@ -514,22 +595,16 @@ export default {
         },
 
         // 更新缩放因子(zoomfactor)
-        updateZoomFactor() {
-            // 验证范围
-            this.zoomStep = utils.clamp(this.zoomStep, 0.01, 1.00);
-            // 更新图表实例的缩放因子
-            if (this.show.render2D && this.$refs.TwoDPlotCom) {
-                this.$refs.TwoDPlotCom.updateZoomFactor(this.zoomStep);
+        updateZoomFactor(zoomFactor) {
+            if (this.show.render2D) {
+                this.$refs.TwoDPlotCom.updateZoomFactor(zoomFactor);
             }
         },
 
         // 更新移动步长(movefactor)
-        updateMoveStep() {
-            // 验证范围
-            this.moveStep = utils.clamp(this.moveStep, 0.01, 1.00);
-            // 更新图表实例的移动步长
-            if (this.show.render2D && this.$refs.TwoDPlotCom) {
-                this.$refs.TwoDPlotCom.updateMoveFactor(this.moveStep);
+        updateMoveFactor(moveFactor) {
+            if (this.show.render2D) {
+                this.$refs.TwoDPlotCom.updateMoveFactor(moveFactor);
             }
         },
 
@@ -612,40 +687,6 @@ export default {
             }
         },
 
-        switchChartType(type) {
-            this.$refs.TwoDPlotCom.switchChartType(type);
-        },
-
-        switchClosed(closed) {
-            this.isClosed = closed;
-            const newData = this.currentData.map(item => ({
-                fn: item.fn,
-                color: item.color,
-                nSamples: item.nSamples,
-                visible: item.visible,
-                dimension: item.dimension,
-                graphType: item.graphType,
-                closed
-            }));
-            this.fuckRender(newData);
-            this.storeDataToVuex(newData);
-        },
-
-        setRenderRange(range) {
-            const newData = this.currentData.map(item => ({
-                fn: item.fn,
-                color: item.color,
-                nSamples: item.nSamples,
-                visible: item.visible,
-                dimension: item.dimension,
-                graphType: item.graphType,
-                closed: item.closed,
-                range
-            }));
-            this.fuckRender(newData);
-            this.storeDataToVuex(newData);
-        },
-
         storeDataToVuex(data) {
             const payload = {
                 data,
@@ -655,12 +696,59 @@ export default {
             this.$store.commit('syncData', payload);
         },
 
-        switchDash(dash) {
-            this.$refs.TwoDPlotCom.switchDash(dash);
+        handleAvatarSelected(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) {
+                this.$refs.popupWindow.addMessage({
+                    head: '上传失败',
+                    messages: ['请选择图片文件'],
+                    target: 'body'
+                });
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                this.$refs.popupWindow.addMessage({
+                    head: '上传失败',
+                    messages: ['文件大小不能超过5MB'],
+                    target: 'body'
+                });
+                return;
+            }
+            this.selectedAvatarFile = file;
         },
 
-        switchGrid(grid) {
-            this.$refs.TwoDPlotCom.switchGrid(grid);
+        async getAvatarUrl() {
+            if (!this.selectedAvatarFile) {
+                this.$refs.popupWindow.addMessage({
+                    head: '上传失败',
+                    messages: ['请先选择要上传的图片文件'],
+                    target: 'body'
+                });
+                return;
+            }
+            const { success, res, error } = await service.getAvatarUrl();
+            console.log('获取头像上传信息:', res);
+            if (success) {
+                const file = this.selectedAvatarFile;
+                this.uploadAvatar(res, file);
+            } else {
+                console.log('获取头像上传信息失败：', error);
+            }
+        },
+
+        async uploadAvatar(res, file) {
+            const { success, error } = await service.uploadAvatar(res, file);
+            if (success) {
+                console.log('上传头像成功');
+                console.log('头像地址:', res.url);
+                const url = {
+                    avatarUrl: res.url
+                }
+                await service.uploadAvatarUrl(url);
+            } else {
+                console.log('上传头像失败:', error);
+            }
         }
     }
 };
@@ -668,5 +756,4 @@ export default {
 
 <style>
 @import url('../assets/componentCss/home.css');
-@import url('../assets/componentCss/icon1.css');
 </style>
