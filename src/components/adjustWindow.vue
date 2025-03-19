@@ -24,12 +24,24 @@
             </div>
             <div class="flex flex-row item-center justify-start gap-2">
                 <p class="mr-4 text-2xl">渲染范围</p>
-                <input type="number" class="input w-20" v-model.number="minVal" @change="setRenderRange"
+                <input type="number" class="input w-20 input-xs self-center" v-model.number="minVal" @change="setRenderRange"
                     @keyup.enter="setRenderRange" />
-                <p class="flex text-center justify-center items-center text-xl">
+                <p class="flex text-center justify-center items-center text-xl mb-1 text-base-content/70">
                     < x <</p>
-                        <input type="number" class="input w-20" v-model.number="maxVal" @change="setRenderRange"
+                        <input type="number" class="input w-20 input-xs self-center" v-model.number="maxVal" @change="setRenderRange"
                             @keyup.enter="setRenderRange" />
+            </div>
+            <div class="flex flex-row items-center justify-start space-x-4">
+                <div class="zoomFactorControl flex items-center justify-center">
+                    <label class="text-2xl mr-1">缩放步长：</label>
+                    <input type="number" v-model.number="userConfig.zoomFactor" min="0.01" max="1.00" step="0.01"
+                        class="input input-xs w-16 text-center" @change="updateZoomFactor" @keyup.enter="updateZoomFactor"/>
+                </div>
+                <div class="moveStepControl flex items-center">
+                    <label class="text-2xl mr-1">移动步长：</label>
+                    <input type="number" v-model.number="userConfig.moveFactor" min="0.01" max="1.00" step="0.01"
+                        class="input input-xs w-16 text-center" @change="updateMoveFactor" @keyup.enter="updateMoveFactor"/>
+                </div>
             </div>
             <div class="flex flex-row items-center justify-start">
                 <p class="mr-4 text-2xl">绘制函数阴影</p>
@@ -48,20 +60,6 @@
                 <p class="mr-4 text-2xl">辅助网格</p>
                 <input type="checkbox" checked="checked" class="toggle toggle-primary" v-model="userConfig.grid"
                     @change="updateUserConfig" />
-            </div>
-            <div class="flex flex-row items-center justify-start space-x-4">
-                <!-- 缩放步长控制组件 -->
-                <div class="zoomFactorControl flex items-center">
-                    <label class="text-lg mr-1">缩放步长:</label>
-                    <input type="number" v-model.number="userConfig.zoomFactor" min="0.01" max="1.00" step="0.01"
-                        class="input input-xs w-16 text-center" @change="updateZoomFactor" @keyup.enter="updateZoomFactor"/>
-                </div>
-                <!-- 移动步长控制组件 -->
-                <div class="moveStepControl flex items-center">
-                    <label class="text-lg mr-1">移动步长:</label>
-                    <input type="number" v-model.number="userConfig.moveFactor" min="0.01" max="1.00" step="0.01"
-                        class="input input-xs w-16 text-center" @change="updateMoveFactor" @keyup.enter="updateMoveFactor"/>
-                </div>
             </div>
         </div>
     </div>

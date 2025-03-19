@@ -1,6 +1,7 @@
 <template>
-    <div class="main flex w-[100dvw] h-[100dvh] ">
-        <div class="main-left w-1/6 min-w-52 shrink-1 overflow-y-auto bg-base-300">
+    <div class="main flex w-[100vw] h-[100vh] ">
+        <div v-if="show.leftList" class="main-left w-1/6 min-w-52 shrink-1 overflow-y-auto bg-base-300 absolute
+        left-0 transform z-10 h-screen">
             <div v-show="show.home" class="w-full h-full flex justify-start flex-col">
                 <div class="top overflow-hidden text-center flex flex-col items-center mt-5 mb-10">
                     <h1 class="text-transparent select-none whitespace-nowrap">函数图形渲染程序</h1>
@@ -94,8 +95,11 @@
                     @click="show.loginModal = !show.loginModal">
                 </div>
             </div>
-            <div class="foot h-1/20 flex justify-evenly items-center overflow-hidden">
-                <adjustButtons @setView="setView" />
+            <div class="h-1/20 self-end w-5/6 ml-auto flex flex-row justify-between overflow-hidden">
+                <button class="btn btn-soft btn-primary rounded-none" @click="show.leftList = !show.leftList">
+                    <icon type="doubleRight" />
+                </button>
+                <adjustButtons @setView="setView"/>
             </div>
             <transition name="bg">
                 <div v-show="show.table" class="fixed inset-0 z-40" @click="show.table = false">
@@ -228,6 +232,7 @@ import register from '../components/register.vue';
 import popupWindow from '../components/popupWindow.vue';
 import adjustButtons from '../components/adjustButtons.vue';
 import adjustWindow from '../components/adjustWindow.vue';
+import Icon from '../components/icon.vue';
 
 
 
@@ -258,7 +263,8 @@ export default {
                 list: false,
                 home: true,
                 render2D: true,
-                adjustWindow: false
+                adjustWindow: false,
+                leftList: true
             },
             account: "",
             password: "",
