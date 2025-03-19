@@ -13,7 +13,16 @@ export default {
         // 以下信息暂时用不到
         nickname: localStorage.getItem('nickname') || null,
         email: localStorage.getItem('email') || null,
-        username: localStorage.getItem('username') || null
+        username: localStorage.getItem('username') || null,
+        userConfig: {
+            chartType: 'linear',
+            closed: false,
+            range: null,
+            dash: false,
+            grid: true,
+            zoomFactor: 0.5,
+            moveFactor: 0.2,
+        }
     },
     
     getters: {
@@ -27,6 +36,13 @@ export default {
         }),
         // 获取显示名称（优先使用昵称）
         displayName: state => state.nickname || state.username || null,
+        chartType: state => state.userConfig.chartType,
+        closed: state => state.userConfig.closed,
+        range: state => state.userConfig.range,
+        dash: state => state.userConfig.dash,
+        grid: state => state.userConfig.grid,
+        zoomFactor: state => state.userConfig.zoomFactor,
+        moveFactor: state => state.userConfig.moveFactor,
     },
     
     // 修改状态的方法
@@ -65,6 +81,10 @@ export default {
             localStorage.removeItem('email');
             localStorage.removeItem('username');
             localStorage.removeItem('token');
+        },
+
+        updateUserConfig(state, config) {
+            state.userConfig = config;
         }
     },
     

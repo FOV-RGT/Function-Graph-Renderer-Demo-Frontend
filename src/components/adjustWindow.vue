@@ -13,35 +13,55 @@
                     <label class="label cursor-pointer gap-2">
                         <span class="label-text">线性</span>
                         <input type="radio" value="linear" name="radio-1" class="radio radio-primary"
-                            v-model="chartType" @change="switchChartType" />
+                            v-model="userConfig.chartType" @change="updateUserConfig" />
                     </label>
                     <label class="label cursor-pointer gap-2">
                         <span class="label-text">对数</span>
-                        <input type="radio" value="log" name="radio-1" class="radio radio-primary"
-                            v-model="chartType" @change="switchChartType" />
+                        <input type="radio" value="log" name="radio-1" class="radio radio-primary" v-model="userConfig.chartType"
+                            @change="updateUserConfig" />
                     </label>
                 </div>
             </div>
             <div class="flex flex-row item-center justify-start gap-2">
                 <p class="mr-4 text-2xl">渲染范围</p>
-                <input type="number" class="input w-20" v-model.number="minVal" @change="setRenderRange" @keyup.enter="setRenderRange"/>
-                <p class="flex text-center justify-center items-center text-xl">< x <</p>
-                <input type="number" class="input w-20" v-model.number="maxVal" @change="setRenderRange" @keyup.enter="setRenderRange"/>
+                <input type="number" class="input w-20" v-model.number="minVal" @change="setRenderRange"
+                    @keyup.enter="setRenderRange" />
+                <p class="flex text-center justify-center items-center text-xl">
+                    < x <</p>
+                        <input type="number" class="input w-20" v-model.number="maxVal" @change="setRenderRange"
+                            @keyup.enter="setRenderRange" />
             </div>
             <div class="flex flex-row items-center justify-start">
                 <p class="mr-4 text-2xl">绘制函数阴影</p>
-                <input type="checkbox" checked="checked" class="toggle toggle-primary" v-model="closed" @change="switchClosed"/>
+                <input type="checkbox" checked="checked" class="toggle toggle-primary" v-model="userConfig.closed"
+                    @change="updateUserConfig" />
                 <div class="warningCircle tooltip tooltip-warning tooltip-right ml-5" data-tip="该选项极其消耗性能">
-                    <icon type="warningCircle" class="self-center text-warning"/>
+                    <icon type="warningCircle" class="self-center text-warning" />
                 </div>
             </div>
             <div class="flex flex-row items-center justify-start">
                 <p class="mr-4 text-2xl">辅助虚线</p>
-                <input type="checkbox" checked="checked" class="toggle toggle-primary" v-model="dash" @change="switchDash"/>
+                <input type="checkbox" checked="checked" class="toggle toggle-primary" v-model="userConfig.dash"
+                    @change="updateUserConfig" />
             </div>
             <div class="flex flex-row items-center justify-start">
                 <p class="mr-4 text-2xl">辅助网格</p>
-                <input type="checkbox" checked="checked" class="toggle toggle-primary" v-model="grid" @change="switchGrid"/>
+                <input type="checkbox" checked="checked" class="toggle toggle-primary" v-model="userConfig.grid"
+                    @change="updateUserConfig" />
+            </div>
+            <div class="flex flex-row items-center justify-start space-x-4">
+                <!-- 缩放步长控制组件 -->
+                <div class="zoomFactorControl flex items-center">
+                    <label class="text-lg mr-1">缩放步长:</label>
+                    <input type="number" v-model.number="userConfig.zoomFactor" min="0.01" max="1.00" step="0.01"
+                        class="input input-xs w-16 text-center" @change="updateZoomFactor" @keyup.enter="updateZoomFactor"/>
+                </div>
+                <!-- 移动步长控制组件 -->
+                <div class="moveStepControl flex items-center">
+                    <label class="text-lg mr-1">移动步长:</label>
+                    <input type="number" v-model.number="userConfig.moveFactor" min="0.01" max="1.00" step="0.01"
+                        class="input input-xs w-16 text-center" @change="updateMoveFactor" @keyup.enter="updateMoveFactor"/>
+                </div>
             </div>
         </div>
     </div>
@@ -49,6 +69,7 @@
 
 <script>
 import icon from './icon.vue'
+import { clamp } from '../assets/utils/componentUtils.js'
 
 
 export default {
@@ -57,42 +78,42 @@ export default {
     },
     data() {
         return {
-            chartType: 'linear',
-            closed: false,
+            userConfig: {
+                chartType: 'linear',
+                closed: false,
+                range: null,
+                dash: false,
+                grid: true,
+                zoomFactor: 0.5,
+                moveFactor: 0.2,
+            },
             minVal: '',
             maxVal: '',
-            dash: false,
-            grid: true
         }
     },
     methods: {
-        switchChartType() {
-            this.$emit('switchChartType', this.chartType);
-        },
-
         selfClose() {
             this.$emit('close');
         },
 
-        switchClosed() {
-            this.$emit('switchClosed', this.closed);
-        },
-
         setRenderRange() {
-            if (this.minVal >= this.maxVal && !(this.minVal == 0 && this.maxVal == 0)) {
-                return;
-            }
-            let range;
-            this.minVal == 0 && this.maxVal == 0 ? range = null : range = [this.minVal, this.maxVal];
-            this.$emit('setRenderRange', range);
+            this.minVal = clamp(this.minVal, -Infinity, this.maxVal)
+            this.minVal == 0 && this.maxVal == 0 ? this.userConfig.range = null : this.userConfig.range = [this.minVal, this.maxVal];
+            this.$store.commit('auth/updateUserConfig', this.userConfig);
         },
 
-        switchDash() {
-            this.$emit('switchDash', this.dash);
+        updateZoomFactor() {
+            this.userConfig.zoomFactor = clamp(this.userConfig.zoomFactor, 0.01, 1.00);
+            this.$store.commit('auth/updateUserConfig', this.userConfig);
         },
 
-        switchGrid() {
-            this.$emit('switchGrid', this.grid);
+        updateMoveFactor() {
+            this.userConfig.moveFactor = clamp(this.userConfig.moveFactor, 0.01, 1.00);
+            this.$store.commit('auth/updateUserConfig', this.userConfig);
+        },
+
+        updateUserConfig() {
+            this.$store.commit('auth/updateUserConfig', this.userConfig);
         }
     }
 }
@@ -106,5 +127,4 @@ export default {
 .warningCircle::before {
     font-size: large;
 }
-
 </style>

@@ -95,28 +95,6 @@
                 </div>
             </div>
             <div class="foot h-1/20 flex justify-evenly items-center overflow-hidden">
-                <button class="btn btn-lg" @click="show.loginModal = !show.loginModal">
-                    <!-- <div v-if="!isAuthenticated">
-                        <div class="status status-info animate-bounce"></div>
-                        请登录
-                    </div>
-                    <div v-else class="flex items-center space-x-3">
-                        <div aria-label="success" class="status status-success"></div>
-                        <span class="text-2xl">{{ greetingMessage + userInfo.nickname }}</span>
-                    </div> -->
-                </button>
-                <!-- 缩放步长控制组件 -->
-                <div class="zoomFactorControl flex items-center">
-                    <label class="text-xs mr-1 text-slate-300/80">缩放步长:</label>
-                    <input type="number" v-model.number="zoomStep" min="0.01" max="1.00" step="0.01"
-                        class="input input-xs w-16 text-center" @change="updateZoomFactor" />
-                </div>
-                <!-- 移动步长控制组件 -->
-                <div class="moveStepControl flex items-center">
-                    <label class="text-xs mr-1 text-slate-300/80">移动步长:</label>
-                    <input type="number" v-model.number="moveStep" min="0.01" max="1.00" step="0.01"
-                        class="input input-xs w-16 text-center" @change="updateMoveStep" />
-                </div>
                 <adjustButtons @setView="setView" />
             </div>
             <transition name="bg">
@@ -229,9 +207,7 @@
             </transition>
             <transition name="table">
                 <adjustWindow v-show="show.adjustWindow" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
-                bg-base-100 rounded-box border border-base-content/10 overflow-auto w-lg h-auto z-80"
-                    @switchChartType="switchChartType" @close="show.adjustWindow = false" @switchClosed="switchClosed"
-                    @setRenderRange="setRenderRange" @switchDash="switchDash" @switchGrid="switchGrid" />
+                bg-base-100 rounded-box border border-base-content/10 overflow-auto w-lg h-auto z-80" @close="show.adjustWindow = false"/>
             </transition>
         </div>
     </div>
@@ -286,13 +262,10 @@ export default {
             },
             account: "",
             password: "",
-            zoomStep: 0.5,
-            moveStep: 0.2,
             formData: {},
             fnData: [],
             pagination: {},
             localFnData: [],
-            isClosed: false,
             selectedAvatarFile: null,
             userAvatarUrl: ''
         };
@@ -366,7 +339,9 @@ export default {
     },
     computed: {
         ...mapState(["functionData_2D", "functionData_3D"]),
-        ...mapGetters('auth', ['userInfo', 'displayName', 'isAuthenticated']),
+        ...mapGetters('auth', ['userInfo', 'displayName', 'isAuthenticated',
+            'chartType', 'closed', 'range', 'dash', 'grid', 'zoomFactor', 'moveFactor'
+        ]),
         currentInputExample() {
             return this.show.render2D ? '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...'
                 : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
@@ -401,6 +376,68 @@ export default {
         functionData_2D: {
             handler(newVal) {
                 this.uploadUserData(newVal);
+            },
+        },
+        chartType: {
+            handler(newVal) {
+                this.$refs.TwoDPlotCom.switchChartType(newVal);
+            },
+        },
+        closed: {
+            handler(newVal) {
+                const newData = toRaw(this.currentData).map(item => ({
+                    fn: item.fn,
+                    color: item.color,
+                    nSamples: item.nSamples,
+                    visible: item.visible,
+                    dimension: item.dimension,
+                    graphType: item.graphType,
+                    closed: newVal,
+                    range: item.range || null
+                }));
+                this.fuckRender(newData);
+                this.storeDataToVuex(newData);
+                
+            },
+        },
+        range: {
+            handler(newVal) {
+                const newData = toRaw(this.currentData).map(item => ({
+                    fn: item.fn,
+                    color: item.color,
+                    nSamples: item.nSamples,
+                    visible: item.visible,
+                    dimension: item.dimension,
+                    graphType: item.graphType,
+                    closed: item.closed || false,
+                    range: newVal
+                }));
+                this.fuckRender(newData);
+                this.storeDataToVuex(newData);
+            },
+        },
+        dash: {
+            handler(newVal) {
+                this.$refs.TwoDPlotCom.switchDash(newVal);
+            },
+        },
+        grid: {
+            handler(newVal) {
+                this.$refs.TwoDPlotCom.switchGrid(newVal);
+            },
+        },
+        zoomFactor: {
+            handler(newVal) {
+                if (this.show.render2D) {
+                    this.$refs.TwoDPlotCom.updateZoomFactor(newVal);
+                }
+            },
+        },
+        moveFactor: {
+            handler(newVal) {
+                if (this.show.render2D) {
+                    this.$refs.TwoDPlotCom.updateMoveFactor(newVal);
+                }
             },
         }
     },
@@ -438,8 +475,8 @@ export default {
                         visible: true,
                         dimension: 2,
                         graphType: 'interval', // 添加默认图表类型
-                        closed: this.isClosed,
-                        range: null
+                        closed: this.closed,
+                        range: this.range
                     };
                     this.storeData(fnData);
                     updatedData.splice(index + 1, 0, fnData);
@@ -453,8 +490,8 @@ export default {
                         visible: true,
                         dimension: 2,
                         graphType: 'interval', // 添加默认图表类型
-                        closed: this.isClosed,
-                        range: null
+                        closed: this.closed,
+                        range: this.range
                     };
                     this.storeData(fnData);
                     updatedData.push(fnData);
@@ -536,22 +573,16 @@ export default {
         },
 
         // 更新缩放因子(zoomfactor)
-        updateZoomFactor() {
-            // 验证范围
-            this.zoomStep = utils.clamp(this.zoomStep, 0.01, 1.00);
-            // 更新图表实例的缩放因子
-            if (this.show.render2D && this.$refs.TwoDPlotCom) {
-                this.$refs.TwoDPlotCom.updateZoomFactor(this.zoomStep);
+        updateZoomFactor(zoomFactor) {
+            if (this.show.render2D) {
+                this.$refs.TwoDPlotCom.updateZoomFactor(zoomFactor);
             }
         },
 
         // 更新移动步长(movefactor)
-        updateMoveStep() {
-            // 验证范围
-            this.moveStep = utils.clamp(this.moveStep, 0.01, 1.00);
-            // 更新图表实例的移动步长
-            if (this.show.render2D && this.$refs.TwoDPlotCom) {
-                this.$refs.TwoDPlotCom.updateMoveFactor(this.moveStep);
+        updateMoveFactor(moveFactor) {
+            if (this.show.render2D) {
+                this.$refs.TwoDPlotCom.updateMoveFactor(moveFactor);
             }
         },
 
@@ -634,41 +665,6 @@ export default {
             }
         },
 
-        switchChartType(type) {
-            this.$refs.TwoDPlotCom.switchChartType(type);
-        },
-
-        switchClosed(closed) {
-            this.isClosed = closed;
-            const newData = toRaw(this.currentData).map(item => ({
-                fn: item.fn,
-                color: item.color,
-                nSamples: item.nSamples,
-                visible: item.visible,
-                dimension: item.dimension,
-                graphType: item.graphType,
-                closed,
-                range: item.range || null
-            }));
-            this.fuckRender(newData);
-            this.storeDataToVuex(newData);
-        },
-
-        setRenderRange(range) {
-            const newData = toRaw(this.currentData).map(item => ({
-                fn: item.fn,
-                color: item.color,
-                nSamples: item.nSamples,
-                visible: item.visible,
-                dimension: item.dimension,
-                graphType: item.graphType,
-                closed: item.closed || false,
-                range
-            }));
-            this.fuckRender(newData);
-            this.storeDataToVuex(newData);
-        },
-
         storeDataToVuex(data) {
             const payload = {
                 data,
@@ -676,14 +672,6 @@ export default {
                 needUpload: true
             };
             this.$store.commit('syncData', payload);
-        },
-
-        switchDash(dash) {
-            this.$refs.TwoDPlotCom.switchDash(dash);
-        },
-
-        switchGrid(grid) {
-            this.$refs.TwoDPlotCom.switchGrid(grid);
         },
 
         handleAvatarSelected(event) {
@@ -733,7 +721,6 @@ export default {
                 console.log('上传头像成功');
                 this.userAvatarUrl = res.url;
                 console.log('头像地址:', this.userAvatarUrl);
-                
             } else {
                 console.log('上传头像失败:', error);
             }
