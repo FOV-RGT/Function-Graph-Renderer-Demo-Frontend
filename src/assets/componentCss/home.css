@@ -141,7 +141,6 @@
     border-radius: 50%;
     background-size: cover;
     background-position: center;
-    border: 1px solid #fff;
     user-select: none;
     z-index: 11;
     object-fit: contain;

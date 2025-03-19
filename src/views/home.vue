@@ -252,8 +252,6 @@ import register from '../components/register.vue';
 import popupWindow from '../components/popupWindow.vue';
 import adjustButtons from '../components/adjustButtons.vue';
 import adjustWindow from '../components/adjustWindow.vue';
-import { v4 as uuidv4 } from 'uuid';
-import OSS from 'ali-oss';
 
 
 
