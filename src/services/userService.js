@@ -57,8 +57,6 @@ export async function login(credentials, needNewData, options = { is2D: true }) 
 export async function updateUserInfo(info) {
     try {
         await authApi.updateUserInfo(info);
-        // const resInfo = res.userinf;
-        // store.commit('auth/setUser', resInfo);
         const authRes = await authApi.getUserInfo();
         store.commit('auth/setUser', authRes.imformation);
         return {
@@ -88,7 +86,7 @@ export async function uploadFunctionData(data) {
                 dimension: item.dimension,
                 graphType: item.graphType,
                 closed: item.closed,
-                // range: item.range
+                range: item.range
             });
             return acc;
         }, []);
@@ -193,7 +191,7 @@ export async function uploadChangeData(data) {
             dimension: data.dimension,
             graphType: data.graphType,
             closed: data.closed,
-            // range: data.range
+            range: data.range
         }]);
         await fnApi.uploadChangeData(uploadData);
         return {

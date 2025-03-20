@@ -31,20 +31,14 @@
     user-select: none;
 }
 
-.top {
-    background: #BE93C5;
-    background: -webkit-linear-gradient(to bottom, #7BC6CC, #BE93C5);
-    background: linear-gradient(to bottom, #7BC6CC, #BE93C5);
+.logo {
+    background: linear-gradient(75deg, #e18b6e, #e3826f, #e47a72, #e47177, #e2687d, #e06086, #dc598f, #d75299);
     background-clip: text;
     -webkit-background-clip: text;
 }
 
-.top h1 {
-    font-size: clamp(0.625rem, 0.337rem + 1.44vw, 2.5rem);
-}
-
-.top p {
-    font-size: clamp(0.313rem, 0.072rem + 1.2vw, 1.875rem);
+.logo h1 {
+    font-size: clamp(1.25rem, 0.962rem + 1.44vw, 3.125rem);
 }
 
 .top-buttonsGroup button {
@@ -171,8 +165,8 @@
 }
 
 .main-left {
-    background-image: url('/有效素材/侧边栏背景/侧边栏背景（已剪切）.png');
-    background-size: 100% 100%;
+    background-image: url('/侧边栏背景/侧边栏背景（已剪切）.png');
+    background-size: 100% 100.3%;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -197,18 +191,16 @@
 
 .renderComponent {
     background-color: white;
-    clip-path: polygon(
-        0 0,
-        1.52% 0,
-        1.52% 100px,
-        3% 40%,
-        0 90%,
-        4% 100%,
-        0 100%,
-        100% 100%,
-        100% 0,
-        0 0
-    );
+    clip-path: polygon(0 0,
+            1.52% 0,
+            1.52% 100px,
+            3% 40%,
+            0 90%,
+            4% 100%,
+            0 100%,
+            100% 100%,
+            100% 0,
+            0 0);
 }
 
 .main-left,
