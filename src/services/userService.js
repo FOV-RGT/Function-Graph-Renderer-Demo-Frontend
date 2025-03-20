@@ -14,6 +14,8 @@ export async function initUserData(needNewData = true, options = { is2D: true })
         const authRes = await authApi.getUserInfo();
         const info = authRes.imformation;
         store.commit('auth/setUser', info);
+        const configRes = await authApi.getUserConfig();
+        store.commit('auth/updateUserConfig', configRes.config);
         // 获取函数数据
         if (needNewData) {
             const fnRes = await fnApi.getHistoricalData();

@@ -251,7 +251,7 @@
                 </div>
             </transition>
             <transition name="table">
-                <adjustWindow v-show="show.adjustWindow" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
+                <adjustWindow v-if="show.adjustWindow" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
                 bg-base-100 rounded-box border border-base-content/10 overflow-auto w-lg h-auto z-80"
                     @close="show.adjustWindow = false" />
             </transition>
@@ -454,7 +454,6 @@ export default {
                 }));
                 this.fuckRender(newData);
                 this.storeDataToVuex(newData);
-
             },
         },
         range: {
