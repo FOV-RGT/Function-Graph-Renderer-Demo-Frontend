@@ -41,6 +41,6 @@ html {
 body {
   width: 100dvw;
   height: 100dvh;
-  @apply bg-gray-900;
+  background-color: #2D496C;
 }
 
