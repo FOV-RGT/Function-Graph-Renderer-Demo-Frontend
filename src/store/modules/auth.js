@@ -45,6 +45,15 @@ export default {
         grid: state => state.userConfig.grid,
         zoomFactor: state => state.userConfig.zoomFactor,
         moveFactor: state => state.userConfig.moveFactor,
+        remoteConfig: state => Object.freeze({
+            chartType: state.userConfig.chartType,
+            closed: state.userConfig.closed,
+            range: state.userConfig.range,
+            dash: state.userConfig.dash,
+            grid: state.userConfig.grid,
+            zoomFactor: state.userConfig.zoomFactor,
+            moveFactor: state.userConfig.moveFactor
+        })
     },
     
     // 修改状态的方法

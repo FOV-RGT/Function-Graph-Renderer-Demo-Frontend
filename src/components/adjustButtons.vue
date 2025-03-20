@@ -24,13 +24,13 @@
                 <polygon class="cls-1"
                     points="146 39.98 140.04 40.93 141 46.98 138.82 46.93 162 150.98 163 150.91 163 146.03 166.36 146.06 146 39.98" />
             </g>
-            <g class="cursor-pointer" @mousedown="startSetView('zoomOut')" @mouseup="endSetView">
+            <g class="cursor-pointer" @mousedown="startSetView('zoomOut')" @mouseup="endSetView" @mouseleave="endSetView">
                 <polygon class="cls-1"
                     points="138 27.98 141 46.98 140.97 46.98 163.01 146.03 173.25 146.1 305 146.98 307 14.98 138 27.98" />
                 <polygon class="cls-3"
                     points="193.28 80.57 207.26 78.53 235.25 78.53 249.23 80.55 249.3 86.49 235.32 88.53 207.26 88.57 193.21 86.52 193.28 80.57" />
             </g>
-            <g class="cursor-pointer" @mousedown="startSetView('zoomIn')" @mouseup="endSetView">
+            <g class="cursor-pointer" @mousedown="startSetView('zoomIn')" @mouseup="endSetView" @mouseleave="endSetView">
                 <polygon class="cls-1"
                     points="131.84 46.76 15 43.98 24.66 166.12 163 157.98 163 146.03 163.01 146.03 140.97 46.98 131.84 46.76" />
                 <polygon class="cls-3"
@@ -59,7 +59,8 @@
                     <polygon class="cls-3"
                         points="175.35 135.39 210.14 170.65 244.92 135.39 210.14 142.94 196.33 139.94 175.35 135.39" />
                 </g>
-                <g class="cursor-pointer" @mousedown="startSetView('moveRight')" @mouseup="endSetView">
+                <g class="cursor-pointer" @mousedown="startSetView('moveRight')" @mouseup="endSetView"
+                @mouseleave="endSetView">
                     <polygon class="cls-1"
                         points="551.64 131 546.15 18.94 388 18.94 388 40.77 423 144.41 423 142 551.64 131" />
                     <polygon class="cls-3"

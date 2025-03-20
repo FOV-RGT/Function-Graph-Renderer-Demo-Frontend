@@ -69,8 +69,9 @@
 
 <script>
 import icon from './icon.vue'
-import { clamp } from '../assets/utils/componentUtils.js'
+import { clamp, deepClone } from '../assets/utils/componentUtils.js'
 import { uploadUserConfig } from '../services/userService.js'
+import { mapGetters } from 'vuex'
 
 
 export default {
@@ -92,11 +93,19 @@ export default {
             maxVal: '',
         }
     },
+    computed: {
+        ...mapGetters('auth', ['remoteConfig']),
+    },
+    mounted() {
+        this.userConfig = deepClone(this.remoteConfig);
+        this.minVal = this.userConfig.range ? this.userConfig.range[0] : '';
+        this.maxVal = this.userConfig.range ? this.userConfig.range[1] : '';
+        console.log('666');
+    },
     methods: {
         selfClose() {
             this.$emit('close');
         },
-
         setRenderRange() {
             const validMin = typeof this.minVal === 'number' && !Number.isNaN(this.minVal);
             const validMax = typeof this.maxVal === 'number' && !Number.isNaN(this.maxVal);
@@ -124,7 +133,7 @@ export default {
 
         async updateUserConfig() {
             this.$store.commit('auth/updateUserConfig', this.userConfig);
-            const {success, error} = await uploadUserConfig(this.userConfig);
+            const { success, error } = await uploadUserConfig(this.userConfig);
             if (success) {
                 console.log('设置已保存');
             } else {
