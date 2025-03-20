@@ -2,10 +2,6 @@
     font-weight: 500;
 }
 
-.renderComponent {
-    background-color: beige;
-}
-
 .left-li-plus .iconfont {
     font-size: 1em;
 }
@@ -120,7 +116,7 @@
 .chart-leftTop {
     position: absolute;
     top: 0;
-    left: 0;
+    left: 1.5%;
     width: 60px;
     height: 100px;
     background-color: rgba(0, 0, 0);
@@ -131,7 +127,7 @@
 .chart-rightTop {
     position: absolute;
     top: 0;
-    right: 0;
+    right: -1px;
     width: 100px;
     height: 100px;
     background-color: rgba(0, 0, 0);
@@ -143,8 +139,8 @@
     position: absolute;
     top: 5px;
     right: 5px;
-    width: 45px;
-    height: 45px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     background-size: cover;
     background-position: center;
@@ -175,19 +171,53 @@
 }
 
 .main-left {
-    background-image: url('/有效素材/侧边栏背景/侧边栏背景.png');
+    background-image: url('/有效素材/侧边栏背景/侧边栏背景（已剪切）.png');
     background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
+    pointer-events: none;
+}
+
+.main-left * {
+    pointer-events: auto;
 }
 
 .leftList-rightTop {
+
     .cls-1,
     .cls-2 {
         stroke-width: 0px;
     }
+
     .cls-2 {
         fill: #fff;
     }
+}
+
+.renderComponent {
+    background-color: white;
+    clip-path: polygon(
+        0 0,
+        1.52% 0,
+        1.52% 100px,
+        3% 40%,
+        0 90%,
+        4% 100%,
+        0 100%,
+        100% 100%,
+        100% 0,
+        0 0
+    );
+}
+
+.main-left,
+.fnList {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.main-left::-webkit-scrollbar,
+.fnList::-webkit-scrollbar {
+    display: none;
 }

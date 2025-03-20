@@ -1,11 +1,11 @@
 <template>
     <div class="main">
         <transition name="leftList">
-            <div v-if="show.leftList" class="main-left w-4/13 shrink-1 overflow-y-hidden relative
+            <div v-if="show.leftList" class="main-left w-4/13 shrink-1 overflow-x-hidden relative
             left-0 transform z-10 h-screen">
-                <div class="leftList-rightTop absolute right-0 top-0 w-15">
+                <div class="leftList-rightTop fixed w-15 right-0">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 437">
-                        <g id="_图层_2" data-name="图层 2" class="cursor-pointer" @click="show.leftList = false">
+                        <g class="cursor-pointer" @click="show.leftList = false">
                             <polygon class="cls-2" points="24.07 0 68.51 123.73 138.92 168.95 173.6 0 24.07 0" />
                             <polygon class="cls-1"
                                 points="44.75 14.37 85.3 126.25 80.74 131.59 139.36 169.23 171.3 14 44.75 14.37" />
@@ -14,7 +14,7 @@
                             <polygon class="cls-2"
                                 points="115.64 66.84 137.26 54.93 104.93 61.27 129.34 119.66 115.64 66.84" />
                         </g>
-                        <g id="_图层_3" data-name="图层 3">
+                        <g>
                             <polygon class="cls-2"
                                 points="68.51 123.73 68.52 123.76 0 204.87 83.9 437 138.92 168.95 68.51 123.73" />
                             <polygon class="cls-1"
@@ -47,7 +47,7 @@
                         </button>
                     </div>
                 </div>
-                <ul class="list overflow-x-auto" v-show="show.list">
+                <ul class="fnList" v-show="show.list">
                     <li class="flex justify-center border-b-2 border-b-slate-500/80 items-center">
                         <div
                             class="li-top p-2 pb-1 pl-8 text-[2em] text-slate-300/70 tracking-widest flex items-center justify-between select-none flex-1">
@@ -110,22 +110,25 @@
                 </ul>
             </div>
         </transition>
-        <div class="main-right pt-6 pr-4 pl-8 overflow-hidden absolute top-0 right-0 h-full w-full">
-            <div class="plotComponents renderComponent h-9/10 w-full relative">
-                <h1 class="flex item-center gap-4 text-5xl absolute left-[50%] transform -translate-x-[50%]">
+        <div class="main-right pt-10 pr-10 pl-3 overflow-hidden absolute top-0 right-0 h-full w-full">
+            <img src="/有效素材/主页面黑色背景/主页面黑色背景.png" alt=""
+                class="fixed inset-0 z-0 object-cover left-6 top-10 w-screen h-screen overflow-visible rotate-3 select-none" />
+            <div class="renderComponent h-12/13 w-full relative">
+                <h1
+                    class="flex item-center gap-4 text-5xl absolute left-[50%] transform -translate-x-[50%] select-none">
                     LOGO
                     <img src="/486.1-done.png" alt="" class="inline-block w-12 h-12" />
                 </h1>
-                <div v-show="show.render2D" class="h-full w-full pl-12 pb-4 pr-4 pt-8">
-                    <TwoDPlotCom ref="TwoDPlotCom"/>
+                <div v-show="show.render2D" class="h-full w-full pl-20 pb-4 pr-4 pt-8">
+                    <TwoDPlotCom ref="TwoDPlotCom" />
                 </div>
                 <div v-show="!show.render2D" class="h-full w-full pt-13">
-                    <ThreeDPlotCom ref="ThreeDPlotCom"/>
+                    <ThreeDPlotCom ref="ThreeDPlotCom" />
                 </div>
                 <div class="chart-leftTop">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 437" class="relative cursor-pointer"
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 437" class="cursor-pointer"
                         @click="show.leftList = true">
-                        <g id="_图层_2" data-name="图层 2" class="">
+                        <g>
                             <polygon class="cls-2"
                                 points="106.28 84.01 102.76 60.09 154.14 38.38 91.69 55.25 106.28 84.01" />
                             <polygon class="cls-2"
@@ -138,26 +141,8 @@
                         @click="show.avatarPreview = !show.avatarPreview">
                     </div>
                 </div>
-                <transition name="bg">
-                    <div v-if="show.avatarPreview" class="fixed inset-0 z-50 select-none"
-                        @click="show.avatarPreview = false">
-                        <div class="absolute inset-0 bg-black/70"></div>
-                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                            <img :src="userInfo.avatarUrl" class="max-h-[80vh] max-w-[80vw] rounded-lg shadow-lg"
-                                alt="用户头像" />
-                        </div>
-                    </div>
-                </transition>
             </div>
-            <div class="h-1/20 w-5/6 pr-4 absolute right-0 flex flex-row justify-end overflow-hidden">
-                <!-- <button class="listControl btn btn-soft btn-primary rounded-none btn-xl
-                h-full w-[clamp(0.8em,2.5vw,2.5em)] ml-0.5" @click="show.leftList = !show.leftList">
-                    <label class="swap swap-flip pointer-events-none">
-                        <input type="checkbox" v-model="show.leftList" />
-                        <icon class="swap-on fill-current" type="doubleRight" />
-                        <icon class="swap-off fill-current" type="doubleLeft" />
-                    </label>
-                </button> -->
+            <div class="h-1/13 w-5/6 pr-10 absolute right-0 flex flex-row justify-end overflow-hidden">
                 <adjustButtons @setView="setView" />
             </div>
             <transition name="bg">
@@ -273,6 +258,16 @@
                 bg-base-100 rounded-box border border-base-content/10 overflow-auto w-lg h-auto z-80"
                     @close="show.adjustWindow = false" />
             </transition>
+            <transition name="bg">
+                <div v-if="show.avatarPreview" class="fixed inset-0 z-40 select-none"
+                    @click="show.avatarPreview = false">
+                    <div class="fixed inset-0 bg-black/70"></div>
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                        <img :src="userInfo.avatarUrl" class="max-h-[80vh] max-w-[80vw] rounded-lg shadow-lg"
+                            alt="用户头像" />
+                    </div>
+                </div>
+            </transition>
         </div>
     </div>
 </template>
@@ -323,7 +318,7 @@ export default {
                 home: true,
                 render2D: true,
                 adjustWindow: false,
-                leftList: true,
+                leftList: false,
                 avatarPreview: false
             },
             account: "",
