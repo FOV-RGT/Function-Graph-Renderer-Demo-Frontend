@@ -59,7 +59,8 @@
                     <polygon class="cls-3"
                         points="175.35 135.39 210.14 170.65 244.92 135.39 210.14 142.94 196.33 139.94 175.35 135.39" />
                 </g>
-                <g class="cursor-pointer" @mousedown="startSetView('moveRight')" @mouseup="endSetView">
+                <g class="cursor-pointer" @mousedown="startSetView('moveRight')" @mouseup="endSetView"
+                @mouseleave="endSetView">
                     <polygon class="cls-1"
                         points="551.64 131 546.15 18.94 388 18.94 388 40.77 423 144.41 423 142 551.64 131" />
                     <polygon class="cls-3"
