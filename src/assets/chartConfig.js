@@ -3,8 +3,8 @@
 
 export const defaultConfig = (target) => ({
     target: target,
-    width: target.clientWidth,
-    height: target.clientHeight,
+    width: target.offsetWidth,
+    height: target.offsetHeight,
     // width: 800,
     // height: 500,
     tip: {

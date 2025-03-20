@@ -2,7 +2,7 @@
     font-weight: 500;
 }
 
-.plotComponents .renderComponent {
+.renderComponent {
     background-color: beige;
 }
 
@@ -120,8 +120,18 @@
     font-size: 1.5em;
 }
 
-.plotComponents::after {
-    content: '';
+.chart-leftTop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60px;
+    height: 100px;
+    background-color: rgba(0, 0, 0);
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+    z-index: 2;
+}
+
+.chart-rightTop {
     position: absolute;
     top: 0;
     right: 0;
@@ -129,7 +139,7 @@
     height: 100px;
     background-color: rgba(0, 0, 0);
     clip-path: polygon(100% 0, 100% 100%, 0 0);
-    z-index: 10;
+    z-index: 3;
 }
 
 .user-avatar {
@@ -158,5 +168,29 @@
 
 .leftList-enter-from,
 .leftList-leave-to {
-    transform: translateX(-100%); 
+    transform: translateX(-100%);
+}
+
+.chart-leftTop svg .cls-2 {
+    stroke-width: 0px;
+    fill: #fff;
+    transform: translate(270px, 40px) scale(-1.5, 1.5) rotate(-20deg);
+}
+
+.main-left {
+    background-image: url('/有效素材/侧边栏背景/侧边栏背景.png');
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.leftList-rightTop {
+    .cls-1,
+    .cls-2 {
+        stroke-width: 0px;
+    }
+    .cls-2 {
+        fill: #fff;
+    }
 }
