@@ -1,14 +1,32 @@
 <template>
-    <div class="main flex w-[100vw] h-[100vh] ">
+    <div class="main">
         <transition name="leftList">
-            <div v-if="show.leftList" class="main-left w-1/6 min-w-52 shrink-1 overflow-y-auto bg-base-300 absolute
+            <div v-if="show.leftList" class="main-left w-4/13 shrink-1 overflow-x-hidden relative
             left-0 transform z-10 h-screen">
-                <div v-show="show.home" class="w-full h-full flex justify-start flex-col">
-                    <div class="top overflow-hidden text-center flex flex-col items-center mt-5 mb-10">
-                        <h1 class="text-transparent select-none whitespace-nowrap">函数图形渲染程序</h1>
-                        <p class="text-transparent select-none">demo-v{{ version }}</p>
-                    </div>
-                    <div class="top-buttonsGroup flex flex-col justify-between grow-1 pb-50">
+                <div class="leftList-rightTop fixed w-15 right-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 436">
+                        <g>
+                            <polygon class="cls-2" points="173.6 0 83.9 436 0 203.87 68.5 123 24.07 0 173.6 0" />
+                            <polygon class="cls-1"
+                                points="84.13 122.02 85.3 125.25 84.26 126.47 143.14 148.06 143.8 144.89 84.13 122.02" />
+                        </g>
+                        <g>
+                            <polygon class="cls-1"
+                                points="85.3 125.24 85.3 125.25 16.96 205.3 89.27 409.87 143.44 146.64 85.3 125.24" />
+                            <path class="cls-2"
+                                d="m121.05,213.97l-15,6.58.17,20.07-10.5,12.6,5.41,9.09-13.89-2.77-10.66,21.02-1.95-23.54-14.28-2.85,8.68-6.28-5.07-15.71,7.98-18.44-11.7-11.91,30.83,6.16,29.97,5.99Zm-23.38,8.43l8.64-6.11-16.24-3.24-16.24-3.24,5.63,8.96-5.33,15.32,1.85,12.39-5.02,5.55,7.53,1.5-.27,18.88,7-17.54,7.53,1.5-2.5-7.05,6.47-10.73.97-16.19Z" />
+                        </g>
+                        <g class="cursor-pointer" @click="show.leftList = false">
+                            <polygon class="cls-1" points="170.93 13 44.75 13.37 85.3 125.24 143.44 146.64 170.93 13" />
+                            <polygon class="cls-2"
+                                points="114.64 66.84 136.26 54.93 103.93 61.27 128.34 119.66 114.64 66.84" />
+                            <polygon class="cls-2"
+                                points="105.28 84.01 101.76 60.09 153.14 38.38 90.69 55.25 105.28 84.01" />
+                        </g>
+                    </svg>
+                </div>
+                <div v-show="show.home" class="w-[68%] h-full flex justify-start flex-col">
+                    <div class="top-buttonsGroup flex flex-col justify-between grow-1 pb-50 pt-50">
                         <button class="btn btn-block" @click="switchHomeShow('list')">
                             输入函数
                         </button>
@@ -26,12 +44,12 @@
                         </button>
                     </div>
                 </div>
-                <ul class="list overflow-x-hidden" v-show="show.list">
+                <ul class="fnList mr-60" v-show="show.list">
                     <li class="flex justify-center border-b-2 border-b-slate-500/80 items-center">
                         <div
                             class="li-top p-2 pb-1 pl-8 text-[2em] text-slate-300/70 tracking-widest flex items-center justify-between select-none flex-1">
                             <p>函数<span class="inline-block">列表</span></p>
-                            <icon type="rollBack" extraclass="cursor-pointer select-none pr-4"
+                            <icon type="rollBack" extraclass="cursor-pointer select-none pr-12"
                                 @click="switchHomeShow('list')" />
                         </div>
                     </li>
@@ -89,37 +107,44 @@
                 </ul>
             </div>
         </transition>
-        <div class="main-right flex-1 shrink-1 pt-6 pr-4 overflow-hidden">
-            <div class="plotComponents h-19/20 pl-8 relative">
-                <TwoDPlotCom ref="TwoDPlotCom" v-show="show.render2D" class="renderComponent pl-2" />
-                <ThreeDPlotCom ref="ThreeDPlotCom" v-show="!show.render2D" class="renderComponent" />
-                <div class="user-avatar" :style="{ 'background-image': `url(${userInfo.avatarUrl})` }"
-                    @click="show.avatarPreview = !show.avatarPreview">
+        <div class="main-right pt-10 pr-5 pl-3 overflow-hidden absolute top-0 right-0 h-full w-full">
+            <img src="/主页面斜黑色矩形/主页面斜黑色矩形.png" alt=""
+                class="fixed inset-0 z-0 object-cover left-6 top-10 w-screen h-screen overflow-visible rotate-3 select-none" />
+            <div class="renderComponent h-12/13 w-full relative text-transparent">
+                <div
+                    class="logo flex item-center gap-4 text-5xl absolute left-[50%] transform -translate-x-[50%] select-none">
+                    <h1>LOGO v{{ version }}</h1>
+                    <img src="/486.1-done.png" alt="" class="w-12 h-12" />
                 </div>
-                <transition name="bg">
-                    <div v-if="show.avatarPreview" class="fixed inset-0 z-50 select-none" @click="show.avatarPreview = false">
-                        <div class="absolute inset-0 bg-black/70"></div>
-                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                            <img :src="userInfo.avatarUrl" class="max-h-[80vh] max-w-[80vw] rounded-lg shadow-lg"
-                                alt="用户头像" />
-                        </div>
+                <div v-show="show.render2D" class="h-full w-full pl-20 pb-4 pr-12 pt-8">
+                    <TwoDPlotCom ref="TwoDPlotCom" />
+                </div>
+                <div v-show="!show.render2D" class="h-full w-full">
+                    <ThreeDPlotCom ref="ThreeDPlotCom" />
+                </div>
+                <div class="chart-leftTop">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 437" class="cursor-pointer"
+                        @click="show.leftList = true">
+                        <g>
+                            <polygon class="cls-2"
+                                points="106.28 84.01 102.76 60.09 154.14 38.38 91.69 55.25 106.28 84.01" />
+                            <polygon class="cls-2"
+                                points="115.64 66.84 137.26 54.93 104.93 61.27 129.34 119.66 115.64 66.84" />
+                        </g>
+                    </svg>
+                </div>
+                <div class="chart-rightTop">
+                    <div class="user-avatar" :style="{ 'background-image': `url(${userInfo.avatarUrl})` }"
+                        @click="show.avatarPreview = !show.avatarPreview">
                     </div>
-                </transition>
+                </div>
             </div>
-            <div class="h-1/20 self-end w-5/6 ml-auto flex flex-row justify-between overflow-hidden">
-                <button class="listControl btn btn-soft btn-primary rounded-none btn-xl
-                h-full w-[clamp(0.8em,2.5vw,2.5em)] ml-0.5" @click="show.leftList = !show.leftList">
-                    <label class="swap swap-flip pointer-events-none">
-                        <input type="checkbox" v-model="show.leftList" />
-                        <icon class="swap-on fill-current" type="doubleRight" />
-                        <icon class="swap-off fill-current" type="doubleLeft" />
-                    </label>
-                </button>
+            <div class="h-1/13 w-5/6 pr-10 absolute right-0 flex flex-row justify-end overflow-hidden">
                 <adjustButtons @setView="setView" />
             </div>
             <transition name="bg">
                 <div v-if="show.table" class="fixed inset-0 z-40 select-none" @click="show.table = false">
-                    <div class="absolute inset-0 bg-black/30"></div>
+                    <div class="absolute inset-0 bg-black/50"></div>
                 </div>
             </transition>
             <transition name="table">
@@ -131,7 +156,7 @@
             <transition name="bg">
                 <div v-if="show.loginModal || show.registerModal" class="fixed inset-0 z-40 select-none"
                     @click="show.loginModal = false; show.registerModal = false">
-                    <div class="absolute inset-0 bg-black/30"></div>
+                    <div class="absolute inset-0 bg-black/50"></div>
                 </div>
             </transition>
             <transition name="table">
@@ -222,13 +247,23 @@
             <popupWindow ref="popupWindow" />
             <transition name="bg">
                 <div v-if="show.adjustWindow" class="fixed inset-0 z-40 select-none" @click="show.adjustWindow = false">
-                    <div class="absolute inset-0 bg-black/30"></div>
+                    <div class="absolute inset-0 bg-black/50"></div>
                 </div>
             </transition>
             <transition name="table">
                 <adjustWindow v-show="show.adjustWindow" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
                 bg-base-100 rounded-box border border-base-content/10 overflow-auto w-lg h-auto z-80"
                     @close="show.adjustWindow = false" />
+            </transition>
+            <transition name="bg">
+                <div v-if="show.avatarPreview" class="fixed inset-0 z-40 select-none"
+                    @click="show.avatarPreview = false">
+                    <div class="fixed inset-0 bg-black/50"></div>
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                        <img :src="userInfo.avatarUrl" class="max-h-[80vh] max-w-[80vw] rounded-lg shadow-lg"
+                            alt="用户头像" />
+                    </div>
+                </div>
             </transition>
         </div>
     </div>
@@ -280,7 +315,7 @@ export default {
                 home: true,
                 render2D: true,
                 adjustWindow: false,
-                leftList: true,
+                leftList: false,
                 avatarPreview: false
             },
             account: "",
