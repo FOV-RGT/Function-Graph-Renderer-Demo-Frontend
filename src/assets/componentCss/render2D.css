@@ -1,6 +1,5 @@
 .function-plot {
     overflow: visible;
-    color: #000;
 }
 
 .function-plot .top-right-legend {
@@ -8,8 +7,9 @@
 }
 
 .function-plot .canvas .x, .function-plot .canvas .y {
-    font-size: 0.8rem;
+    font-size: 1rem;
     user-select: none;
+    color: #000;
 }
 
 .function-plot .canvas .tip text {

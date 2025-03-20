@@ -3,7 +3,6 @@
 </template>
 
 <script>
-import { image } from 'd3';
 
 
 const map = {

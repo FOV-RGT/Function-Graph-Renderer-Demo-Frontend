@@ -8,12 +8,12 @@ import { toRaw, markRaw } from "vue";
 export class chartInstance {
     constructor(target) {
         this.target = target;
-        this.config = chartConfig.defaultConfig(target); // 初始化图表配置
+        this.config = markRaw(chartConfig.defaultConfig(target)); // 初始化图表配置
         this.zoomFactor = 0.5; // 默认缩放因子
         this.moveFactor = 0.2; // 默认移动因子
         this.type = 'linear'; // 默认坐标轴类型
         console.log("实例挂载:初始化配置完成");
-        this.instance = functionPlot(this.config); // 初始化图表实例
+        this.instance = markRaw(functionPlot(this.config)); // 初始化图表实例
         console.log("图表实例成功挂载");
     }
 
