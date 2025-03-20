@@ -3,7 +3,7 @@
         <transition name="leftList">
             <div v-if="show.leftList" class="main-left w-4/13 shrink-1 overflow-y-hidden relative
             left-0 transform z-10 h-screen">
-                <div class="leftList-rightTop absolute right-0 top-0 w-10 h-10">
+                <div class="leftList-rightTop absolute right-0 top-0 w-15">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 437">
                         <g id="_图层_2" data-name="图层 2" class="cursor-pointer" @click="show.leftList = false">
                             <polygon class="cls-2" points="24.07 0 68.51 123.73 138.92 168.95 173.6 0 24.07 0" />
@@ -52,7 +52,7 @@
                         <div
                             class="li-top p-2 pb-1 pl-8 text-[2em] text-slate-300/70 tracking-widest flex items-center justify-between select-none flex-1">
                             <p>函数<span class="inline-block">列表</span></p>
-                            <icon type="rollBack" extraclass="cursor-pointer select-none pr-4"
+                            <icon type="rollBack" extraclass="cursor-pointer select-none pr-12"
                                 @click="switchHomeShow('list')" />
                         </div>
                     </li>
@@ -114,7 +114,7 @@
             <div class="plotComponents renderComponent h-9/10 w-full relative">
                 <h1 class="flex item-center gap-4 text-5xl absolute left-[50%] transform -translate-x-[50%]">
                     LOGO
-                    <img src="/public/Polaris2.png" alt="" class="inline-block w-12 h-12" />
+                    <img src="/486.1-done.png" alt="" class="inline-block w-12 h-12" />
                 </h1>
                 <div v-show="show.render2D" class="h-full w-full pl-12 pb-4 pr-4 pt-8">
                     <TwoDPlotCom ref="TwoDPlotCom"/>
