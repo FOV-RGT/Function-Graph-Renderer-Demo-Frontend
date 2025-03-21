@@ -86,13 +86,13 @@
 
 .table-enter-active,
 .table-leave-active {
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .table-enter-from,
 .table-leave-to {
     opacity: 0;
-    transform: scale(0.8);
+    transform: scale(0.9);
 }
 
 .register-btn .iconfont {
@@ -218,7 +218,6 @@
     background-attachment: fixed;
     pointer-events: none;
     width: clamp(33.75rem, 4.655rem + 46.55vw, 67.5rem);
-    /* 明确指定宽度 */
     height: clamp(22.5rem, 3.103rem + 31.03vw, 45rem);
 }
 
@@ -230,31 +229,26 @@
     li:nth-child(1) {
         height: 15%;
         transform: rotate(-2deg);
-        /* background-color: #d75299; */
     }
 
     li:nth-child(2) {
         height: 15%;
         transform: translateY(28%);
-        /* background-color: #dc598f; */
     }
 
     li:nth-child(3) {
         height: 15%;
         transform: translateY(30%) rotate(1deg);
-        /* background-color: #e2687d; */
     }
 
     li:nth-child(4) {
         height: 15%;
         transform: translateY(40%) rotate(-1deg);
-        /* background-color: #e47177; */
     }
 
     li:nth-child(5) {
         height: 15%;
         transform: translateY(60%) rotate(-4deg);
-        /* background-color: #e47a72; */
     }
 }
 
@@ -270,7 +264,6 @@
 
 .fnList2 ul input::placeholder {
     font-size: 1rem;
-    /* 或者其他尺寸 */
     color: rgba(255, 255, 255, 0.5);
 }
 
@@ -290,4 +283,7 @@
         stroke: #fff;
         stroke-miterlimit: 10;
     }
+}
+.liInput {
+    font-size: clamp(1.25rem, 0.388rem + 1.38vw, 2.25rem);
 }

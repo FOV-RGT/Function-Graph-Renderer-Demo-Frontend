@@ -25,9 +25,9 @@
                         </g>
                     </svg>
                 </div>
-                <div v-show="show.home" class="w-[68%] h-full flex justify-start flex-col">
+                <div class="w-[68%] h-full flex justify-start flex-col">
                     <div class="top-buttonsGroup flex flex-col justify-between grow-1 pb-50 pt-50">
-                        <button class="btn btn-block" @click="switchHomeShow('list')">
+                        <button class="btn btn-block" @click="show.list = true">
                             输入函数
                         </button>
                         <button class="btn btn-block" @click="show.adjustWindow = !show.adjustWindow">
@@ -44,69 +44,11 @@
                         </button>
                     </div>
                 </div>
-                <!---<ul class="fnList mr-60" v-show="show.list">
-                    <li class="flex justify-center border-b-2 border-b-slate-500/80 items-center">
-                        <div
-                            class="li-top p-2 pb-1 pl-8 text-[2em] text-slate-300/70 tracking-widest flex items-center justify-between select-none flex-1">
-                            <p>函数<span class="inline-block">列表</span></p>
-                            <icon type="rollBack" extraclass="cursor-pointer select-none pr-12"
-                                @click="switchHomeShow('list')" />
-                        </div>
-                    </li>
-                    <li v-for="(item, index) in currentData" :key="index" class="list-row pl-1 pr-1 pb-0 flex">
-                        <div class="flex-col select-none flex-1">
-                            <div class="join flex pb-0.5">
-                                <label class="li-input input flex-1 text-lg items-center pr-0 justify-start">
-                                    <span>f(x)=</span>
-                                    <input :value="item.fn" spellcheck="false" type="text"
-                                        :placeholder=currentInputExample class="join-item text-slate-300/80 flex-auto"
-                                        @input="debouncedAddInput($event.target.value, index)">
-                                    <icon type="close_c" extraclass="cursor-pointer select-none pr-4 text-orange-800"
-                                        @click="fuckList('delect', index)" />
-                                </label>
-                            </div>
-                            <div class="samplePoints flex items-center">
-                                <label class="text-xs mr-1">采样点数：</label>
-                                <input type="number" :value.number="item.nSamples" min="500" max="5000" step="1"
-                                    class="input input-xs w-16 text-center"
-                                    @input="debouncedUpdateSamplePoints($event.target.valueAsNumber, index)" />
-                            </div>
-                            <div class="li-b flex gap-4">
-                                <icon type="plus" extraclass="cursor-pointer select-none"
-                                    @click="fuckList('plus', index)" />
-                                <icon type="minus" extraclass="cursor-pointer select-none"
-                                    @click="fuckList('minus', index)" />
-                                <icon :type="item.visible == true ? 'eye' : 'eye_c'"
-                                    extraclass="cursor-pointer select-none" @click="fuckList('visible', index)" />
-                                <div class="colorPicker">
-                                    <ColorPicker format="rgb" shape="square" :debounce="0" lang="ZH-cn"
-                                        v-model:pureColor="item.color"
-                                        @update:pureColor="throttleupdateColor($event, index)" />
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="flex list-row text-4xl justify-center p-2">
-                        <div class="left-li-plus items-center flex h-[2rem] justify-center">
-                            <icon type="plus" extraclass="cursor-pointer select-none" @click="fuckList('plus-b')" />
-                        </div>
-                    </li>
-                    <li class="list-row text-4xl text-sky-600">千早 爱音</li>
-                    <li class="list-row text-4xl text-sky-600">长崎 素世</li>
-                    <li class="list-row text-4xl text-sky-600">高松 灯</li>
-                    <li class="list-row text-4xl text-sky-600">椎名 立希</li>
-                    <li class="list-row text-4xl text-sky-600">要 乐奈</li>
-                    <li class="list-row text-4xl text-pink-800">丰川 祥子</li>
-                    <li class="list-row text-4xl text-pink-800">八幡 海铃</li>
-                    <li class="list-row text-4xl text-pink-800">三角 初华</li>
-                    <li class="list-row text-4xl text-pink-800">祐天寺 若麦</li>
-                    <li class="list-row text-4xl text-pink-800">若叶 睦</li>
-                </ul> -->
             </div>
         </transition>
-        <div class="main-right pt-10 pr-5 pl-3 absolute top-0 right-0 h-full w-full overflow-hidden">
-            <img src="/主页面斜黑色矩形/主页面斜黑色矩形.png" alt=""
-                class="fixed inset-0 z-0 object-cover left-6 top-10 w-screen h-screen overflow-visible rotate-3 select-none" />
+        <div class="main-right pt-10 pr-10 pl-3 absolute top-0 right-0 h-full w-full overflow-hidden">
+            <img src="/主页面斜黑色矩形/主页面斜黑色矩形.svg" alt=""
+                class="fixed inset-0 z-0 object-contain left-0 top-5 w-screen h-screen overflow-visible rotate-1 select-none" />
             <div class="renderComponent h-12/13 w-full relative text-transparent">
                 <div
                     class="logo flex item-center gap-4 text-5xl absolute left-[50%] transform -translate-x-[50%] select-none">
@@ -276,7 +218,7 @@
                                             v-model:pureColor="item.color"
                                             @update:pureColor="throttleupdateColor($event, displayData.startIndex + index)" />
                                         <input type="text" spellcheck="false"
-                                            class="w-full h-10 text-xl border-0 outline-none" :value="item.fn"
+                                            class="w-full h-10 liInput border-0 outline-none" :value="item.fn"
                                             :placeholder="currentInputExample"
                                             @input="debouncedAddInput($event.target.value, displayData.startIndex + index)">
                                     </div>
@@ -293,34 +235,34 @@
                             </li>
                             <li v-if="displayData.fnData.length < 5" class=" flex w-full items-center shrink-0">
                                 <div class="flex w-full justify-center items-center shrink-0">
-                                    <div class="flex justify-center items-center gap-5">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 322 179.98"
-                                            class="liBottom w-15">
-                                            <g class="cursor-pointer"
-                                                @click="fuckList('plus-b', displayData.startIndex + displayData.endIndex + 1)">
-                                                <polygon class="cls-1"
-                                                    points="131.84 46.76 15 43.98 24.66 166.12 163 157.98 163 146.03 163.01 146.03 140.97 46.98 131.84 46.76" />
-                                                <polygon class="cls-3"
-                                                    points="64.28 103.43 85.04 100.4 88.08 79.57 93.75 79.64 96.77 100.36 117.65 103.41 117.71 109.08 96.82 112.13 93.77 133.01 88.1 133.07 85.07 112.15 64.21 109.1 64.28 103.43" />
-                                            </g>
-                                        </svg>
+                                    <div class="flex flex-1 justify-center items-center gap-5">
+                                        <img src="/public/加号/加号.png" alt="" class="cursor-pointer w-1/15"
+                                            @click="fuckList('plus-b', displayData.startIndex + displayData.endIndex + 1)">
                                     </div>
                                 </div>
                             </li>
                         </ul>
                         <div
-                            class="absolute bottom-5/22 left-1/5 w-1/10 h-1/15 flex justify-between items-center min-w-13">
-                            <img src="/翻页箭头/箭头（金）.png" alt="" class="-rotate-90 w-5 h-5 cursor-pointer"
+                            class="absolute bottom-5/22 left-1/5 w-1/8 h-1/15 flex justify-between items-center min-w-13 text-xl">
+                            <img src="/翻页箭头/箭头（金）.png" alt=""
+                                :class="['-rotate-90 w-5 h-5', canGoPrevious ? 'cursor-pointer' : 'cursor-not-allowed opacity-50']"
                                 @click="changePage('-')" />
-                            <img src="/翻页箭头/箭头（金）.png" alt="" class="rotate-90 w-5 h-5 cursor-pointer"
+                            <div class="flex items-center">
+                                <input type="text" class="w-10 h-10 text-xl text-center outline-none border-2 border-transparent
+                                    rounded-md focus:border-2 focus:border-[#AEA181] transition-colors duration-100"
+                                    :value="currentPage" @input="inputChangePage($event.target.value, $event)" />
+                                <p>/</p>
+                            </div>
+                            <p>{{ this.displayPageCount }}</p>
+                            <img src="/翻页箭头/箭头（金）.png" alt=""
+                                :class="['rotate-90 w-5 h-5', canGoNext ? 'cursor-pointer' : 'cursor-not-allowed opacity-50']"
                                 @click="changePage('+')" />
                         </div>
                     </div>
                 </div>
             </transition>
             <transition name="bg">
-                <div v-if="show.list" class="fixed inset-0 z-40 select-none bg-black/30"
-                    @click="switchHomeShow('list')">
+                <div v-if="show.list" class="fixed inset-0 z-40 select-none bg-black/30" @click="show.list = false">
                     <div class="fixed inset-0"></div>
                 </div>
             </transition>
@@ -371,7 +313,6 @@ export default {
                 registerModal: false,
                 info: false,
                 list: false,
-                home: true,
                 render2D: true,
                 adjustWindow: false,
                 leftList: false,
@@ -498,6 +439,16 @@ export default {
             } else {
                 return '夜深了，';
             }
+        },
+        canGoPrevious() {
+            return this.currentPagination.currentPage > 1;
+        },
+        canGoNext() {
+            return this.currentPagination.totalPage > this.currentPagination.currentPage ||
+                this.currentPagination.currentRecord === 5;
+        },
+        displayPageCount() {
+            return this.currentPage < this.currentPagination.totalPage ? this.currentPagination.totalPage : this.currentPage;
         }
     },
     watch: {
@@ -860,9 +811,9 @@ export default {
         },
 
         changePage(evt) {
-            if (evt === '+' && (this.currentPagination.totalPage > this.currentPagination.currentPage || this.currentPagination.currentRecord === 5)) {
+            if (evt === '+' && this.canGoNext) {
                 this.currentPage += 1;
-            } else if (evt === '-' && this.currentPagination.currentPage > 1) {
+            } else if (evt === '-' && this.canGoPrevious) {
                 this.currentPage -= 1;
             }
         },
@@ -871,6 +822,16 @@ export default {
             const startIndex = (this.currentPage - 1) * 5;
             const endIndex = Math.min(startIndex + 5, this.currentData?.length || 0);
             return endIndex - startIndex;
+        },
+
+        inputChangePage(input, event) {
+            const isValidNumber = /^\d+$/.test(input);
+            const page = parseInt(input);
+            if (isValidNumber && page > 0 && page <= this.currentPagination.totalPage) {
+                this.currentPage = page;
+            } else if (input !== '') {
+                event.target.value = this.currentPage;
+            }
         }
     }
 };
