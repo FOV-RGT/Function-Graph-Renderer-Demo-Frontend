@@ -284,6 +284,25 @@
         stroke-miterlimit: 10;
     }
 }
+
 .liInput {
     font-size: clamp(1.25rem, 0.388rem + 1.38vw, 2.25rem);
+}
+
+.pinTrue {
+    .cls-1 {
+        fill: #fff;
+    }
+
+    .cls-2 {
+        fill: #2d496c;
+    }
+
+    .cls-3 {
+        fill: #aa6331;
+    }
+}
+
+.pinTrue {
+    transform: translateX(60px) translateY(200px) scale(0.3) rotate(10deg);
 }

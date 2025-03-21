@@ -3,18 +3,34 @@
         <transition name="leftList">
             <div v-if="show.leftList" class="main-left w-4/13 shrink-1 overflow-x-hidden relative
             left-0 transform z-10 h-screen">
-                <div class="leftList-rightTop fixed w-15 right-0.5 -rotate-1">
+                <div class="leftList-rightTop fixed w-15 right-0.5 -rotate-1 select-none">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 436">
                         <g>
                             <polygon class="cls-2" points="173.6 0 83.9 436 0 203.87 68.5 123 24.07 0 173.6 0" />
                             <polygon class="cls-1"
                                 points="84.13 122.02 85.3 125.25 84.26 126.47 143.14 148.06 143.8 144.89 84.13 122.02" />
                         </g>
-                        <g>
+                        <g class="cursor-pointer" @click="leftPin = !leftPin">
                             <polygon class="cls-1"
                                 points="85.3 125.24 85.3 125.25 16.96 205.3 89.27 409.87 143.44 146.64 85.3 125.24" />
-                            <path class="cls-2"
+                            <path v-show="!leftPin" class="cls-2"
                                 d="m121.05,213.97l-15,6.58.17,20.07-10.5,12.6,5.41,9.09-13.89-2.77-10.66,21.02-1.95-23.54-14.28-2.85,8.68-6.28-5.07-15.71,7.98-18.44-11.7-11.91,30.83,6.16,29.97,5.99Zm-23.38,8.43l8.64-6.11-16.24-3.24-16.24-3.24,5.63,8.96-5.33,15.32,1.85,12.39-5.02,5.55,7.53,1.5-.27,18.88,7-17.54,7.53,1.5-2.5-7.05,6.47-10.73.97-16.19Z" />
+                        </g>
+                        <g v-show="leftPin" class="cursor-pointer pinTrue" @click="leftPin = !leftPin">
+                            <g>
+                                <path class="cls-3"
+                                    d="M220.71,.25c-13.53,13.78-27.06,27.56-40.58,41.34-4.13,32.62-8.26,65.24-12.39,97.86,10.23,12.13,20.46,24.25,30.69,36.38-16.47,.61-32.95,1.22-49.42,1.83-3.53,8.17-8.64,20.16-14.64,34.78-13.65,33.27-14.53,37.87-16.11,37.61-4.94-.82-10.97-48.87,13.66-73,8.66-8.48,13.78-6.82,20.14-15.7,10.5-14.65,4.66-30.48,2.73-57.99-1.91-27.17-3.96-56.42,10.11-76.39,5.33-7.57,19.18-22.6,55.81-26.72Z" />
+                                <path class="cls-3"
+                                    d="M51.99,10.47c26.85-.61,53.69-1.22,80.54-1.83-23.45-5.61-47.03,5.19-56.64,24.75-7.54,15.35-5.56,34.24,4.77,49.08,4.07,13.63,8.14,27.25,12.2,40.88-6.31,16.07-12.61,32.14-18.92,48.2-7.32-53.69-14.64-107.39-21.97-161.08Z" />
+                            </g>
+                            <g>
+                                <path class="cls-2"
+                                    d="M220.71,.25l-45.36,32.09,13.86,67.15-26.46,49.25,23.94,26.86h-47.88l-21.42,77.6-22.03-77.6H46.11l24.62-26.86-27.21-49.25,14.25-67.15L11.12,.25H220.71Zm-71.91,43.91l24.58-26.25H61.4l24.58,26.25-7.51,54.93,14.34,40.29-12.98,21.97h25.95l11.61,63.48,11.61-63.48h25.94l-12.97-21.97,14.34-40.29-7.51-54.93Z" />
+                            </g>
+                            <g>
+                                <path class="cls-1"
+                                    d="M209.84,.25l-45.36,32.09,13.86,67.15-26.46,49.25,23.94,26.86h-47.88l-21.42,77.6-22.03-77.6H35.24l24.63-26.86-27.22-49.25,14.26-67.15L.25,.25H209.84Zm-71.91,43.91l24.58-26.25H50.53l24.58,26.25-7.51,54.93,14.34,40.29-12.97,21.97h25.94l11.61,63.48,11.61-63.48h25.95l-12.98-21.97,14.34-40.29-7.51-54.93Z" />
+                            </g>
                         </g>
                         <g class="cursor-pointer" @click="show.leftList = false">
                             <polygon class="cls-1" points="170.93 13 44.75 13.37 85.3 125.24 143.44 146.64 170.93 13" />
@@ -46,9 +62,14 @@
                 </div>
             </div>
         </transition>
+        <transition name="bg">
+            <div v-if="show.leftList && !leftPin" class="fixed inset-0 z-1 select-none" @mousedown="show.leftList = false">
+                <div class="absolute inset-0 bg-black/35"></div>
+            </div>
+        </transition>
         <div class="main-right pt-10 pr-10 pl-3 absolute top-0 right-0 h-full w-full overflow-hidden">
             <img src="/主页面斜黑色矩形/主页面斜黑色矩形.svg" alt=""
-                class="fixed inset-0 z-0 object-contain left-0 top-5 w-screen h-screen overflow-visible rotate-1 select-none" />
+                class="fixed inset-0 z-0 object-contain left-0 top-5 w-screen h-screen rotate-1 select-none" />
             <div class="renderComponent h-12/13 w-full relative text-transparent">
                 <div
                     class="logo flex item-center gap-4 text-5xl absolute left-[50%] transform -translate-x-[50%] select-none">
@@ -61,7 +82,7 @@
                 <div v-show="!show.render2D" class="h-full w-full">
                     <ThreeDPlotCom ref="ThreeDPlotCom" />
                 </div>
-                <div class="chart-leftTop">
+                <div class="chart-leftTop select-none">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 437" class="cursor-pointer"
                         @click="show.leftList = true">
                         <g>
@@ -72,7 +93,7 @@
                         </g>
                     </svg>
                 </div>
-                <div class="chart-rightTop">
+                <div class="chart-rightTop select-none">
                     <div class="user-avatar" :style="{ 'background-image': `url(${userInfo.avatarUrl})` }"
                         @click="show.avatarPreview = !show.avatarPreview">
                     </div>
@@ -82,8 +103,8 @@
                 <adjustButtons @setView="setView" />
             </div>
             <transition name="bg">
-                <div v-if="show.table" class="fixed inset-0 z-40 select-none" @click="show.table = false">
-                    <div class="absolute inset-0 bg-black/50"></div>
+                <div v-if="show.table" class="fixed inset-0 z-40 select-none" @mousedown="show.table = false">
+                    <div class="absolute inset-0 bg-black/35"></div>
                 </div>
             </transition>
             <transition name="table">
@@ -94,8 +115,8 @@
             </transition>
             <transition name="bg">
                 <div v-if="show.loginModal || show.registerModal" class="fixed inset-0 z-40 select-none"
-                    @click="show.loginModal = false; show.registerModal = false">
-                    <div class="absolute inset-0 bg-black/50"></div>
+                    @mousedown="show.loginModal = false; show.registerModal = false">
+                    <div class="absolute inset-0 bg-black/35"></div>
                 </div>
             </transition>
             <transition name="table">
@@ -185,8 +206,8 @@
             </transition>
             <popupWindow ref="popupWindow" />
             <transition name="bg">
-                <div v-if="show.adjustWindow" class="fixed inset-0 z-40 select-none" @click="show.adjustWindow = false">
-                    <div class="absolute inset-0 bg-black/50"></div>
+                <div v-if="show.adjustWindow" class="fixed inset-0 z-40 select-none" @mousedown="show.adjustWindow = false">
+                    <div class="absolute inset-0 bg-black/35"></div>
                 </div>
             </transition>
             <transition name="table">
@@ -196,8 +217,8 @@
             </transition>
             <transition name="bg">
                 <div v-if="show.avatarPreview" class="fixed inset-0 z-40 select-none"
-                    @click="show.avatarPreview = false">
-                    <div class="fixed inset-0 bg-black/50"></div>
+                    @mousedown="show.avatarPreview = false">
+                    <div class="fixed inset-0 bg-black/35"></div>
                     <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                         <img :src="userInfo.avatarUrl" class="max-h-[80vh] max-w-[80vw] rounded-lg shadow-lg"
                             alt="用户头像" />
@@ -215,7 +236,7 @@
                                 <div class="flex flex-1 justify-between items-center gap-2">
                                     <div class="flex items-center gap-5 grow">
                                         <ColorPicker format="rgb" shape="circle" :debounce="0" lang="ZH-cn"
-                                            v-model:pureColor="item.color"
+                                            popupPosition="left" v-model:pureColor="item.color"
                                             @update:pureColor="throttleupdateColor($event, displayData.startIndex + index)" />
                                         <input type="text" spellcheck="false"
                                             class="w-full h-10 liInput border-0 outline-none" :value="item.fn"
@@ -262,7 +283,7 @@
                 </div>
             </transition>
             <transition name="bg">
-                <div v-if="show.list" class="fixed inset-0 z-40 select-none bg-black/30" @click="show.list = false">
+                <div v-if="show.list" class="fixed inset-0 z-40 select-none bg-black/35" @mousedown="show.list = false">
                     <div class="fixed inset-0"></div>
                 </div>
             </transition>
@@ -325,7 +346,8 @@ export default {
             pagination: {},
             localFnData: [],
             selectedAvatarFile: null,
-            currentPage: 1
+            currentPage: 1,
+            leftPin: false
         };
     },
     created() {
@@ -597,16 +619,6 @@ export default {
                 }
             }
             this.storeDataToVuex(updatedData);
-        },
-
-        switchHomeShow(evt) {
-            this.show.home = !this.show.home;
-            switch (evt) {
-                case 'list': {
-                    this.show.list = !this.show.list;
-                    break;
-                }
-            }
         },
 
         async userLogin(data, callback) {
