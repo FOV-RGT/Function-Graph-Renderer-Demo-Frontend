@@ -60,9 +60,9 @@
                     <icon type="doubleLeft" />
                 </button>
                 <label class="join-item input">
-                    <input v-show="!loading.getData" type="number" class="join rounded-none w-12 text-center"
+                    <input v-show="!loading.getData" type="text" class="join rounded-none w-12 text-center"
                         :value="currentPagination.currentPage"
-                        @input="debouncedUpdatePage($event.target.valueAsNumber)">
+                        @input="debouncedUpdatePage($event.target.value, $event)">
                     <span v-show="loading.getData" class="loading loading-spinner loading-lg"></span>
                     </input>
                     <span>/</span>
@@ -112,13 +112,16 @@ export default {
         }
     },
     created() {
-        this.debouncedUpdatePage = debounce((page) => {
-            if (isNaN(page)) {
-                page = this.currentPagination.currentPage;
-            } else {
-                page = Math.floor(clamp(page, 1, this.currentPagination.totalPages));
+        this.debouncedUpdatePage = debounce((input, event) => {
+            const isValidNumber = /^\d+$/.test(input);
+            let page = parseInt(input);
+            if (isValidNumber) {
+                page = clamp(page, 1, this.currentPagination.totalPages);
+                this.changePage(page);
+            } else if (input !== '') {
+                event.target.value = this.currentPagination.currentPage;
             }
-            this.changePage(page);
+            
         }, 250)
     },
     mounted() {
@@ -151,7 +154,7 @@ export default {
                     currentPage: this.localPage || 1,
                     pageSize: pageSize,
                     totalPages: Math.ceil(this.localFnData.length / pageSize) || 1,
-                    totalRecords: this.localFnData.length
+                    totalRecords: this.localFnData?.length || 0
                 };
             }
         }

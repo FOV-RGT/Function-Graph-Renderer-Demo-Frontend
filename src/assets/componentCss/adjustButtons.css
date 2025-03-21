@@ -35,13 +35,7 @@
         stroke-width: 0px;
     }
 
-    .cls-2,
-    .cls-3 {
+    .cls-2 {
         fill: #fff;
-    }
-
-    .cls-3 {
-        stroke: #fff;
-        stroke-miterlimit: 10;
     }
 }

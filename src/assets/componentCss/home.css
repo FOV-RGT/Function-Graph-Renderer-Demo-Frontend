@@ -14,17 +14,13 @@
     font-size: 2em;
 }
 
-.colorPicker {
-    flex: 1 !important;
-    display: inline-flex;
-    align-items: center;
-    justify-items: center;
-}
-
-.colorPicker .vc-color-wrap {
-    flex: 1 !important;
+.vc-color-wrap {
     margin-right: 0 !important;
-    display: inline-flex;
+    border: 0px !important;
+    width: 30px !important;
+    height: 30px !important;
+    flex-shrink: 0 !important;
+    display: inline-block !important;
 }
 
 .current-color {
@@ -90,13 +86,13 @@
 
 .table-enter-active,
 .table-leave-active {
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .table-enter-from,
 .table-leave-to {
     opacity: 0;
-    transform: scale(0.8);
+    transform: scale(0.9);
 }
 
 .register-btn .iconfont {
@@ -212,4 +208,101 @@
 .main-left::-webkit-scrollbar,
 .fnList::-webkit-scrollbar {
     display: none;
+}
+
+.fnList2 {
+    background-image: url('/函数表达式输入框组件/输入函数组件（终极版）.png');
+    background-size: 100% 100.3%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    pointer-events: none;
+    width: clamp(33.75rem, 4.655rem + 46.55vw, 67.5rem);
+    height: clamp(22.5rem, 3.103rem + 31.03vw, 45rem);
+}
+
+.fnList2 * {
+    pointer-events: auto;
+}
+
+.fnList2 ul {
+    li:nth-child(1) {
+        height: 15%;
+        transform: rotate(-2deg);
+    }
+
+    li:nth-child(2) {
+        height: 15%;
+        transform: translateY(28%);
+    }
+
+    li:nth-child(3) {
+        height: 15%;
+        transform: translateY(30%) rotate(1deg);
+    }
+
+    li:nth-child(4) {
+        height: 15%;
+        transform: translateY(40%) rotate(-1deg);
+    }
+
+    li:nth-child(5) {
+        height: 15%;
+        transform: translateY(60%) rotate(-4deg);
+    }
+}
+
+.liRight img:nth-child(1) {
+    width: clamp(1.313rem, 0.181rem + 1.81vw, 2.625rem);
+    height: clamp(1rem, 0.138rem + 1.38vw, 2rem);
+}
+
+.liRight img:nth-child(2) {
+    width: clamp(1.313rem, 0.181rem + 1.81vw, 2.625rem);
+    height: clamp(1.125rem, 0.155rem + 1.55vw, 2.25rem);
+}
+
+.fnList2 ul input::placeholder {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.liBottom {
+
+    .cls-1,
+    .cls-2 {
+        stroke-width: 0px;
+    }
+
+    .cls-2,
+    .cls-3 {
+        fill: #fff;
+    }
+
+    .cls-3 {
+        stroke: #fff;
+        stroke-miterlimit: 10;
+    }
+}
+
+.liInput {
+    font-size: clamp(1.25rem, 0.388rem + 1.38vw, 2.25rem);
+}
+
+.pinTrue {
+    .cls-1 {
+        fill: #fff;
+    }
+
+    .cls-2 {
+        fill: #2d496c;
+    }
+
+    .cls-3 {
+        fill: #aa6331;
+    }
+}
+
+.pinTrue {
+    transform: translateX(60px) translateY(200px) scale(0.3) rotate(10deg);
 }

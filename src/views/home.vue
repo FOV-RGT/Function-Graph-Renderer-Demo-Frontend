@@ -3,18 +3,34 @@
         <transition name="leftList">
             <div v-if="show.leftList" class="main-left w-4/13 shrink-1 overflow-x-hidden relative
             left-0 transform z-10 h-screen">
-                <div class="leftList-rightTop fixed w-15 right-1">
+                <div class="leftList-rightTop fixed w-15 right-0.5 -rotate-1 select-none">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 436">
                         <g>
                             <polygon class="cls-2" points="173.6 0 83.9 436 0 203.87 68.5 123 24.07 0 173.6 0" />
                             <polygon class="cls-1"
                                 points="84.13 122.02 85.3 125.25 84.26 126.47 143.14 148.06 143.8 144.89 84.13 122.02" />
                         </g>
-                        <g>
+                        <g class="cursor-pointer" @click="leftPin = !leftPin">
                             <polygon class="cls-1"
                                 points="85.3 125.24 85.3 125.25 16.96 205.3 89.27 409.87 143.44 146.64 85.3 125.24" />
-                            <path class="cls-2"
+                            <path v-show="!leftPin" class="cls-2"
                                 d="m121.05,213.97l-15,6.58.17,20.07-10.5,12.6,5.41,9.09-13.89-2.77-10.66,21.02-1.95-23.54-14.28-2.85,8.68-6.28-5.07-15.71,7.98-18.44-11.7-11.91,30.83,6.16,29.97,5.99Zm-23.38,8.43l8.64-6.11-16.24-3.24-16.24-3.24,5.63,8.96-5.33,15.32,1.85,12.39-5.02,5.55,7.53,1.5-.27,18.88,7-17.54,7.53,1.5-2.5-7.05,6.47-10.73.97-16.19Z" />
+                        </g>
+                        <g v-show="leftPin" class="cursor-pointer pinTrue" @click="leftPin = !leftPin">
+                            <g>
+                                <path class="cls-3"
+                                    d="M220.71,.25c-13.53,13.78-27.06,27.56-40.58,41.34-4.13,32.62-8.26,65.24-12.39,97.86,10.23,12.13,20.46,24.25,30.69,36.38-16.47,.61-32.95,1.22-49.42,1.83-3.53,8.17-8.64,20.16-14.64,34.78-13.65,33.27-14.53,37.87-16.11,37.61-4.94-.82-10.97-48.87,13.66-73,8.66-8.48,13.78-6.82,20.14-15.7,10.5-14.65,4.66-30.48,2.73-57.99-1.91-27.17-3.96-56.42,10.11-76.39,5.33-7.57,19.18-22.6,55.81-26.72Z" />
+                                <path class="cls-3"
+                                    d="M51.99,10.47c26.85-.61,53.69-1.22,80.54-1.83-23.45-5.61-47.03,5.19-56.64,24.75-7.54,15.35-5.56,34.24,4.77,49.08,4.07,13.63,8.14,27.25,12.2,40.88-6.31,16.07-12.61,32.14-18.92,48.2-7.32-53.69-14.64-107.39-21.97-161.08Z" />
+                            </g>
+                            <g>
+                                <path class="cls-2"
+                                    d="M220.71,.25l-45.36,32.09,13.86,67.15-26.46,49.25,23.94,26.86h-47.88l-21.42,77.6-22.03-77.6H46.11l24.62-26.86-27.21-49.25,14.25-67.15L11.12,.25H220.71Zm-71.91,43.91l24.58-26.25H61.4l24.58,26.25-7.51,54.93,14.34,40.29-12.98,21.97h25.95l11.61,63.48,11.61-63.48h25.94l-12.97-21.97,14.34-40.29-7.51-54.93Z" />
+                            </g>
+                            <g>
+                                <path class="cls-1"
+                                    d="M209.84,.25l-45.36,32.09,13.86,67.15-26.46,49.25,23.94,26.86h-47.88l-21.42,77.6-22.03-77.6H35.24l24.63-26.86-27.22-49.25,14.26-67.15L.25,.25H209.84Zm-71.91,43.91l24.58-26.25H50.53l24.58,26.25-7.51,54.93,14.34,40.29-12.97,21.97h25.94l11.61,63.48,11.61-63.48h25.95l-12.98-21.97,14.34-40.29-7.51-54.93Z" />
+                            </g>
                         </g>
                         <g class="cursor-pointer" @click="show.leftList = false">
                             <polygon class="cls-1" points="170.93 13 44.75 13.37 85.3 125.24 143.44 146.64 170.93 13" />
@@ -25,9 +41,9 @@
                         </g>
                     </svg>
                 </div>
-                <div v-show="show.home" class="w-[68%] h-full flex justify-start flex-col">
+                <div class="w-[68%] h-full flex justify-start flex-col">
                     <div class="top-buttonsGroup flex flex-col justify-between grow-1 pb-50 pt-50">
-                        <button class="btn btn-block" @click="switchHomeShow('list')">
+                        <button class="btn btn-block" @click="show.list = true">
                             输入函数
                         </button>
                         <button class="btn btn-block" @click="show.adjustWindow = !show.adjustWindow">
@@ -44,76 +60,20 @@
                         </button>
                     </div>
                 </div>
-                <ul class="fnList mr-60" v-show="show.list">
-                    <li class="flex justify-center border-b-2 border-b-slate-500/80 items-center">
-                        <div
-                            class="li-top p-2 pb-1 pl-8 text-[2em] text-slate-300/70 tracking-widest flex items-center justify-between select-none flex-1">
-                            <p>函数<span class="inline-block">列表</span></p>
-                            <icon type="rollBack" extraclass="cursor-pointer select-none pr-12"
-                                @click="switchHomeShow('list')" />
-                        </div>
-                    </li>
-                    <li v-for="(item, index) in currentData" :key="index" class="list-row pl-1 pr-1 pb-0 flex">
-                        <div class="flex-col select-none flex-1">
-                            <!-- 函数表达式输入区 -->
-                            <div class="join flex pb-0.5">
-                                <label class="li-input input flex-1 text-lg items-center pr-0 justify-start">
-                                    <span>f(x)=</span>
-                                    <input :value="item.fn" spellcheck="false" type="text"
-                                        :placeholder=currentInputExample class="join-item text-slate-300/80 flex-auto"
-                                        @input="debouncedAddInput($event.target.value, index)">
-                                    <icon type="close_c" extraclass="cursor-pointer select-none pr-4 text-orange-800"
-                                        @click="fuckList('delect', index)" />
-                                </label>
-                            </div>
-                            <!-- 采样点数量的控制输入框 -->
-                            <div class="samplePoints flex items-center">
-                                <label class="text-xs mr-1">采样点数：</label>
-                                <input type="number" :value.number="item.nSamples" min="500" max="5000" step="1"
-                                    class="input input-xs w-16 text-center"
-                                    @input="debouncedUpdateSamplePoints($event.target.valueAsNumber, index)" />
-                            </div>
-                            <!-- 其他操作区域 -->
-                            <div class="li-b flex gap-4">
-                                <icon type="plus" extraclass="cursor-pointer select-none"
-                                    @click="fuckList('plus', index)" />
-                                <icon type="minus" extraclass="cursor-pointer select-none"
-                                    @click="fuckList('minus', index)" />
-                                <icon :type="item.visible == true ? 'eye' : 'eye_c'"
-                                    extraclass="cursor-pointer select-none" @click="fuckList('visible', index)" />
-                                <div class="colorPicker">
-                                    <ColorPicker format="rgb" shape="square" :debounce="0" lang="ZH-cn"
-                                        v-model:pureColor="item.color"
-                                        @update:pureColor="throttleupdateColor($event, index)" />
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="flex list-row text-4xl justify-center p-2">
-                        <div class="left-li-plus items-center flex h-[2rem] justify-center">
-                            <icon type="plus" extraclass="cursor-pointer select-none" @click="fuckList('plus-b')" />
-                        </div>
-                    </li>
-                    <li class="list-row text-4xl text-sky-600">千早 爱音</li>
-                    <li class="list-row text-4xl text-sky-600">长崎 素世</li>
-                    <li class="list-row text-4xl text-sky-600">高松 灯</li>
-                    <li class="list-row text-4xl text-sky-600">椎名 立希</li>
-                    <li class="list-row text-4xl text-sky-600">要 乐奈</li>
-                    <li class="list-row text-4xl text-pink-800">丰川 祥子</li>
-                    <li class="list-row text-4xl text-pink-800">八幡 海铃</li>
-                    <li class="list-row text-4xl text-pink-800">三角 初华</li>
-                    <li class="list-row text-4xl text-pink-800">祐天寺 若麦</li>
-                    <li class="list-row text-4xl text-pink-800">若叶 睦</li>
-                </ul>
             </div>
         </transition>
-        <div class="main-right pt-10 pr-5 pl-3 overflow-hidden absolute top-0 right-0 h-full w-full">
-            <img src="/主页面斜黑色矩形/主页面斜黑色矩形.png" alt=""
-                class="fixed inset-0 z-0 object-cover left-6 top-10 w-screen h-screen overflow-visible rotate-3 select-none" />
+        <transition name="bg">
+            <div v-if="show.leftList && !leftPin" class="fixed inset-0 z-1 select-none" @mousedown="show.leftList = false">
+                <div class="absolute inset-0 bg-black/35"></div>
+            </div>
+        </transition>
+        <div class="main-right pt-10 pr-10 pl-3 absolute top-0 right-0 h-full w-full overflow-hidden">
+            <img src="/主页面斜黑色矩形/主页面斜黑色矩形.svg" alt=""
+                class="fixed inset-0 z-0 object-contain left-0 top-5 w-screen h-screen rotate-1 select-none" />
             <div class="renderComponent h-12/13 w-full relative text-transparent">
                 <div
                     class="logo flex item-center gap-4 text-5xl absolute left-[50%] transform -translate-x-[50%] select-none">
-                    <h1>LOGO v{{ version }}</h1>
+                    <h1 class="flex items-center">LOGO v{{ version }}</h1>
                     <img src="/486.1-done.png" alt="" class="w-12 h-12" />
                 </div>
                 <div v-show="show.render2D" class="h-full w-full pl-20 pb-4 pr-12 pt-8">
@@ -122,7 +82,7 @@
                 <div v-show="!show.render2D" class="h-full w-full">
                     <ThreeDPlotCom ref="ThreeDPlotCom" />
                 </div>
-                <div class="chart-leftTop">
+                <div class="chart-leftTop select-none">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 437" class="cursor-pointer"
                         @click="show.leftList = true">
                         <g>
@@ -133,7 +93,7 @@
                         </g>
                     </svg>
                 </div>
-                <div class="chart-rightTop">
+                <div class="chart-rightTop select-none">
                     <div class="user-avatar" :style="{ 'background-image': `url(${userInfo.avatarUrl})` }"
                         @click="show.avatarPreview = !show.avatarPreview">
                     </div>
@@ -143,8 +103,8 @@
                 <adjustButtons @setView="setView" />
             </div>
             <transition name="bg">
-                <div v-if="show.table" class="fixed inset-0 z-40 select-none" @click="show.table = false">
-                    <div class="absolute inset-0 bg-black/50"></div>
+                <div v-if="show.table" class="fixed inset-0 z-40 select-none" @mousedown="show.table = false">
+                    <div class="absolute inset-0 bg-black/35"></div>
                 </div>
             </transition>
             <transition name="table">
@@ -155,8 +115,8 @@
             </transition>
             <transition name="bg">
                 <div v-if="show.loginModal || show.registerModal" class="fixed inset-0 z-40 select-none"
-                    @click="show.loginModal = false; show.registerModal = false">
-                    <div class="absolute inset-0 bg-black/50"></div>
+                    @mousedown="show.loginModal = false; show.registerModal = false">
+                    <div class="absolute inset-0 bg-black/35"></div>
                 </div>
             </transition>
             <transition name="table">
@@ -246,8 +206,8 @@
             </transition>
             <popupWindow ref="popupWindow" />
             <transition name="bg">
-                <div v-if="show.adjustWindow" class="fixed inset-0 z-40 select-none" @click="show.adjustWindow = false">
-                    <div class="absolute inset-0 bg-black/50"></div>
+                <div v-if="show.adjustWindow" class="fixed inset-0 z-40 select-none" @mousedown="show.adjustWindow = false">
+                    <div class="absolute inset-0 bg-black/35"></div>
                 </div>
             </transition>
             <transition name="table">
@@ -257,12 +217,74 @@
             </transition>
             <transition name="bg">
                 <div v-if="show.avatarPreview" class="fixed inset-0 z-40 select-none"
-                    @click="show.avatarPreview = false">
-                    <div class="fixed inset-0 bg-black/50"></div>
+                    @mousedown="show.avatarPreview = false">
+                    <div class="fixed inset-0 bg-black/35"></div>
                     <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                         <img :src="userInfo.avatarUrl" class="max-h-[80vh] max-w-[80vw] rounded-lg shadow-lg"
                             alt="用户头像" />
                     </div>
+                </div>
+            </transition>
+            <transition name="table">
+                <div v-if="show.list" class="fnList2 z-80 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
+                    select-none pointer-events-none max-w-6/13 max-h-7/13">
+                    <div class="relative w-full h-full !pointer-events-none">
+                        <ul
+                            class="absolute top-3/15 left-4/21 w-16/28 h-5/9 flex flex-col justify-start items-start text-white">
+                            <li v-for="(item, index) in displayData.fnData" :key="index"
+                                class="flex w-full items-center shrink-0">
+                                <div class="flex flex-1 justify-between items-center gap-2">
+                                    <div class="flex items-center gap-5 grow">
+                                        <ColorPicker format="rgb" shape="circle" :debounce="0" lang="ZH-cn"
+                                            popupPosition="left" v-model:pureColor="item.color"
+                                            @update:pureColor="throttleupdateColor($event, displayData.startIndex + index)" />
+                                        <input type="text" spellcheck="false"
+                                            class="w-full h-10 liInput border-0 outline-none" :value="item.fn"
+                                            :placeholder="currentInputExample"
+                                            @input="debouncedAddInput($event.target.value, displayData.startIndex + index)">
+                                    </div>
+                                    <div class="liRight flex items-center gap-4">
+                                        <img v-if="item.visible" src="/函数表达式输入框组件/隐藏图标（未隐藏状态）.png" alt=""
+                                            class="cursor-pointer"
+                                            @click="fuckList('visible', displayData.startIndex + index)" />
+                                        <img v-else src="/函数表达式输入框组件/隐藏图标（隐藏状态）.png" alt="" class="cursor-pointer"
+                                            @click="fuckList('visible', displayData.startIndex + index)">
+                                        <img src="/函数表达式输入框组件/垃圾桶.png" alt="" class="cursor-pointer"
+                                            @click="fuckList('minus', displayData.startIndex + index)" />
+                                    </div>
+                                </div>
+                            </li>
+                            <li v-if="displayData.fnData.length < 5" class=" flex w-full items-center shrink-0">
+                                <div class="flex w-full justify-center items-center shrink-0">
+                                    <div class="flex flex-1 justify-center items-center gap-5">
+                                        <img src="/加号/加号.png" alt="" class="cursor-pointer w-1/15"
+                                            @click="fuckList('plus-b', displayData.startIndex + displayData.endIndex + 1)">
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                        <div
+                            class="absolute bottom-5/22 left-1/5 w-1/8 h-1/15 flex justify-between items-center min-w-13 text-xl">
+                            <img src="/翻页箭头/箭头（金）.png" alt=""
+                                :class="['-rotate-90 w-5 h-5', canGoPrevious ? 'cursor-pointer' : 'cursor-not-allowed opacity-50']"
+                                @click="changePage('-')" />
+                            <div class="flex items-center">
+                                <input type="text" class="w-10 h-10 text-xl text-center outline-none border-2 border-transparent
+                                    rounded-md focus:border-2 focus:border-[#AEA181] transition-colors duration-100"
+                                    :value="currentPage" @input="inputChangePage($event.target.value, $event)" />
+                                <p>/</p>
+                            </div>
+                            <p>{{ this.displayPageCount }}</p>
+                            <img src="/翻页箭头/箭头（金）.png" alt=""
+                                :class="['rotate-90 w-5 h-5', canGoNext ? 'cursor-pointer' : 'cursor-not-allowed opacity-50']"
+                                @click="changePage('+')" />
+                        </div>
+                    </div>
+                </div>
+            </transition>
+            <transition name="bg">
+                <div v-if="show.list" class="fixed inset-0 z-40 select-none bg-black/35" @mousedown="show.list = false">
+                    <div class="fixed inset-0"></div>
                 </div>
             </transition>
         </div>
@@ -312,7 +334,6 @@ export default {
                 registerModal: false,
                 info: false,
                 list: false,
-                home: true,
                 render2D: true,
                 adjustWindow: false,
                 leftList: false,
@@ -325,6 +346,8 @@ export default {
             pagination: {},
             localFnData: [],
             selectedAvatarFile: null,
+            currentPage: 1,
+            leftPin: false
         };
     },
     created() {
@@ -373,6 +396,7 @@ export default {
             const currentData = [...toRaw(this.currentData)];
             currentData[index].color = color;
             this.storeData(currentData[index]);
+            this.storeDataToVuex(currentData);
             if (this.currentData[index].visible) {
                 this.$refs.TwoDPlotCom.fuckRender(this.functionData_2D);
             }
@@ -400,21 +424,31 @@ export default {
             'chartType', 'closed', 'range', 'dash', 'grid', 'zoomFactor', 'moveFactor'
         ]),
         currentInputExample() {
-            return this.show.render2D ? '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...'
+            return this.show.render2D ? 'eg:8log(cos(sin(sqrt(x^3))))'
                 : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
         },
         currentData() {
             console.log("💩");
-            // if (this.currentData && this.currentData.length > 0) {
-            //     const payload = JSON.stringify(this.currentData.map(item => ({
-            //         fn: item.fn,
-            //         color: item.color,
-            //         nSamples: item.nSamples,
-            //         visible: item.visible
-            //     })));
-            //     console.log(payload);
-            // }
             return this.show.render2D ? this.functionData_2D : this.functionData_3D;
+        },
+        currentPagination() {
+            return {
+                pageSize: 5,
+                totalRecord: this.currentData?.length || 0,
+                totalPage: Math.ceil(this.currentData?.length / 5) || 1,
+                currentRecord: this.getCurrentRecordCount(),
+                currentPage: this.currentPage
+            }
+        },
+        displayData() {
+            const startIndex = (this.currentPagination.currentPage - 1) * this.currentPagination.pageSize;
+            const endIndex = startIndex + this.currentPagination.pageSize;
+            const fnData = this.currentData.slice(startIndex, endIndex);
+            return {
+                fnData,
+                startIndex,
+                endIndex
+            }
         },
         greetingMessage() {
             const time = new Date().getHours();
@@ -427,6 +461,16 @@ export default {
             } else {
                 return '夜深了，';
             }
+        },
+        canGoPrevious() {
+            return this.currentPagination.currentPage > 1;
+        },
+        canGoNext() {
+            return this.currentPagination.totalPage > this.currentPagination.currentPage ||
+                this.currentPagination.currentRecord === 5;
+        },
+        displayPageCount() {
+            return this.currentPage < this.currentPagination.totalPage ? this.currentPagination.totalPage : this.currentPage;
         }
     },
     watch: {
@@ -434,6 +478,7 @@ export default {
             handler(newVal) {
                 this.uploadUserData(newVal);
             },
+            deep: true
         },
         chartType: {
             handler(newVal) {
@@ -556,6 +601,7 @@ export default {
                 case 'minus': {
                     updatedData.splice(index, 1);
                     this.fuckRender(updatedData);
+
                     break;
                 }
                 case 'delect': {
@@ -568,20 +614,11 @@ export default {
                     updatedData[index].visible = !updatedData[index].visible;
                     this.storeData(updatedData[index]);
                     this.fuckRender(updatedData);
+                    console.log(this.currentPagination)
                     break;
                 }
             }
             this.storeDataToVuex(updatedData);
-        },
-
-        switchHomeShow(evt) {
-            this.show.home = !this.show.home;
-            switch (evt) {
-                case 'list': {
-                    this.show.list = !this.show.list;
-                    break;
-                }
-            }
         },
 
         async userLogin(data, callback) {
@@ -782,6 +819,30 @@ export default {
                 await service.uploadAvatarUrl(url);
             } else {
                 console.log('上传头像失败:', error);
+            }
+        },
+
+        changePage(evt) {
+            if (evt === '+' && this.canGoNext) {
+                this.currentPage += 1;
+            } else if (evt === '-' && this.canGoPrevious) {
+                this.currentPage -= 1;
+            }
+        },
+
+        getCurrentRecordCount() {
+            const startIndex = (this.currentPage - 1) * 5;
+            const endIndex = Math.min(startIndex + 5, this.currentData?.length || 0);
+            return endIndex - startIndex;
+        },
+
+        inputChangePage(input, event) {
+            const isValidNumber = /^\d+$/.test(input);
+            const page = parseInt(input);
+            if (isValidNumber && page > 0 && page <= this.currentPagination.totalPage) {
+                this.currentPage = page;
+            } else if (input !== '') {
+                event.target.value = this.currentPage;
             }
         }
     }
