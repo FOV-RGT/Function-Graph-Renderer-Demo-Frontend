@@ -92,13 +92,9 @@
 </template>
 
 <script>
-import icon from './icon.vue'
 
 
 export default {
-    components: {
-        icon
-    },
     data() {
         return {
             viewTimeOut: null,

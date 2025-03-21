@@ -3,7 +3,7 @@
         <transition name="leftList">
             <div v-if="show.leftList" class="main-left w-4/13 shrink-1 overflow-x-hidden relative
             left-0 transform z-10 h-screen">
-                <div class="leftList-rightTop fixed w-15 right-1">
+                <div class="leftList-rightTop fixed w-15 right-0.5 -rotate-1">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 436">
                         <g>
                             <polygon class="cls-2" points="173.6 0 83.9 436 0 203.87 68.5 123 24.07 0 173.6 0" />
@@ -110,7 +110,7 @@
             <div class="renderComponent h-12/13 w-full relative text-transparent">
                 <div
                     class="logo flex item-center gap-4 text-5xl absolute left-[50%] transform -translate-x-[50%] select-none">
-                    <h1>LOGO v{{ version }}</h1>
+                    <h1 class="flex items-center">LOGO v{{ version }}</h1>
                     <img src="/486.1-done.png" alt="" class="w-12 h-12" />
                 </div>
                 <div v-show="show.render2D" class="h-full w-full pl-20 pb-4 pr-12 pt-8">
@@ -264,37 +264,62 @@
             </transition>
             <transition name="table">
                 <div v-if="show.list" class="fnList2 z-80 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
-                    select-none pointer-events-none max-w-7/13 max-h-7/13">
+                    select-none pointer-events-none max-w-6/13 max-h-7/13">
                     <div class="relative w-full h-full !pointer-events-none">
                         <ul
                             class="absolute top-3/15 left-4/21 w-16/28 h-5/9 flex flex-col justify-start items-start text-white">
                             <li v-for="(item, index) in displayData.fnData" :key="index"
                                 class="flex w-full items-center shrink-0">
                                 <div class="flex flex-1 justify-between items-center gap-2">
-                                    <div class="flex items-center gap-10 grow">
+                                    <div class="flex items-center gap-5 grow">
                                         <ColorPicker format="rgb" shape="circle" :debounce="0" lang="ZH-cn"
                                             v-model:pureColor="item.color"
                                             @update:pureColor="throttleupdateColor($event, displayData.startIndex + index)" />
-                                        <input type="text" class="w-full h-10 text-4xl border-0 outline-none"
-                                            :value="item.fn" :placeholder="currentInputExample"
+                                        <input type="text" spellcheck="false"
+                                            class="w-full h-10 text-xl border-0 outline-none" :value="item.fn"
+                                            :placeholder="currentInputExample"
                                             @input="debouncedAddInput($event.target.value, displayData.startIndex + index)">
                                     </div>
-                                    <div class="liRight flex items-center gap-5">
+                                    <div class="liRight flex items-center gap-4">
                                         <img v-if="item.visible" src="/函数表达式输入框组件/隐藏图标（未隐藏状态）.png" alt=""
+                                            class="cursor-pointer"
                                             @click="fuckList('visible', displayData.startIndex + index)" />
-                                        <img v-else src="/函数表达式输入框组件/隐藏图标（隐藏状态）.png" alt=""
+                                        <img v-else src="/函数表达式输入框组件/隐藏图标（隐藏状态）.png" alt="" class="cursor-pointer"
                                             @click="fuckList('visible', displayData.startIndex + index)">
-                                        <img src="/函数表达式输入框组件/垃圾桶.png" alt=""
-                                            @click="fuckList('delect', displayData.startIndex + index)" />
+                                        <img src="/函数表达式输入框组件/垃圾桶.png" alt="" class="cursor-pointer"
+                                            @click="fuckList('minus', displayData.startIndex + index)" />
+                                    </div>
+                                </div>
+                            </li>
+                            <li v-if="displayData.fnData.length < 5" class=" flex w-full items-center shrink-0">
+                                <div class="flex w-full justify-center items-center shrink-0">
+                                    <div class="flex justify-center items-center gap-5">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 322 179.98"
+                                            class="liBottom w-15">
+                                            <g class="cursor-pointer"
+                                                @click="fuckList('plus-b', displayData.startIndex + displayData.endIndex + 1)">
+                                                <polygon class="cls-1"
+                                                    points="131.84 46.76 15 43.98 24.66 166.12 163 157.98 163 146.03 163.01 146.03 140.97 46.98 131.84 46.76" />
+                                                <polygon class="cls-3"
+                                                    points="64.28 103.43 85.04 100.4 88.08 79.57 93.75 79.64 96.77 100.36 117.65 103.41 117.71 109.08 96.82 112.13 93.77 133.01 88.1 133.07 85.07 112.15 64.21 109.1 64.28 103.43" />
+                                            </g>
+                                        </svg>
                                     </div>
                                 </div>
                             </li>
                         </ul>
+                        <div
+                            class="absolute bottom-5/22 left-1/5 w-1/10 h-1/15 flex justify-between items-center min-w-13">
+                            <img src="/翻页箭头/箭头（金）.png" alt="" class="-rotate-90 w-5 h-5 cursor-pointer"
+                                @click="changePage('-')" />
+                            <img src="/翻页箭头/箭头（金）.png" alt="" class="rotate-90 w-5 h-5 cursor-pointer"
+                                @click="changePage('+')" />
+                        </div>
                     </div>
                 </div>
             </transition>
             <transition name="bg">
-                <div v-if="show.list" class="fixed inset-0 z-40 select-none"
+                <div v-if="show.list" class="fixed inset-0 z-40 select-none bg-black/30"
                     @click="switchHomeShow('list')">
                     <div class="fixed inset-0"></div>
                 </div>
@@ -359,6 +384,7 @@ export default {
             pagination: {},
             localFnData: [],
             selectedAvatarFile: null,
+            currentPage: 1
         };
     },
     created() {
@@ -435,7 +461,7 @@ export default {
             'chartType', 'closed', 'range', 'dash', 'grid', 'zoomFactor', 'moveFactor'
         ]),
         currentInputExample() {
-            return this.show.render2D ? 'Example:8log(cos(sin(sqrt(x^3))))'
+            return this.show.render2D ? 'eg:8log(cos(sin(sqrt(x^3))))'
                 : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
         },
         currentData() {
@@ -447,7 +473,8 @@ export default {
                 pageSize: 5,
                 totalRecord: this.currentData?.length || 0,
                 totalPage: Math.ceil(this.currentData?.length / 5) || 1,
-                currentPage: 1
+                currentRecord: this.getCurrentRecordCount(),
+                currentPage: this.currentPage
             }
         },
         displayData() {
@@ -601,6 +628,7 @@ export default {
                 case 'minus': {
                     updatedData.splice(index, 1);
                     this.fuckRender(updatedData);
+
                     break;
                 }
                 case 'delect': {
@@ -613,6 +641,7 @@ export default {
                     updatedData[index].visible = !updatedData[index].visible;
                     this.storeData(updatedData[index]);
                     this.fuckRender(updatedData);
+                    console.log(this.currentPagination)
                     break;
                 }
             }
@@ -828,6 +857,20 @@ export default {
             } else {
                 console.log('上传头像失败:', error);
             }
+        },
+
+        changePage(evt) {
+            if (evt === '+' && (this.currentPagination.totalPage > this.currentPagination.currentPage || this.currentPagination.currentRecord === 5)) {
+                this.currentPage += 1;
+            } else if (evt === '-' && this.currentPagination.currentPage > 1) {
+                this.currentPage -= 1;
+            }
+        },
+
+        getCurrentRecordCount() {
+            const startIndex = (this.currentPage - 1) * 5;
+            const endIndex = Math.min(startIndex + 5, this.currentData?.length || 0);
+            return endIndex - startIndex;
         }
     }
 };

@@ -232,21 +232,25 @@
         transform: rotate(-2deg);
         /* background-color: #d75299; */
     }
+
     li:nth-child(2) {
         height: 15%;
         transform: translateY(28%);
         /* background-color: #dc598f; */
     }
+
     li:nth-child(3) {
         height: 15%;
         transform: translateY(30%) rotate(1deg);
         /* background-color: #e2687d; */
     }
+
     li:nth-child(4) {
         height: 15%;
         transform: translateY(40%) rotate(-1deg);
         /* background-color: #e47177; */
     }
+
     li:nth-child(5) {
         height: 15%;
         transform: translateY(60%) rotate(-4deg);
@@ -265,6 +269,25 @@
 }
 
 .fnList2 ul input::placeholder {
-    font-size: 1.5rem;  /* 或者其他尺寸 */
+    font-size: 1rem;
+    /* 或者其他尺寸 */
     color: rgba(255, 255, 255, 0.5);
+}
+
+.liBottom {
+
+    .cls-1,
+    .cls-2 {
+        stroke-width: 0px;
+    }
+
+    .cls-2,
+    .cls-3 {
+        fill: #fff;
+    }
+
+    .cls-3 {
+        stroke: #fff;
+        stroke-miterlimit: 10;
+    }
 }
