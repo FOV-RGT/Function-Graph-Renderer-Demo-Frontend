@@ -151,7 +151,7 @@ export default {
                     currentPage: this.localPage || 1,
                     pageSize: pageSize,
                     totalPages: Math.ceil(this.localFnData.length / pageSize) || 1,
-                    totalRecords: this.localFnData.length
+                    totalRecords: this.localFnData?.length || 0
                 };
             }
         }

@@ -14,17 +14,13 @@
     font-size: 2em;
 }
 
-.colorPicker {
-    flex: 1 !important;
-    display: inline-flex;
-    align-items: center;
-    justify-items: center;
-}
-
-.colorPicker .vc-color-wrap {
-    flex: 1 !important;
+.vc-color-wrap {
     margin-right: 0 !important;
-    display: inline-flex;
+    border: 0px !important;
+    width: 30px !important;
+    height: 30px !important;
+    flex-shrink: 0 !important;
+    display: inline-block !important;
 }
 
 .current-color {
@@ -212,4 +208,63 @@
 .main-left::-webkit-scrollbar,
 .fnList::-webkit-scrollbar {
     display: none;
+}
+
+.fnList2 {
+    background-image: url('/函数表达式输入框组件/输入函数组件（终极版）.png');
+    background-size: 100% 100.3%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    pointer-events: none;
+    width: clamp(33.75rem, 4.655rem + 46.55vw, 67.5rem);
+    /* 明确指定宽度 */
+    height: clamp(22.5rem, 3.103rem + 31.03vw, 45rem);
+}
+
+.fnList2 * {
+    pointer-events: auto;
+}
+
+.fnList2 ul {
+    li:nth-child(1) {
+        height: 15%;
+        transform: rotate(-2deg);
+        /* background-color: #d75299; */
+    }
+    li:nth-child(2) {
+        height: 15%;
+        transform: translateY(28%);
+        /* background-color: #dc598f; */
+    }
+    li:nth-child(3) {
+        height: 15%;
+        transform: translateY(30%) rotate(1deg);
+        /* background-color: #e2687d; */
+    }
+    li:nth-child(4) {
+        height: 15%;
+        transform: translateY(40%) rotate(-1deg);
+        /* background-color: #e47177; */
+    }
+    li:nth-child(5) {
+        height: 15%;
+        transform: translateY(60%) rotate(-4deg);
+        /* background-color: #e47a72; */
+    }
+}
+
+.liRight img:nth-child(1) {
+    width: clamp(1.313rem, 0.181rem + 1.81vw, 2.625rem);
+    height: clamp(1rem, 0.138rem + 1.38vw, 2rem);
+}
+
+.liRight img:nth-child(2) {
+    width: clamp(1.313rem, 0.181rem + 1.81vw, 2.625rem);
+    height: clamp(1.125rem, 0.155rem + 1.55vw, 2.25rem);
+}
+
+.fnList2 ul input::placeholder {
+    font-size: 1.5rem;  /* 或者其他尺寸 */
+    color: rgba(255, 255, 255, 0.5);
 }

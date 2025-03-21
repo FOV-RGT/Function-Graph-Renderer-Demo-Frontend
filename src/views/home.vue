@@ -44,7 +44,7 @@
                         </button>
                     </div>
                 </div>
-                <ul class="fnList mr-60" v-show="show.list">
+                <!---<ul class="fnList mr-60" v-show="show.list">
                     <li class="flex justify-center border-b-2 border-b-slate-500/80 items-center">
                         <div
                             class="li-top p-2 pb-1 pl-8 text-[2em] text-slate-300/70 tracking-widest flex items-center justify-between select-none flex-1">
@@ -55,7 +55,6 @@
                     </li>
                     <li v-for="(item, index) in currentData" :key="index" class="list-row pl-1 pr-1 pb-0 flex">
                         <div class="flex-col select-none flex-1">
-                            <!-- 函数表达式输入区 -->
                             <div class="join flex pb-0.5">
                                 <label class="li-input input flex-1 text-lg items-center pr-0 justify-start">
                                     <span>f(x)=</span>
@@ -66,14 +65,12 @@
                                         @click="fuckList('delect', index)" />
                                 </label>
                             </div>
-                            <!-- 采样点数量的控制输入框 -->
                             <div class="samplePoints flex items-center">
                                 <label class="text-xs mr-1">采样点数：</label>
                                 <input type="number" :value.number="item.nSamples" min="500" max="5000" step="1"
                                     class="input input-xs w-16 text-center"
                                     @input="debouncedUpdateSamplePoints($event.target.valueAsNumber, index)" />
                             </div>
-                            <!-- 其他操作区域 -->
                             <div class="li-b flex gap-4">
                                 <icon type="plus" extraclass="cursor-pointer select-none"
                                     @click="fuckList('plus', index)" />
@@ -104,10 +101,10 @@
                     <li class="list-row text-4xl text-pink-800">三角 初华</li>
                     <li class="list-row text-4xl text-pink-800">祐天寺 若麦</li>
                     <li class="list-row text-4xl text-pink-800">若叶 睦</li>
-                </ul>
+                </ul> -->
             </div>
         </transition>
-        <div class="main-right pt-10 pr-5 pl-3 overflow-hidden absolute top-0 right-0 h-full w-full">
+        <div class="main-right pt-10 pr-5 pl-3 absolute top-0 right-0 h-full w-full overflow-hidden">
             <img src="/主页面斜黑色矩形/主页面斜黑色矩形.png" alt=""
                 class="fixed inset-0 z-0 object-cover left-6 top-10 w-screen h-screen overflow-visible rotate-3 select-none" />
             <div class="renderComponent h-12/13 w-full relative text-transparent">
@@ -265,6 +262,43 @@
                     </div>
                 </div>
             </transition>
+            <transition name="table">
+                <div v-if="show.list" class="fnList2 z-80 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
+                    select-none pointer-events-none max-w-7/13 max-h-7/13">
+                    <div class="relative w-full h-full !pointer-events-none">
+                        <ul
+                            class="absolute top-3/15 left-4/21 w-16/28 h-5/9 flex flex-col justify-start items-start text-white">
+                            <li v-for="(item, index) in displayData.fnData" :key="index"
+                                class="flex w-full items-center shrink-0">
+                                <div class="flex flex-1 justify-between items-center gap-2">
+                                    <div class="flex items-center gap-10 grow">
+                                        <ColorPicker format="rgb" shape="circle" :debounce="0" lang="ZH-cn"
+                                            v-model:pureColor="item.color"
+                                            @update:pureColor="throttleupdateColor($event, displayData.startIndex + index)" />
+                                        <input type="text" class="w-full h-10 text-4xl border-0 outline-none"
+                                            :value="item.fn" :placeholder="currentInputExample"
+                                            @input="debouncedAddInput($event.target.value, displayData.startIndex + index)">
+                                    </div>
+                                    <div class="liRight flex items-center gap-5">
+                                        <img v-if="item.visible" src="/函数表达式输入框组件/隐藏图标（未隐藏状态）.png" alt=""
+                                            @click="fuckList('visible', displayData.startIndex + index)" />
+                                        <img v-else src="/函数表达式输入框组件/隐藏图标（隐藏状态）.png" alt=""
+                                            @click="fuckList('visible', displayData.startIndex + index)">
+                                        <img src="/函数表达式输入框组件/垃圾桶.png" alt=""
+                                            @click="fuckList('delect', displayData.startIndex + index)" />
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </transition>
+            <transition name="bg">
+                <div v-if="show.list" class="fixed inset-0 z-40 select-none"
+                    @click="switchHomeShow('list')">
+                    <div class="fixed inset-0"></div>
+                </div>
+            </transition>
         </div>
     </div>
 </template>
@@ -373,6 +407,7 @@ export default {
             const currentData = [...toRaw(this.currentData)];
             currentData[index].color = color;
             this.storeData(currentData[index]);
+            this.storeDataToVuex(currentData);
             if (this.currentData[index].visible) {
                 this.$refs.TwoDPlotCom.fuckRender(this.functionData_2D);
             }
@@ -400,21 +435,30 @@ export default {
             'chartType', 'closed', 'range', 'dash', 'grid', 'zoomFactor', 'moveFactor'
         ]),
         currentInputExample() {
-            return this.show.render2D ? '2sin(2x);3cos(log(x^10));8log(cos(sin(sqrt(x^3))));x=5;x=-5...'
+            return this.show.render2D ? 'Example:8log(cos(sin(sqrt(x^3))))'
                 : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
         },
         currentData() {
             console.log("💩");
-            // if (this.currentData && this.currentData.length > 0) {
-            //     const payload = JSON.stringify(this.currentData.map(item => ({
-            //         fn: item.fn,
-            //         color: item.color,
-            //         nSamples: item.nSamples,
-            //         visible: item.visible
-            //     })));
-            //     console.log(payload);
-            // }
             return this.show.render2D ? this.functionData_2D : this.functionData_3D;
+        },
+        currentPagination() {
+            return {
+                pageSize: 5,
+                totalRecord: this.currentData?.length || 0,
+                totalPage: Math.ceil(this.currentData?.length / 5) || 1,
+                currentPage: 1
+            }
+        },
+        displayData() {
+            const startIndex = (this.currentPagination.currentPage - 1) * this.currentPagination.pageSize;
+            const endIndex = startIndex + this.currentPagination.pageSize;
+            const fnData = this.currentData.slice(startIndex, endIndex);
+            return {
+                fnData,
+                startIndex,
+                endIndex
+            }
         },
         greetingMessage() {
             const time = new Date().getHours();
@@ -434,6 +478,7 @@ export default {
             handler(newVal) {
                 this.uploadUserData(newVal);
             },
+            deep: true
         },
         chartType: {
             handler(newVal) {
