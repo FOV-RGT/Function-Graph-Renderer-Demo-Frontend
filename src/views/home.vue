@@ -257,7 +257,7 @@
                             <li v-if="displayData.fnData.length < 5" class=" flex w-full items-center shrink-0">
                                 <div class="flex w-full justify-center items-center shrink-0">
                                     <div class="flex flex-1 justify-center items-center gap-5">
-                                        <img src="/public/加号/加号.png" alt="" class="cursor-pointer w-1/15"
+                                        <img src="/加号/加号.png" alt="" class="cursor-pointer w-1/15"
                                             @click="fuckList('plus-b', displayData.startIndex + displayData.endIndex + 1)">
                                     </div>
                                 </div>
