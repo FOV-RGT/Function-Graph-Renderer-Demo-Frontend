@@ -2,6 +2,8 @@
  * 组件工具函数
  */
 
+import confetti from 'canvas-confetti';
+
 // 类型检查函数
 export const isNumber = (value) => typeof value === 'number' && !isNaN(value); // 检查值是否为数字
 export const isString = (value) => typeof value === 'string'; // 检查值是否为字符串
@@ -348,4 +350,12 @@ export const sortData = (data) => {
         dataArray[item.uploadId].push(item);
     })
     return Object.values(dataArray);
+}
+
+export const fire = (particleRatio, opts, origin = { y: 0.75, x: 0.5 }) => {
+    confetti({
+        origin,
+        ...opts,
+        particleCount: Math.floor(100 * particleRatio)
+    });
 }

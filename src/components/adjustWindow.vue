@@ -100,7 +100,6 @@ export default {
         this.userConfig = deepClone(this.remoteConfig);
         this.minVal = this.userConfig.range ? this.userConfig.range[0] : '';
         this.maxVal = this.userConfig.range ? this.userConfig.range[1] : '';
-        console.log('666');
     },
     methods: {
         selfClose() {

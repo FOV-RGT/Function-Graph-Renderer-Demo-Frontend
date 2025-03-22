@@ -1,5 +1,4 @@
 import { parse } from "mathjs";
-import * as THREE from 'three';
 
 self.onmessage = function (event) {
     const { start, end, initStep, exprString, target } = event.data;

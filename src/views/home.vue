@@ -3,7 +3,7 @@
         <transition name="leftList">
             <div v-if="show.leftList" class="main-left w-4/13 shrink-1 overflow-x-hidden relative
             left-0 transform z-10 h-screen">
-                <div class="leftList-rightTop fixed w-15 right-0.5 -rotate-1 select-none">
+                <div class="leftList-rightTop fixed w-20 right-0.5 -rotate-1 select-none">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 436">
                         <g>
                             <polygon class="cls-2" points="173.6 0 83.9 436 0 203.87 68.5 123 24.07 0 173.6 0" />
@@ -18,18 +18,19 @@
                         </g>
                         <g v-show="leftPin" class="cursor-pointer pinTrue" @click="leftPin = !leftPin">
                             <g>
-                                <path class="cls-3"
-                                    d="M220.71,.25c-13.53,13.78-27.06,27.56-40.58,41.34-4.13,32.62-8.26,65.24-12.39,97.86,10.23,12.13,20.46,24.25,30.69,36.38-16.47,.61-32.95,1.22-49.42,1.83-3.53,8.17-8.64,20.16-14.64,34.78-13.65,33.27-14.53,37.87-16.11,37.61-4.94-.82-10.97-48.87,13.66-73,8.66-8.48,13.78-6.82,20.14-15.7,10.5-14.65,4.66-30.48,2.73-57.99-1.91-27.17-3.96-56.42,10.11-76.39,5.33-7.57,19.18-22.6,55.81-26.72Z" />
-                                <path class="cls-3"
-                                    d="M51.99,10.47c26.85-.61,53.69-1.22,80.54-1.83-23.45-5.61-47.03,5.19-56.64,24.75-7.54,15.35-5.56,34.24,4.77,49.08,4.07,13.63,8.14,27.25,12.2,40.88-6.31,16.07-12.61,32.14-18.92,48.2-7.32-53.69-14.64-107.39-21.97-161.08Z" />
-                            </g>
-                            <g>
-                                <path class="cls-2"
-                                    d="M220.71,.25l-45.36,32.09,13.86,67.15-26.46,49.25,23.94,26.86h-47.88l-21.42,77.6-22.03-77.6H46.11l24.62-26.86-27.21-49.25,14.25-67.15L11.12,.25H220.71Zm-71.91,43.91l24.58-26.25H61.4l24.58,26.25-7.51,54.93,14.34,40.29-12.98,21.97h25.95l11.61,63.48,11.61-63.48h25.94l-12.97-21.97,14.34-40.29-7.51-54.93Z" />
+                                <polygon class="cls-3" points="173.6 0 24.07 0 68.5 123 0 203.87 83.9 436 173.6 0" />
                             </g>
                             <g>
                                 <path class="cls-1"
-                                    d="M209.84,.25l-45.36,32.09,13.86,67.15-26.46,49.25,23.94,26.86h-47.88l-21.42,77.6-22.03-77.6H35.24l24.63-26.86-27.22-49.25,14.26-67.15L.25,.25H209.84Zm-71.91,43.91l24.58-26.25H50.53l24.58,26.25-7.51,54.93,14.34,40.29-12.97,21.97h25.94l11.61,63.48,11.61-63.48h25.95l-12.98-21.97,14.34-40.29-7.51-54.93Z" />
+                                    d="m120.88,214.3c-4.47,3.17-8.94,6.35-13.41,9.52-2.89,9.07-5.78,18.13-8.68,27.2,2.17,4.03,4.34,8.05,6.5,12.08-4.57-.74-9.15-1.49-13.72-2.23-1.41,2.13-3.47,5.26-5.91,9.1-5.55,8.72-6.04,9.98-6.46,9.82-1.32-.51-.39-14.54,7.69-20.04,2.84-1.94,4.16-1.18,6.39-3.35,3.68-3.59,2.92-8.43,3.87-16.37.94-7.85,1.94-16.3,6.89-21.21,1.88-1.86,6.5-5.37,16.82-4.5Z" />
+                            </g>
+                            <g>
+                                <path class="cls-2"
+                                    d="m120.88,214.3l-14.23,6.62.21,19.91-9.94,12.56,5.15,8.99-13.2-2.67-10.08,20.92-1.9-23.34-13.58-2.74,8.23-6.28-4.85-15.55,7.54-18.34-11.13-11.74,29.29,5.92,28.48,5.76Zm-22.18,8.51l8.19-6.11-15.43-3.12-15.43-3.12,5.36,8.85-5.02,15.24,1.79,12.28-4.76,5.54,7.15,1.45-.21,18.74,6.61-17.44,7.15,1.45-2.39-6.98,6.12-10.68.88-16.07Z" />
+                            </g>
+                            <g>
+                                <polygon class="cls-4"
+                                    points="117.89 213.7 103.66 220.31 103.87 240.22 93.93 252.78 99.08 261.77 85.88 259.1 75.8 280.02 73.9 256.68 60.33 253.94 68.56 247.66 63.71 232.1 71.25 213.76 60.11 202.02 89.41 207.94 117.89 213.7" />
                             </g>
                         </g>
                         <g class="cursor-pointer" @click="show.leftList = false">
@@ -46,16 +47,16 @@
                         <button class="btn btn-block" @click="show.list = true">
                             输入函数
                         </button>
-                        <button class="btn btn-block" @click="show.adjustWindow = !show.adjustWindow">
+                        <button class="btn btn-block" @click="show.adjustWindow = true">
                             设置
                         </button>
                         <button class="btn btn-block" @click="switchRenderer">
                             切换模式
                         </button>
-                        <button class="btn btn-block" @click="show.table = !show.table">
+                        <button class="btn btn-block" @click="show.table = true">
                             历史记录
                         </button>
-                        <button class="btn btn-block" @click="show.loginModal = !show.loginModal">
+                        <button class="btn btn-block" @click="show.loginModal = true">
                             账户
                         </button>
                     </div>
@@ -63,7 +64,8 @@
             </div>
         </transition>
         <transition name="bg">
-            <div v-if="show.leftList && !leftPin" class="fixed inset-0 z-1 select-none" @mousedown="show.leftList = false">
+            <div v-if="show.leftList && !leftPin" class="fixed inset-0 z-1 select-none"
+                @mousedown="show.leftList = false">
                 <div class="absolute inset-0 bg-black/35"></div>
             </div>
         </transition>
@@ -206,7 +208,8 @@
             </transition>
             <popupWindow ref="popupWindow" />
             <transition name="bg">
-                <div v-if="show.adjustWindow" class="fixed inset-0 z-40 select-none" @mousedown="show.adjustWindow = false">
+                <div v-if="show.adjustWindow" class="fixed inset-0 z-40 select-none"
+                    @mousedown="show.adjustWindow = false">
                     <div class="absolute inset-0 bg-black/35"></div>
                 </div>
             </transition>
@@ -219,7 +222,8 @@
                 <div v-if="show.avatarPreview" class="fixed inset-0 z-40 select-none"
                     @mousedown="show.avatarPreview = false">
                     <div class="fixed inset-0 bg-black/35"></div>
-                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-1000 select-none"
+                        @mousedown.stop>
                         <img :src="userInfo.avatarUrl" class="max-h-[80vh] max-w-[80vw] rounded-lg shadow-lg"
                             alt="用户头像" />
                     </div>
@@ -347,7 +351,7 @@ export default {
             localFnData: [],
             selectedAvatarFile: null,
             currentPage: 1,
-            leftPin: false
+            leftPin: true
         };
     },
     created() {
@@ -553,6 +557,8 @@ export default {
         setView(evt) {
             if (this.show.render2D) {
                 this.$refs.TwoDPlotCom.setView(evt, this.zoomStep, this.moveStep);
+            } else {
+                this.$refs.ThreeDPlotCom.setView(evt, this.zoomStep, this.moveStep);
             }
         },
 
@@ -601,7 +607,6 @@ export default {
                 case 'minus': {
                     updatedData.splice(index, 1);
                     this.fuckRender(updatedData);
-
                     break;
                 }
                 case 'delect': {
@@ -633,6 +638,7 @@ export default {
                 this.show.loginModal = false;
                 this.initFormData();
                 this.localFnData = [];
+                this.firework();
                 setTimeout(() => {
                     this.show.info = true;
                 }, 400);
@@ -844,6 +850,32 @@ export default {
             } else if (input !== '') {
                 event.target.value = this.currentPage;
             }
+        },
+
+        firework() {
+            const origin = { y: 0.65, x: 0.5 };
+            utils.fire(0.25, {
+                spread: 66,
+                startVelocity: 75,
+                scalar: 0.8
+            }, origin);
+            utils.fire(0.2, {
+                spread: 60
+            }, origin);
+            utils.fire(0.35, {
+                spread: 100,
+                decay: 0.91
+            }, origin);
+            utils.fire(0.3, {
+                spread: 130,
+                startVelocity: 66,
+                decay: 0.92,
+                scalar: 1.2
+            }, origin);
+            utils.fire(0.4, {
+                spread: 120,
+                startVelocity: 45
+            }, origin);
         }
     }
 };

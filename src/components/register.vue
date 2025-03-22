@@ -85,7 +85,7 @@
 import icon from './icon.vue';
 import { register } from '../services/userService';
 import popupWindow from './popupWindow.vue';
-import confetti from 'canvas-confetti';
+import { fire } from '../assets/utils/componentUtils' 
 
 
 export default {
@@ -169,7 +169,7 @@ export default {
                 console.log('注册成功');
                 this.loading.registerSuccess = true;
                 this.login(registerData);
-                this.fireWorks();
+                this.firework();
             } else {
                 this.loading.registerSuccess = false;
                 const data = {
@@ -216,36 +216,26 @@ export default {
                 loginSuccess: false,
             };
         },
-        fire(particleRatio, opts) {
-            confetti({
-                origin: {
-                    y: 0.75,
-                    x: 0.5
-                },
-                ...opts,
-                particleCount: Math.floor(100 * particleRatio)
-            });
-        },
-        fireWorks() {
-            this.fire(0.25, {
+        firework() {
+            fire(0.25, {
                 spread: 66,
                 startVelocity: 75,
                 scalar: 0.8
             });
-            this.fire(0.2, {
+            fire(0.2, {
                 spread: 60
             });
-            this.fire(0.35, {
+            fire(0.35, {
                 spread: 100,
                 decay: 0.91
             });
-            this.fire(0.3, {
+            fire(0.3, {
                 spread: 130,
                 startVelocity: 66,
                 decay: 0.92,
                 scalar: 1.2
             });
-            this.fire(0.4, {
+            fire(0.4, {
                 spread: 120,
                 startVelocity: 45
             });
