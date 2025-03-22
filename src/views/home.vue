@@ -607,6 +607,7 @@ export default {
                 case 'minus': {
                     updatedData.splice(index, 1);
                     this.fuckRender(updatedData);
+
                     break;
                 }
                 case 'delect': {
