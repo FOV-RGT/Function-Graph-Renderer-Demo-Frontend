@@ -76,7 +76,7 @@
 
 .bg-enter-active,
 .bg-leave-active {
-    transition: opacity 0.3s ease;
+    transition: opacity 0.2s ease;
 }
 
 .bg-enter-from,
@@ -291,7 +291,14 @@
 
 .pinTrue {
     .cls-1 {
-        fill: #fff;
+        fill: #aa6331;
+    }
+
+    .cls-1,
+    .cls-2,
+    .cls-3,
+    .cls-4 {
+        stroke-width: 0px;
     }
 
     .cls-2 {
@@ -299,10 +306,10 @@
     }
 
     .cls-3 {
-        fill: #aa6331;
+        fill: none;
     }
-}
 
-.pinTrue {
-    transform: translateX(60px) translateY(200px) scale(0.3) rotate(10deg);
+    .cls-4 {
+        fill: #fff;
+    }
 }
