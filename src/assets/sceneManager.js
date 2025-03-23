@@ -23,9 +23,9 @@ export default class SceneManager {
         this.optimizePerformance();
         // 开始动画循环
         this.animate();
-        setTimeout(() => {
-            this.coordinateSystem.exportToGLTF('axis_system_200.glb');
-        }, 3000);
+        // setTimeout(() => {
+        //     this.coordinateSystem.exportToGLTF('axis_system_200.glb');
+        // }, 3000);
     }
 
     initRenderer() {
