@@ -1,100 +1,100 @@
 <template>
-  <div style="width: 100%;height: 100%;" ref="canvas2D"></div>
+    <div style="width: 100%;height: 100%;" ref="canvas2D"></div>
 </template>
 
 <script>
 import { chartInstance } from '../assets/utils/chartSetter';
 
 export default {
-  data() {
-    return {
-      chartInstance: null,
-    };
-  },
-  created() {
-  },
-  mounted() {
-    // 绘制图表
-    console.log("图表实例开始挂载");
-    this.chartInstance = new chartInstance(this.$refs.canvas2D);
-  },
-  beforeUnmount() {
-    console.log("销毁图表实例");
-    this.chartInstance.destroyInstance();
-  },
-  computed: {
-
-  },
-  watch: {
-
-  },
-  methods: {
-    // 重置视图
-    setView(evt, zoomStep, moveStep) {
-      switch (evt) {
-        case 'reset':
-          console.log("触发:重置范围");
-          this.chartInstance.resetView();
-          break;
-        case 'zoomIn':
-        case 'zoomOut':
-          console.log(`触发:${evt === 'zoomIn' ? '放大' : '缩小'}范围`);
-          this.chartInstance.zoomView(evt, zoomStep);
-          break;
-        case 'moveLeft':
-        case 'moveRight':
-        case 'moveUp':
-        case 'moveDown':
-          console.log(`触发:${evt}视图`);
-          this.chartInstance.moveView(evt, moveStep);
-          break;
-        default:
-          break;
-      }
+    data() {
+        return {
+            chartInstance: null,
+        };
     },
-
-    // 更新图表实例的缩放因子
-    updateZoomFactor(zoomStep) {
-      this.chartInstance.setZoomFactor(zoomStep);
+    created() {
     },
-
-    //更新图表实例的移动因子
-    updateMoveFactor(moveStep) {
-      this.chartInstance.setMoveFactor(moveStep);
+    mounted() {
+        // 绘制图表
+        console.log("图表实例开始挂载");
+        this.chartInstance = new chartInstance(this.$refs.canvas2D);
     },
-
-    fuckRender(data) {
-      this.chartInstance.setFunction(data);
+    beforeUnmount() {
+        console.log("销毁图表实例");
+        this.chartInstance.destroyInstance();
     },
+    computed: {
 
-    fuckResize() {
-      this.chartInstance.resize(this.$refs.canvas2D);
     },
+    watch: {
 
-    // 更新采样点数量
-    updateSamplePoints(samples, index) {
-      if (!this.chartInstance) return;
-      try {
-        if (typeof this.chartInstance.setSamplePoints === 'function') {
-          this.chartInstance.setSamplePoints(samples, index);
-        } 
-      } catch (error) {
-        console.error("采样点更新失败");
-      }
     },
+    methods: {
+        // 重置视图
+        setView(evt, zoomStep, moveStep) {
+            switch (evt) {
+                case 'reset':
+                    console.log("触发:重置范围");
+                    this.chartInstance.resetView();
+                    break;
+                case 'zoomIn':
+                case 'zoomOut':
+                    console.log(`触发:${evt === 'zoomIn' ? '放大' : '缩小'}范围`);
+                    this.chartInstance.zoomView(evt, zoomStep);
+                    break;
+                case 'moveLeft':
+                case 'moveRight':
+                case 'moveUp':
+                case 'moveDown':
+                    console.log(`触发:${evt}视图`);
+                    this.chartInstance.moveView(evt, moveStep);
+                    break;
+                default:
+                    break;
+            }
+        },
 
-    switchChartType(type) {
-      this.chartInstance.switchChartType(type);
-    },
+        // 更新图表实例的缩放因子
+        updateZoomFactor(zoomStep) {
+            this.chartInstance.setZoomFactor(zoomStep);
+        },
 
-    switchDash(dash) {
-      this.chartInstance.switchDash(dash);
-    },
+        //更新图表实例的移动因子
+        updateMoveFactor(moveStep) {
+            this.chartInstance.setMoveFactor(moveStep);
+        },
 
-    switchGrid(grid) {
-      this.chartInstance.switchGrid(grid);
+        fuckRender(data) {
+            this.chartInstance.setFunction(data);
+        },
+
+        fuckResize() {
+            this.chartInstance.resize(this.$refs.canvas2D);
+        },
+
+        // 更新采样点数量
+        updateSamplePoints(samples, index) {
+            if (!this.chartInstance) return;
+            try {
+                if (typeof this.chartInstance.setSamplePoints === 'function') {
+                    this.chartInstance.setSamplePoints(samples, index);
+                }
+            } catch (error) {
+                console.error("采样点更新失败");
+            }
+        },
+
+        switchChartType(type) {
+            this.chartInstance.switchChartType(type);
+        },
+
+        switchDash(dash) {
+            this.chartInstance.switchDash(dash);
+        },
+
+        switchGrid(grid) {
+            this.chartInstance.switchGrid(grid);
+        }
     }
-  }
 };
 </script>
 

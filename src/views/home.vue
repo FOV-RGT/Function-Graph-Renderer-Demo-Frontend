@@ -409,7 +409,7 @@ export default {
     async mounted() {
         const { success, error } = await service.initUserData();
         if (success) {
-            this.fuckRender(this.currentData);
+            this.$refs.TwoDPlotCom.fuckRender(this.functionData_2D);
             this.initFormData();
             this.show.info = true;
             console.log('初始化用户信息成功');
@@ -607,7 +607,6 @@ export default {
                 case 'minus': {
                     updatedData.splice(index, 1);
                     this.fuckRender(updatedData);
-
                     break;
                 }
                 case 'delect': {

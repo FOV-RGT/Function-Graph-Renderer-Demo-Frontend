@@ -1,9 +1,11 @@
 import * as THREE from "three";
 import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
+import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 export default class CoordinateSystem {
-    constructor(length = 200) {
+    constructor(length) {
         this.length = length;
         this.axes = new THREE.Object3D();
         this.createAxes();
@@ -12,22 +14,22 @@ export default class CoordinateSystem {
 
     createAxes() {
         // 更现代的颜色配置
-        const xAxisColor = 0xff3b30;      // 更亮的红色
-        const yAxisColor = 0x007aff;      // iOS风格蓝色
-        const zAxisColor = 0x34c759;      // 清新绿色
+        const xAxisColor = 0xff3b30;
+        const yAxisColor = 0x007aff;
+        const zAxisColor = 0x34c759;
         // 更现代的材质配置 - X轴
         const positiveXAxisMaterial = new THREE.LineBasicMaterial({
             color: xAxisColor,
-            linewidth: 2,               // 线条更粗
+            linewidth: 2,
             transparent: true,
             opacity: 0.9
         });
         const negativeXAxisMaterial = new THREE.LineDashedMaterial({
             color: xAxisColor,
-            dashSize: 0.2,              // 增大虚线尺寸
+            dashSize: 0.2,
             gapSize: 0.1,
             transparent: true,
-            opacity: 0.7                // 负轴略微透明
+            opacity: 0.7
         });
         // Y轴材质
         const positiveYAxisMaterial = new THREE.LineBasicMaterial({
@@ -104,7 +106,7 @@ export default class CoordinateSystem {
         loader.load(
             "https://threejs.org/examples/fonts/helvetiker_regular.typeface.json",
             (font) => {
-                for (let i = -this.length; i <= this.length; i++) {
+                for (let i = -this.length; i <= this.length; i += 5) {
                     if (i !== 0) {
                         // X轴标记
                         this.createAxisLabel(font, new THREE.Vector3(i, -0.5, 0), i, 0xff0000, 0, "x");
@@ -168,8 +170,8 @@ export default class CoordinateSystem {
         const material = new THREE.LineBasicMaterial({
             color: color,
             transparent: true,
-            opacity: 0.75,              // 不要太显眼
-            linewidth: 5           // 适中的粗细
+            opacity: 0.75,
+            linewidth: 1
         });
         const line = new THREE.Line(geometry, material);
         this.axes.add(line);
@@ -178,4 +180,42 @@ export default class CoordinateSystem {
     getAxes() {
         return this.axes;
     }
+
+    exportToGLTF(filename = 'coordinate_system.glb') {
+        return new Promise((resolve, reject) => {
+            const exporter = new GLTFExporter();
+            // 导出选项
+            const options = {
+                binary: true,  // 使用二进制格式(.glb)而非JSON(.gltf)
+                maxTextureSize: 4096,
+                animations: []
+            };
+            // 执行导出
+            exporter.parse(
+                this.axes,
+                (gltf) => {
+                    // 如果在浏览器环境下，触发下载
+                    if (typeof window !== 'undefined') {
+                        this.saveArrayBuffer(gltf, filename);
+                    }
+                    resolve(gltf);
+                },
+                (error) => {
+                    console.error('导出GLTF时出错:', error);
+                    reject(error);
+                },
+                options
+            );
+        });
+    }
+
+    // 辅助方法 - 保存ArrayBuffer为文件
+    saveArrayBuffer(buffer, filename) {
+        const blob = new Blob([buffer], { type: 'application/octet-stream' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+    }
 }
+
