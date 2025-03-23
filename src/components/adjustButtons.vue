@@ -4,7 +4,7 @@
             <input type="file" ref="GLTFFileInput" accept=".glb,.gltf" class="hidden"
                 @change="handleFileSelected" />
             <button class="btn btn-soft btn-info btn-xl text-2xl" @click="triggerFileSelect">
-                上传GLTF模型
+                上传GLTF|GLB模型
             </button>
         </div>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 163 176" class="icon1 h-5/7">
