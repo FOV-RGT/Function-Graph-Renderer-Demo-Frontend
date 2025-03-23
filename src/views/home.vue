@@ -284,7 +284,7 @@ import packageJson from '../../package.json';
 import TwoDPlotCom from '../components/render2D.vue';
 import ThreeDPlotCom from '../components/render3D.vue';
 import icon from '../components/icon.vue';
-import { mapState, mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 import { toRaw } from 'vue';
 import * as utils from '../assets/utils/componentUtils';
 import { parse } from 'mathjs';
@@ -409,13 +409,13 @@ export default {
         window.removeEventListener('resize', this.throttledResize);
     },
     computed: {
-        ...mapState(["functionData_2D", "functionData_3D"]),
+        ...mapGetters(["functionData_2D", "functionData_3D", "is2D"]),
         ...mapGetters('auth', ['userInfo', 'displayName', 'isAuthenticated',
             'chartType', 'closed', 'range', 'dash', 'grid', 'zoomFactor', 'moveFactor'
         ]),
         currentInputExample() {
-            return this.show.render2D ? 'eg:8log(cos(sin(sqrt(x^3))))'
-                : 'x=1;y=x^2-z^2;log(cos(sin(sqrt(x^3))));cube,width=5,height=5,depth=5;sphere,radius=10'
+            return this.show.render2D ? 'e.g. 8log(cos(sin(sqrt(x^3))))'
+                : 'e.g. y=x^2-z^2'
         },
         currentData() {
             console.log("💩");
@@ -530,13 +530,17 @@ export default {
                     this.$refs.TwoDPlotCom.updateMoveFactor(newVal);
                 }
             },
-        }
+        },
+        is2D: {
+            handler(newVal) {
+                this.show.render2D = newVal;
+            },
+        },
     },
     methods: {
         switchRenderer() {
-            this.show.render2D = !this.show.render2D;
             this.throttledResize();
-            this.$store.commit('switchRender', this.show.render2D);
+            this.$store.commit('switchRender');
         },
 
         //将缩放步长和移动步长传递给2D图标实例

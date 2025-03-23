@@ -4,7 +4,7 @@
 
 <script>
 import { toRaw } from "vue";
-import { mapState } from "vuex";
+import { mapGetters } from "vuex";
 import SceneManager from '../assets/sceneManager.js';
 import FunctionRenderer from '../assets/functionRender.js';
 
@@ -17,16 +17,21 @@ export default {
         };
     },
     computed: {
-        ...mapState(['switch3D']),
+        ...mapGetters(['is2D', 'GLTFfile']),
     },
     watch: {
-        switch3D(newVal) {
+        is2D(newVal) {
             if (newVal) {
                 this.$nextTick(() => {
                     this.sceneManager.resize();
                 });
             }
         },
+        GLTFfile(newVal) {
+            if (newVal) {
+                this.sceneManager.loadGLTFModel(newVal);
+            }
+        }
     },
     mounted() {
         this.init();
