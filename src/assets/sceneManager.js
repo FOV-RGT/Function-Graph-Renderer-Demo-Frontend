@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import CoordinateSystem from './coordinateSystem.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
 
 export default class SceneManager {
     constructor(container) {
@@ -12,6 +14,7 @@ export default class SceneManager {
         this.setupBoundingBoxClipping();
         this.createMaterials();
         this.initLights();
+        this.setupCameraLights();
         // 创建坐标系
         this.coordinateSystem = new CoordinateSystem(200);
         const axes = this.coordinateSystem.getAxes();
@@ -42,6 +45,9 @@ export default class SceneManager {
         );
         // 启用物理正确光照
         this.renderer.physicallyCorrectLights = true;
+        // 启用阴影
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         // 色调映射，增强视觉效果
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         this.renderer.toneMappingExposure = 1.0;
@@ -73,19 +79,86 @@ export default class SceneManager {
     }
 
     initLights() {
-        // 改用白色环境光，降低强度提高真实感
-        this.ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
-        // 添加半球光，模拟天空和地面反射
+        // 基础环境光，适当降低强度
+        this.ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        this.scene.add(this.ambientLight);
+        // 半球光，增强环境光的颜色对比度
         this.hemisphereLight = new THREE.HemisphereLight(0xddeeff, 0x202020, 0.6);
         this.hemisphereLight.userData = { isLight: true, isFunctionObject: false };
         this.scene.add(this.hemisphereLight);
-        // 主方向光，调整为暖色调
-        this.directionalLight = new THREE.DirectionalLight(0xffeedd, 0.7);
-        // 添加第二个方向光，作为补光
-        this.fillLight = new THREE.DirectionalLight(0x8eaaff, 0.35);
+        // 主方向光 - 模拟太阳光，增强阴影
+        this.directionalLight = new THREE.DirectionalLight(0xffe0c0, 1.2);
+        this.directionalLight.position.set(2, 2, 1);
+        this.directionalLight.castShadow = true;
+        this.directionalLight.shadow.mapSize.width = 1024;
+        this.directionalLight.shadow.mapSize.height = 1024;
+        this.directionalLight.shadow.camera.near = 0.5;
+        this.directionalLight.shadow.camera.far = 500;
+        this.directionalLight.shadow.bias = -0.001;
+        // 设置阴影相机范围
+        const d = 200;
+        this.directionalLight.shadow.camera.left = -d;
+        this.directionalLight.shadow.camera.right = d;
+        this.directionalLight.shadow.camera.top = d;
+        this.directionalLight.shadow.camera.bottom = -d;
+        this.directionalLight.userData = { isLight: true, isFunctionObject: false };
+        this.scene.add(this.directionalLight);
+        // 填充光 - 模拟反射光，减少阴影的强烈对比
+        this.fillLight = new THREE.DirectionalLight(0x8eaaff, 0.4);
         this.fillLight.position.set(-1, 0.5, -0.5);
         this.fillLight.userData = { isLight: true, isFunctionObject: false };
         this.scene.add(this.fillLight);
+        // 新增：侧面点光源 - 增加模型侧面细节
+        this.pointLight = new THREE.PointLight(0xff9900, 0.8, 200);
+        this.pointLight.position.set(-50, 50, 50);
+        this.pointLight.castShadow = true;
+        this.pointLight.shadow.mapSize.width = 512;
+        this.pointLight.shadow.mapSize.height = 512;
+        this.pointLight.userData = { isLight: true, isFunctionObject: false };
+        this.scene.add(this.pointLight);
+        // 新增：背光 - 提高模型边缘轮廓可见度
+        this.rimLight = new THREE.SpotLight(0x2b4c7f, 0.6);
+        this.rimLight.position.set(-10, -5, -10);
+        this.rimLight.angle = Math.PI / 4;
+        this.rimLight.penumbra = 0.5;
+        this.rimLight.userData = { isLight: true, isFunctionObject: false };
+        this.scene.add(this.rimLight);
+        // 添加专门用于强调金属高光的聚光灯
+        this.highlightSpot = new THREE.SpotLight(0xffffff, 1.0);
+        this.highlightSpot.position.set(5, 10, 5);
+        this.highlightSpot.angle = Math.PI / 6;
+        this.highlightSpot.penumbra = 0.2;
+        this.highlightSpot.decay = 1.5;
+        this.highlightSpot.distance = 100;
+        this.highlightSpot.castShadow = true;
+        this.highlightSpot.userData = { isLight: true, isFunctionObject: false };
+        this.scene.add(this.highlightSpot);
+    }
+
+    setupCameraLights() {
+        // 创建一个灯光组
+        this.cameraLights = new THREE.Group();
+        this.cameraLights.userData = { isLight: true, isFunctionObject: false };
+        // 相机正面柔和光源
+        this.cameraLight = new THREE.SpotLight(0xffffff, 0.8);
+        this.cameraLight.position.set(0, 0, 0); // 相对于相机位置
+        this.cameraLight.angle = Math.PI / 6;
+        this.cameraLight.penumbra = 0.4;
+        this.cameraLight.decay = 1.5;
+        this.cameraLight.distance = 100;
+        this.cameraLight.castShadow = true;
+        this.cameraLight.shadow.mapSize.width = 512;
+        this.cameraLight.shadow.mapSize.height = 512;
+        // 相机辅助填充光
+        this.cameraFill = new THREE.PointLight(0xdfebff, 0.5, 30);
+        this.cameraFill.position.set(-2, 2, -2); // 相对于相机的位置偏移
+        // 将灯光添加到灯光组
+        this.cameraLights.add(this.cameraLight);
+        this.cameraLights.add(this.cameraFill);
+        // 将灯光组添加到相机
+        this.camera.add(this.cameraLights);
+        // 将相机添加到场景(这一步很重要，否则相机上的灯光不会被渲染)
+        this.scene.add(this.camera);
     }
 
     updateLight() {
@@ -121,6 +194,7 @@ export default class SceneManager {
 
     animate() {
         this.controls.update();
+        this.camera.updateMatrixWorld();
         this.renderer.render(this.scene, this.camera);
         requestAnimationFrame(this.animate.bind(this));
     }
@@ -336,4 +410,72 @@ export default class SceneManager {
         // 将裁剪平面应用到渲染器
         this.renderer.localClippingEnabled = true;
     }
+
+    loadGLTFModel(file) {
+        const fileURL = URL.createObjectURL(file);
+        // 显示加载提示
+        console.log(`正在加载模型: ${file.name}...`);
+        const loader = new GLTFLoader();
+        loader.load(
+            fileURL,
+            (gltf) => {
+                // 处理加载成功
+                console.log('模型加载成功:', file.name);
+                // 清理URL
+                URL.revokeObjectURL(fileURL);
+                // 设置模型参数
+                const model = gltf.scene;
+                // 自动居中和缩放模型以适应边界盒
+                this.centerAndScaleModel(model);
+                // 应用裁剪平面到模型的所有材质
+                model.traverse(node => {
+                    if (node.material) {
+                        if (Array.isArray(node.material)) {
+                            node.material.forEach(mat => {
+                                mat.clippingPlanes = this.clippingPlanes;
+                                mat.clipIntersection = false;
+                                mat.needsUpdate = true;
+                            });
+                        } else {
+                            node.material.clippingPlanes = this.clippingPlanes;
+                            node.material.clipIntersection = false;
+                            node.material.needsUpdate = true;
+                        }
+                    }
+                });
+                // 添加到场景并标记为自定义模型
+                model.userData.isCustomModel = true;
+                this.addObject(model, false);
+                console.log('模型已添加到场景');
+            },
+            // 进度回调
+            (xhr) => {
+                const percentComplete = xhr.loaded / xhr.total * 100;
+                console.log(`模型加载进度: ${Math.round(percentComplete)}%`);
+            },
+            // 错误回调
+            (error) => {
+                console.error('加载模型时出错:', error);
+                URL.revokeObjectURL(fileURL);
+            }
+        );
+    }
+
+    // 辅助方法 - 居中和缩放模型
+    centerAndScaleModel(model) {
+        // 计算模型包围盒
+        const box = new THREE.Box3().setFromObject(model);
+        const size = box.getSize(new THREE.Vector3());
+        const center = box.getCenter(new THREE.Vector3());
+        // 确定模型尺寸
+        const maxDimension = Math.max(size.x, size.y, size.z);
+        const boxSize = 400; // 边界盒尺寸
+        const scaleFactor = (boxSize * 0.7) / maxDimension; // 留一些边距
+        // 缩放模型
+        model.scale.multiplyScalar(scaleFactor);
+        // 居中模型
+        model.position.sub(center.multiplyScalar(scaleFactor));
+        console.log(`模型已缩放: ${scaleFactor.toFixed(3)}倍`);
+    }
+
 }

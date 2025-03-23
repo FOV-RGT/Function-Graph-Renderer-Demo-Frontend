@@ -48,7 +48,7 @@
 }
 
 .button:hover {
-    opacity: 0.9;
+    opacity: 0.85;
     transform: scale(1.02);
 }
 

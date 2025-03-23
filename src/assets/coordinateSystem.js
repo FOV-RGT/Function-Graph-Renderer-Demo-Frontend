@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 export default class CoordinateSystem {
     constructor(length) {
@@ -165,8 +164,6 @@ export default class CoordinateSystem {
         const spriteMaterial = new THREE.SpriteMaterial({
             map: texture,
             transparent: true,
-            depthTest: false, // 禁用深度测试以确保始终可见
-            depthWrite: false // 不写入深度缓冲区
         });
         // 创建精灵并设置位置
         const sprite = new THREE.Sprite(spriteMaterial);
