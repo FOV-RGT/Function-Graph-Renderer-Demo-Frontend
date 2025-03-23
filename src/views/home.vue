@@ -3,7 +3,7 @@
         <transition name="menu">
             <div v-if="show.menu" class="main-left flex w-1/3 shrink-1 overflow-x-hidden relative
             left-0 transform z-10 h-screen">
-                <div class="menu-rightTop fixed w-20 right-1 select-none">
+                <div class="menu-rightTop fixed w-20 right-[0.5%] select-none">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 436">
                         <g>
                             <polygon class="cls-2" points="173.6 0 83.9 436 0 203.87 68.5 123 24.07 0 173.6 0" />
@@ -42,7 +42,7 @@
                         </g>
                     </svg>
                 </div>
-                <menuButtons class="mt-auto mb-5 ml-5"
+                <menuButtons class="mt-auto mb-auto ml-5"
                 @list="show.list = true" @adjustWindow="show.adjustWindow = true" @switchRenderer="switchRenderer"
                 @table="show.table = true" @loginModal="show.loginModal = true"/>
             </div>

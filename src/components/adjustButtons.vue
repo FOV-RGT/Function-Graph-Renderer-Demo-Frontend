@@ -1,8 +1,8 @@
 <template>
     <div class="overflow-hidden h-full flex flex-row justify-end items-center gap-8 select-none">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 163 176" class="icon1 h-2/3 cursor-pointer" @click="setView('reset')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 163 176" class="icon1 h-2/3">
             <polygon class="cls-2" points="0 0 163 16 151 176 9 166 0 0"/>
-            <g class="button">
+            <g class="button" @click="setView('reset')">
                 <path class="cls-1" d="m29,23l116,11-9,121s-113.04-7.25-113.5-7.5,6.5-124.5,6.5-124.5Z"/>
                 <path class="cls-2"
                     d="m114.82,84.92v6.42h-10.59l-.22-.03c.14-1.04.22-2.11.22-3.19s-.08-2.15-.22-3.2h10.81Z" />
