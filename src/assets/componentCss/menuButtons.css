@@ -251,7 +251,29 @@
         opacity: .3;
     }
 
-    text.cls-43, text.cls-44, text.cls-45, text.cls-46, text.cls-47 {
+    text.cls-43,
+    text.cls-44,
+    text.cls-45,
+    text.cls-46,
+    text.cls-47 {
         font-family: '庞门正道标题体';
     }
+}
+
+.button {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    transform-box: fill-box;
+    transform-origin: center;
+    filter: brightness(1) drop-shadow(0 0 0px rgba(0, 0, 0, 0));
+}
+
+.button:hover {
+    opacity: 0.95;
+    transform: scale(1.002);
+    filter: brightness(1.05) drop-shadow(0 0 7px rgba(0, 0, 0, 1));
+}
+
+.button:active {
+    transform: scale(0.99);
 }
