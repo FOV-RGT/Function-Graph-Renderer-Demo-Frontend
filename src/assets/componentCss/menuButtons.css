@@ -1,0 +1,257 @@
+.menuButtons {
+    .cls-1 {
+        fill: #195ea0;
+    }
+
+    .cls-1,
+    .cls-2,
+    .cls-3,
+    .cls-4,
+    .cls-5,
+    .cls-6,
+    .cls-7,
+    .cls-8,
+    .cls-9,
+    .cls-10,
+    .cls-11,
+    .cls-12,
+    .cls-13,
+    .cls-14,
+    .cls-15,
+    .cls-16,
+    .cls-17,
+    .cls-18,
+    .cls-19,
+    .cls-20,
+    .cls-21,
+    .cls-22,
+    .cls-23,
+    .cls-24,
+    .cls-25,
+    .cls-26 {
+        stroke-width: 0px;
+    }
+
+    .cls-2 {
+        fill: #aa6331;
+    }
+
+    .cls-3 {
+        fill: #7ec1f6;
+    }
+
+    .cls-27,
+    .cls-28,
+    .cls-29,
+    .cls-30,
+    .cls-31,
+    .cls-32,
+    .cls-33,
+    .cls-34,
+    .cls-35,
+    .cls-36,
+    .cls-37,
+    .cls-38,
+    .cls-39,
+    .cls-40,
+    .cls-41,
+    .cls-42 {
+        stroke-miterlimit: 10;
+    }
+
+    .cls-27,
+    .cls-28,
+    .cls-32,
+    .cls-37,
+    .cls-41 {
+        fill: none;
+    }
+
+    .cls-27,
+    .cls-29,
+    .cls-32,
+    .cls-33,
+    .cls-34,
+    .cls-36,
+    .cls-40 {
+        stroke: #231815;
+    }
+
+    .cls-4 {
+        fill: #dbdcdc;
+    }
+
+    .cls-5,
+    .cls-38,
+    .cls-42 {
+        fill: #295c72;
+    }
+
+    .cls-28 {
+        stroke: #a56030;
+    }
+
+    .cls-28,
+    .cls-30,
+    .cls-39,
+    .cls-41,
+    .cls-42 {
+        stroke-width: 3px;
+    }
+
+    .cls-29,
+    .cls-34,
+    .cls-35,
+    .cls-14 {
+        fill: #2b4769;
+    }
+
+    .cls-6 {
+        fill: #48a2f9;
+    }
+
+    .cls-7 {
+        fill: #53abf2;
+    }
+
+    .cls-8 {
+        fill: #3472d6;
+    }
+
+    .cls-30,
+    .cls-31,
+    .cls-37,
+    .cls-38,
+    .cls-39,
+    .cls-42 {
+        stroke: #fff;
+    }
+
+    .cls-30,
+    .cls-36,
+    .cls-16,
+    .cls-40,
+    .cls-26 {
+        fill: #fff;
+    }
+
+    .cls-31,
+    .cls-21,
+    .cls-39 {
+        fill: #a56030;
+    }
+
+    .cls-31,
+    .cls-38 {
+        stroke-width: .75px;
+    }
+
+    .cls-9 {
+        fill: #5185d8;
+    }
+
+    .cls-32,
+    .cls-34,
+    .cls-36,
+    .cls-37 {
+        stroke-width: 2px;
+    }
+
+    .cls-43 {
+        font-size: 56.3px;
+    }
+
+    .cls-43,
+    .cls-44,
+    .cls-45,
+    .cls-46,
+    .cls-47 {
+        fill: #aea181;
+        font-family: PangMenZhengDaoBiaoTiTiMianFeiBan-4Regular, PangMenZhengDaoBiaoTiTiMianFeiBan-4;
+    }
+
+    .cls-11 {
+        fill: #2d496c;
+    }
+
+    .cls-44 {
+        font-size: 56.3px;
+    }
+
+    .cls-12 {
+        fill: #5abbef;
+    }
+
+    .cls-33 {
+        fill: #231815;
+    }
+
+    .cls-13 {
+        fill: #42a1ec;
+    }
+
+    .cls-35 {
+        stroke-width: 6px;
+    }
+
+    .cls-35,
+    .cls-41 {
+        stroke: #2b4769;
+    }
+
+    .cls-15 {
+        fill: #4c93cb;
+    }
+
+    .cls-45 {
+        font-size: 56.3px;
+    }
+
+    .cls-17 {
+        fill: #b8b9b9;
+    }
+
+    .cls-18 {
+        fill: #88cdf6;
+    }
+
+    .cls-19 {
+        fill: #2d82b5;
+    }
+
+    .cls-20 {
+        fill: #53a7d8;
+    }
+
+    .cls-22 {
+        fill: #eeeeef;
+    }
+
+    .cls-23 {
+        fill: #bce6ff;
+    }
+
+    .cls-46 {
+        font-size: 56.3px;
+    }
+
+    .cls-47 {
+        font-size: 56.3px;
+    }
+
+    .cls-24 {
+        fill: #593e64;
+    }
+
+    .cls-25 {
+        fill: #015c92;
+    }
+
+    .cls-26 {
+        opacity: .3;
+    }
+
+    text.cls-43, text.cls-44, text.cls-45, text.cls-46, text.cls-47 {
+        font-family: '庞门正道标题体';
+    }
+}
