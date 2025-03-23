@@ -1,6 +1,4 @@
 import * as THREE from "three";
-import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js";
-import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
@@ -102,67 +100,88 @@ export default class CoordinateSystem {
     }
 
     loadFontAndAddLabels() {
-        const loader = new FontLoader();
-        loader.load(
-            "https://threejs.org/examples/fonts/helvetiker_regular.typeface.json",
-            (font) => {
-                for (let i = -this.length; i <= this.length; i += 5) {
-                    if (i !== 0) {
-                        // X轴标记
-                        this.createAxisLabel(font, new THREE.Vector3(i, -0.5, 0), i, 0xff0000, 0, "x");
-                        this.createTickMark(
-                            new THREE.Vector3(i, 0, 0),
-                            new THREE.Vector3(i, -0.2, 0),
-                            0xff0000
-                        );
-                        // Y轴标记
-                        this.createAxisLabel(font, new THREE.Vector3(-0.8, i, 0), i, 0x0000ff, 0, "y");
-                        this.createTickMark(
-                            new THREE.Vector3(0, i, 0),
-                            new THREE.Vector3(-0.2, i, 0),
-                            0x0000ff
-                        );
-                        // Z轴标记
-                        this.createAxisLabel(font, new THREE.Vector3(0, -0.5, i), i, 0x00ff00, Math.PI / 2, "z");
-                        this.createTickMark(
-                            new THREE.Vector3(0, 0, i),
-                            new THREE.Vector3(0, -0.2, i),
-                            0x00ff00
-                        );
-                    }
+        const majorStep = 5; // 主要标签间距
+        const minorStep = 1;  // 次要刻度间距
+        // 为每个轴添加标签
+        for (let i = -this.length; i <= this.length; i += minorStep) {
+            if (i !== 0) { // 跳过原点
+                // 判断是否为主要刻度点
+                const isMajorTick = i % majorStep === 0;
+                // 添加刻度线
+                this.createTickMark(
+                    new THREE.Vector3(i, 0, 0),
+                    new THREE.Vector3(i, isMajorTick ? -0.3 : -0.1, 0),
+                    0xff0000
+                );
+                this.createTickMark(
+                    new THREE.Vector3(0, i, 0),
+                    new THREE.Vector3(isMajorTick ? -0.3 : -0.1, i, 0),
+                    0x0000ff
+                );
+                this.createTickMark(
+                    new THREE.Vector3(0, 0, i),
+                    new THREE.Vector3(0, isMajorTick ? -0.3 : -0.1, i),
+                    0x00ff00
+                );
+                // 只在主要刻度点添加标签
+                if (isMajorTick) {
+                    // X轴标记
+                    this.createAxisLabel(new THREE.Vector3(i, -0.2, 0), i, 0xff0000, "x");
+                    // Y轴标记
+                    this.createAxisLabel(new THREE.Vector3(-0.2, i, 0), i, 0x0000ff, "y");
+                    // Z轴标记
+                    this.createAxisLabel(new THREE.Vector3(0, -0.2, i), i, 0x00ff00, "z");
                 }
             }
-        );
+        }
     }
 
-    createAxisLabel(font, position, text, color, rotation = 0, axis) {
-        const textGeo = new TextGeometry(text.toString(), {
-            font: font,
-            size: 0.25,
-            depth: 0.02,
-            bevelEnabled: true,
-            bevelThickness: 0.01,
-            bevelSize: 0.005,
-            bevelSegments: 3
+    createAxisLabel(position, text, color, axis) {
+        // 增加画布分辨率以提高清晰度
+        const pixelRatio = window.devicePixelRatio || 2;
+        const canvasSize = 128; // 更大的画布尺寸
+        const canvas = document.createElement('canvas');
+        canvas.width = canvasSize * pixelRatio;
+        canvas.height = canvasSize / 2 * pixelRatio;
+        const ctx = canvas.getContext('2d');
+        ctx.scale(pixelRatio, pixelRatio); // 缩放画布上下文以适应高DPI
+        // 添加文本描边以提高对比度
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.lineWidth = 3;
+        ctx.font = `bold ${canvasSize/2.5}px Arial, Helvetica, sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.strokeText(text.toString(), canvasSize/2, canvasSize/4);
+        // 填充文本
+        ctx.fillStyle = `#${color.toString(16).padStart(6, '0')}`;
+        ctx.fillText(text.toString(), canvasSize/2, canvasSize/4);
+        // 创建纹理并启用抗锯齿
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.needsUpdate = true;
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        texture.anisotropy = 4; // 增加各向异性过滤级别
+        // 创建精灵材质
+        const spriteMaterial = new THREE.SpriteMaterial({
+            map: texture,
+            transparent: true,
+            depthTest: false, // 禁用深度测试以确保始终可见
+            depthWrite: false // 不写入深度缓冲区
         });
-        // 使用MeshStandardMaterial更现代
-        const textMaterial = new THREE.MeshStandardMaterial({
-            color: color,
-            metalness: 0.75,            // 金属感
-            roughness: 0.75,            // 表面更光滑
-            emissive: color,           // 自发光
-            emissiveIntensity: 0.75,    // 发光强度
-        });
-        const textMesh = new THREE.Mesh(textGeo, textMaterial);
-        textMesh.position.copy(position);
-        // 轻微阴影效果
-        textMesh.castShadow = true;
-        if (axis === "x" || axis === "z") {
-            textMesh.rotation.y = rotation;
-        } else {
-            textMesh.rotation.x = rotation;
+        // 创建精灵并设置位置
+        const sprite = new THREE.Sprite(spriteMaterial);
+        sprite.position.copy(position);
+        // 调整缩放以适应更大的纹理，保持视觉大小一致
+        sprite.scale.set(1.0, 0.5, 1);
+        // 根据轴调整位置
+        if (axis === "x") {
+            sprite.position.y -= 0.4;
+        } else if (axis === "y") {
+            sprite.position.x -= 0.6;
+        } else if (axis === "z") {
+            sprite.position.y -= 0.4;
         }
-        this.axes.add(textMesh);
+        this.axes.add(sprite);
     }
 
     createTickMark(start, end, color) {

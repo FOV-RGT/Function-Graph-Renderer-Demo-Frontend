@@ -58,7 +58,7 @@ export default class SceneManager {
             0.1,
             2000
         );
-        this.camera.position.set(6, 3, 6);
+        this.camera.position.set(10, 2, 10);
         // 设置相机朝向中心点
         this.camera.lookAt(0, 0, 0);
     }
@@ -267,7 +267,7 @@ export default class SceneManager {
 
     // 重置相机位置和朝向到初始状态
     resetCamera() {
-        this.camera.position.set(6, 3, 6);
+        this.camera.position.set(10, 2, 10);
         this.camera.lookAt(0, 0, 0);
         this.controls.target.set(0, 0, 0);
         this.controls.update();
