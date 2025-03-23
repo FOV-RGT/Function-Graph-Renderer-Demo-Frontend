@@ -1,6 +1,6 @@
 <template>
     <div class="overflow-hidden h-full flex flex-row justify-end items-center gap-8 select-none">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 163 176" class="icon1 h-2/3">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 163 176" class="icon1 h-5/7">
             <polygon class="cls-2" points="0 0 163 16 151 176 9 166 0 0"/>
             <g class="button" @click="setView('reset')">
                 <path class="cls-1" d="m29,23l116,11-9,121s-113.04-7.25-113.5-7.5,6.5-124.5,6.5-124.5Z"/>

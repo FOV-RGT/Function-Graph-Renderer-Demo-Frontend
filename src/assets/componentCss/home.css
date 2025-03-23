@@ -185,6 +185,22 @@
     }
 }
 
+.menu-rightTop .button {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+.menu-rightTop .button:hover {
+    opacity: 0.85;
+    transform: scale(1.02);
+}
+
+.menu-rightTop .button:active {
+    transform: scale(0.98);
+}
+
 .renderComponent {
     background-color: white;
     clip-path: polygon(0 0,
