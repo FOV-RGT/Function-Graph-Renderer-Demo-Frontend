@@ -144,13 +144,13 @@
     font-size: 1.5em;
 }
 
-.leftList-enter-active,
-.leftList-leave-active {
+.menu-enter-active,
+.menu-leave-active {
     transition: transform 0.2s ease;
 }
 
-.leftList-enter-from,
-.leftList-leave-to {
+.menu-enter-from,
+.menu-leave-to {
     transform: translateX(-100%);
 }
 
@@ -173,7 +173,7 @@
     pointer-events: auto;
 }
 
-.leftList-rightTop {
+.menu-rightTop {
 
     .cls-1,
     .cls-2 {

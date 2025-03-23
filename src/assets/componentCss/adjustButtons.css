@@ -39,3 +39,19 @@
         fill: #fff;
     }
 }
+
+.button {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+.button:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+}
+
+.button:active {
+    transform: scale(0.98);
+}

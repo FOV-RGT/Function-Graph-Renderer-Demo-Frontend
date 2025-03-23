@@ -1,9 +1,9 @@
 <template>
     <div class="main">
-        <transition name="leftList">
-            <div v-if="show.leftList" class="main-left w-4/13 shrink-1 overflow-x-hidden relative
+        <transition name="menu">
+            <div v-if="show.menu" class="main-left flex w-1/3 shrink-1 overflow-x-hidden relative
             left-0 transform z-10 h-screen">
-                <div class="leftList-rightTop fixed w-20 right-0.5 -rotate-1 select-none">
+                <div class="menu-rightTop fixed w-20 right-1 select-none">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 436">
                         <g>
                             <polygon class="cls-2" points="173.6 0 83.9 436 0 203.87 68.5 123 24.07 0 173.6 0" />
@@ -33,7 +33,7 @@
                                     points="117.89 213.7 103.66 220.31 103.87 240.22 93.93 252.78 99.08 261.77 85.88 259.1 75.8 280.02 73.9 256.68 60.33 253.94 68.56 247.66 63.71 232.1 71.25 213.76 60.11 202.02 89.41 207.94 117.89 213.7" />
                             </g>
                         </g>
-                        <g class="cursor-pointer" @click="show.leftList = false">
+                        <g class="cursor-pointer" @click="show.menu = false">
                             <polygon class="cls-1" points="170.93 13 44.75 13.37 85.3 125.24 143.44 146.64 170.93 13" />
                             <polygon class="cls-2"
                                 points="114.64 66.84 136.26 54.93 103.93 61.27 128.34 119.66 114.64 66.84" />
@@ -42,30 +42,14 @@
                         </g>
                     </svg>
                 </div>
-                <div class="w-[68%] h-full flex justify-start flex-col">
-                    <div class="top-buttonsGroup flex flex-col justify-between grow-1 pb-50 pt-50">
-                        <button class="btn btn-block" @click="show.list = true">
-                            输入函数
-                        </button>
-                        <button class="btn btn-block" @click="show.adjustWindow = true">
-                            设置
-                        </button>
-                        <button class="btn btn-block" @click="switchRenderer">
-                            切换模式
-                        </button>
-                        <button class="btn btn-block" @click="show.table = true">
-                            历史记录
-                        </button>
-                        <button class="btn btn-block" @click="show.loginModal = true">
-                            账户
-                        </button>
-                    </div>
-                </div>
+                <menuButtons class="mt-auto mb-5 ml-5"
+                @list="show.list = true" @adjustWindow="show.adjustWindow = true" @switchRenderer="switchRenderer"
+                @table="show.table = true" @loginModal="show.loginModal = true"/>
             </div>
         </transition>
         <transition name="bg">
-            <div v-if="show.leftList && !leftPin" class="fixed inset-0 z-1 select-none"
-                @mousedown="show.leftList = false">
+            <div v-if="show.menu && !leftPin" class="fixed inset-0 z-1 select-none"
+                @mousedown="show.menu = false">
                 <div class="absolute inset-0 bg-black/35"></div>
             </div>
         </transition>
@@ -86,7 +70,7 @@
                 </div>
                 <div class="chart-leftTop select-none">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 437" class="cursor-pointer"
-                        @click="show.leftList = true">
+                        @click="show.menu = true">
                         <g>
                             <polygon class="cls-2"
                                 points="106.28 84.01 102.76 60.09 154.14 38.38 91.69 55.25 106.28 84.01" />
@@ -310,6 +294,7 @@ import register from '../components/register.vue';
 import popupWindow from '../components/popupWindow.vue';
 import adjustButtons from '../components/adjustButtons.vue';
 import adjustWindow from '../components/adjustWindow.vue';
+import menuButtons from '../components/menuButtons.vue';
 
 
 
@@ -323,7 +308,8 @@ export default {
         register,
         popupWindow,
         adjustButtons,
-        adjustWindow
+        adjustWindow,
+        menuButtons
     },
     data() {
         return {
@@ -340,7 +326,7 @@ export default {
                 list: false,
                 render2D: true,
                 adjustWindow: false,
-                leftList: false,
+                menu: true,
                 avatarPreview: false
             },
             account: "",

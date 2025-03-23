@@ -1,10 +1,9 @@
 <template>
-    <div class="svgButtonsGroup overflow-hidden h-full flex flex-row justify-end items-center gap-8 select-none">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 163 176" class="icon1 h-2/3">
-            <polygon class="cls-2 cursor-pointer" points="0 0 163 16 151 176 9 166 0 0" @click="setView('reset')" />
-            <path class="cls-1 cursor-pointer" d="m29,23l116,11-9,121s-113.04-7.25-113.5-7.5,6.5-124.5,6.5-124.5Z"
-                @click="setView('reset')" />
-            <g class="cursor-pointer" @click="setView('reset')">
+    <div class="overflow-hidden h-full flex flex-row justify-end items-center gap-8 select-none">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 163 176" class="icon1 h-2/3 cursor-pointer" @click="setView('reset')">
+            <polygon class="cls-2" points="0 0 163 16 151 176 9 166 0 0"/>
+            <g class="button">
+                <path class="cls-1" d="m29,23l116,11-9,121s-113.04-7.25-113.5-7.5,6.5-124.5,6.5-124.5Z"/>
                 <path class="cls-2"
                     d="m114.82,84.92v6.42h-10.59l-.22-.03c.14-1.04.22-2.11.22-3.19s-.08-2.15-.22-3.2h10.81Z" />
                 <path class="cls-2"
@@ -24,14 +23,14 @@
                 <polygon class="cls-1"
                     points="146 39.98 140.04 40.93 141 46.98 138.82 46.93 162 150.98 163 150.91 163 146.03 166.36 146.06 146 39.98" />
             </g>
-            <g class="cursor-pointer" @mousedown="startSetView('zoomOut')" @mouseup="endSetView"
+            <g class="button" @mousedown="startSetView('zoomOut')" @mouseup="endSetView"
                 @mouseleave="endSetView">
                 <polygon class="cls-1"
                     points="138 27.98 141 46.98 140.97 46.98 163.01 146.03 173.25 146.1 305 146.98 307 14.98 138 27.98" />
                 <polygon class="cls-3"
                     points="193.28 80.57 207.26 78.53 235.25 78.53 249.23 80.55 249.3 86.49 235.32 88.53 207.26 88.57 193.21 86.52 193.28 80.57" />
             </g>
-            <g class="cursor-pointer" @mousedown="startSetView('zoomIn')" @mouseup="endSetView"
+            <g class="button" @mousedown="startSetView('zoomIn')" @mouseup="endSetView"
                 @mouseleave="endSetView">
                 <polygon class="cls-1"
                     points="131.84 46.76 15 43.98 24.66 166.12 163 157.98 163 146.03 163.01 146.03 140.97 46.98 131.84 46.76" />
@@ -48,28 +47,28 @@
                 <polygon class="cls-1" points="387.03 23.17 371.42 24.56 374.84 102.34 387.03 103.47 387.03 23.17" />
             </g>
             <g id="_图层_8" data-name="图层 8">
-                <g class="cursor-pointer" @mousedown="startSetView('moveUp')" @mouseup="endSetView"
+                <g class="button" @mousedown="startSetView('moveUp')" @mouseup="endSetView"
                 @mouseleave="endSetView">
                     <polygon class="cls-1"
                         points="17.17 43.82 23.96 163.31 119.97 151.3 119.82 140.07 129.58 140.61 132.45 43.82 17.17 43.82" />
                     <polygon class="cls-2"
                         points="72.55 74.19 45 101.81 63 97.81 64 128.81 80.93 128.81 83.44 97.81 100 101.81 72.55 74.19" />
                 </g>
-                <g class="cursor-pointer" @mousedown="startSetView('moveLeft')" @mouseup="endSetView"
+                <g class="button" @mousedown="startSetView('moveLeft')" @mouseup="endSetView"
                 @mouseleave="endSetView">
                     <polygon class="cls-1"
                         points="253.5 35.07 252.07 130.87 363.82 126.52 363.82 101.32 374.84 102.34 381.32 23.67 253.5 35.07" />
                     <polygon class="cls-2"
                         points="289.38 77.45 317 105 313 87 344 86 344 69.07 313 66.56 317 50 289.38 77.45" />
                 </g>
-                <g class="cursor-pointer" @mousedown="startSetView('moveRight')" @mouseup="endSetView"
+                <g class="button" @mousedown="startSetView('moveRight')" @mouseup="endSetView"
                 @mouseleave="endSetView">
                     <polygon class="cls-1"
                         points="522.13 19.52 390.44 10.81 395.29 22.43 381.32 23.67 374.84 102.34 526 116.35 522.13 19.52" />
                     <polygon class="cls-2"
                         points="477.62 63.3 450 90.85 454 72.85 423 71.85 423 54.92 454 52.42 450 35.85 477.62 63.3" />
                 </g>
-                <g class="cursor-pointer" @mousedown="startSetView('moveDown')" @mouseup="endSetView"
+                <g class="button" @mousedown="startSetView('moveDown')" @mouseup="endSetView"
                 @mouseleave="endSetView">
                     <polygon class="cls-1"
                         points="239.4 36.33 246.11 19.61 136.28 25.82 135.63 43.82 132.45 43.82 129.58 140.61 251.98 147.33 251.98 136.45 251.97 137.66 251.98 136.45 251.98 130.87 252.07 130.87 253.5 35.07 239.4 36.33" />
