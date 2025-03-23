@@ -7,7 +7,7 @@ import WorkerManager from './workerManager';
 export default class FunctionRenderer {
     constructor(sceneManager) {
         this.sceneManager = sceneManager;
-        this.geometryBuilder = new GeometryBuilder();
+        this.geometryBuilder = new GeometryBuilder(sceneManager.clippingPlanes);
         this.workerManager = new WorkerManager();
     }
 
@@ -154,10 +154,11 @@ export default class FunctionRenderer {
         input.split(",").forEach(param => {
             const parts = param.split("=");
             if (parts.length === 2) {
-                const key = parts[0].replace(/^[a-z]+/, '').trim(); // 去除前缀
+                const key = parts[0].trim();
                 params[key] = parts[1].trim();
             }
         });
+        console.log("66666", params);
         return params;
     }
 

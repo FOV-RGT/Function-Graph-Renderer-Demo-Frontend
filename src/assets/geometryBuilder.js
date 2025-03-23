@@ -1,21 +1,24 @@
 import * as THREE from "three";
 
 export default class GeometryBuilder {
-    constructor() {
+    constructor(clippingPlanes = null) {
         // 定义默认材质
         this.lineMaterial = new THREE.LineBasicMaterial({
             color: 0x3087b9,
-            linewidth: 2
+            linewidth: 2,
+            clippingPlanes: clippingPlanes
         });
         this.meshMaterial = new THREE.MeshBasicMaterial({
             color: 0x3087b9,
             wireframe: true,
-            side: THREE.DoubleSide
+            side: THREE.DoubleSide,
+            clippingPlanes: clippingPlanes
         });
         this.redMaterial = new THREE.MeshBasicMaterial({
             color: 0xff0000,
             wireframe: true,
-            side: THREE.DoubleSide
+            side: THREE.DoubleSide,
+            clippingPlanes: clippingPlanes
         });
     }
 

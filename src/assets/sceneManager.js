@@ -9,10 +9,11 @@ export default class SceneManager {
         this.initRenderer();
         this.initCamera();
         this.initControls();
+        this.setupBoundingBoxClipping();
         this.createMaterials();
         this.initLights();
         // 创建坐标系
-        this.coordinateSystem = new CoordinateSystem();
+        this.coordinateSystem = new CoordinateSystem(200);
         const axes = this.coordinateSystem.getAxes();
         axes.userData = { isAxes: true, isFunctionObject: false };
         this.scene.add(axes);
@@ -22,6 +23,9 @@ export default class SceneManager {
         this.optimizePerformance();
         // 开始动画循环
         this.animate();
+        // setTimeout(() => {
+        //     this.coordinateSystem.exportToGLTF('axis_system_200.glb');
+        // }, 3000);
     }
 
     initRenderer() {
@@ -48,14 +52,13 @@ export default class SceneManager {
     }
 
     initCamera() {
-        const boxSize = 400;
         this.camera = new THREE.PerspectiveCamera(
             75, // 降低FOV角度使视野更合理
             this.container.clientWidth / this.container.clientHeight,
             0.1,
-            boxSize * 5
+            2000
         );
-        this.camera.position.set(boxSize / 3, boxSize / 6, boxSize / 2);
+        this.camera.position.set(6, 3, 6);
         // 设置相机朝向中心点
         this.camera.lookAt(0, 0, 0);
     }
@@ -155,14 +158,18 @@ export default class SceneManager {
                 roughness: 0.5,
                 metalness: 0.2,
                 side: THREE.DoubleSide,
-                flatShading: false
+                flatShading: false,
+                clippingPlanes: this.clippingPlanes,
+                clipIntersection: false
             }),
             // 线框材质
             wireframe: new THREE.MeshBasicMaterial({
                 color: 0x3087b9,
                 wireframe: true,
                 transparent: true,
-                opacity: 0.7
+                opacity: 0.7,
+                clippingPlanes: this.clippingPlanes,
+                clipIntersection: false
             }),
             // 半透明材质
             transparent: new THREE.MeshPhysicalMaterial({
@@ -171,7 +178,9 @@ export default class SceneManager {
                 metalness: 0.1,
                 transparent: true,
                 opacity: 0.7,
-                side: THREE.DoubleSide
+                side: THREE.DoubleSide,
+                clippingPlanes: this.clippingPlanes,
+                clipIntersection: false
             }),
             // 点云材质
             points: new THREE.PointsMaterial({
@@ -179,7 +188,9 @@ export default class SceneManager {
                 sizeAttenuation: true,
                 color: 0xffff00,
                 transparent: true,
-                opacity: 0.8
+                opacity: 0.8,
+                clippingPlanes: this.clippingPlanes,
+                clipIntersection: false
             })
         };
     }
@@ -256,8 +267,7 @@ export default class SceneManager {
 
     // 重置相机位置和朝向到初始状态
     resetCamera() {
-        const boxSize = 400;
-        this.camera.position.set(boxSize / 3, boxSize / 6, boxSize / 2);
+        this.camera.position.set(6, 3, 6);
         this.camera.lookAt(0, 0, 0);
         this.controls.target.set(0, 0, 0);
         this.controls.update();
@@ -293,10 +303,10 @@ export default class SceneManager {
         // 根据方向设置移动向量
         switch (direction) {
             case 'left':
-                panOffset.copy(panLeft).multiplyScalar(panDistance);
+                panOffset.copy(panLeft).multiplyScalar(-panDistance);
                 break;
             case 'right':
-                panOffset.copy(panLeft).multiplyScalar(-panDistance);
+                panOffset.copy(panLeft).multiplyScalar(panDistance);
                 break;
             case 'up':
                 panOffset.copy(panUp).multiplyScalar(panDistance);
@@ -310,5 +320,20 @@ export default class SceneManager {
         this.controls.target.add(panOffset);
         // 更新控制器
         this.controls.update();
+    }
+
+    setupBoundingBoxClipping() {
+        const boxSize = 400;
+        const halfSize = boxSize / 2;
+        this.clippingPlanes = [
+            new THREE.Plane(new THREE.Vector3(-1, 0, 0), halfSize),  // 右侧平面
+            new THREE.Plane(new THREE.Vector3(1, 0, 0), halfSize),   // 左侧平面
+            new THREE.Plane(new THREE.Vector3(0, -1, 0), halfSize),  // 顶部平面
+            new THREE.Plane(new THREE.Vector3(0, 1, 0), halfSize),   // 底部平面
+            new THREE.Plane(new THREE.Vector3(0, 0, -1), halfSize),  // 前面平面
+            new THREE.Plane(new THREE.Vector3(0, 0, 1), halfSize)    // 后面平面
+        ];
+        // 将裁剪平面应用到渲染器
+        this.renderer.localClippingEnabled = true;
     }
 }
