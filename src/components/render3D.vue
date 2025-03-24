@@ -16,7 +16,7 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(['is2D', 'GLTFfile', 'functionData_3D', 'Objectuuid', 'previousOpacity']),
+        ...mapGetters(['is2D', 'GLTFfile', 'Objectuuid']),
     },
     watch: {
         is2D: {
@@ -38,7 +38,6 @@ export default {
     },
     mounted() {
         this.init();
-        this.handleArrayInput(this.functionData_3D);
     },
     beforeUnmount() {
         this.sceneManager.dispose();
@@ -55,6 +54,7 @@ export default {
         },
 
         async handleInput(input, index) {
+            this.delectObject(index);
             const uuid = await this.functionRenderer.renderFunction(input);
             const payload = {
                 uuid,
@@ -65,6 +65,7 @@ export default {
 
         async handleArrayInput(inputs, index = 0) {
             for (const input of inputs) {
+                console.log("添加3D数据", input);
                 const uuid = await this.functionRenderer.renderFunction(input);
                 const payload = {
                     uuid,
@@ -91,13 +92,12 @@ export default {
 
         switchObjectVisible(visible, index) {
             const uuid = this.Objectuuid[index];
-            const previousOpacity = this.previousOpacity[index];
-            const currentOpacity = this.sceneManager.switchObjectVisible(visible, uuid, previousOpacity);
+            this.sceneManager.switchObjectVisible(visible, uuid);
             const payload = {
-                currentOpacity,
+                visible,
                 index
             }
-            this.$store.commit('storePreviousOpacity', payload);
+            this.$store.commit('storeObjectVisible', payload);
         }
     }
 };

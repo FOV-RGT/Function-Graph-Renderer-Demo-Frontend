@@ -1,11 +1,11 @@
 import authApi from '../api/auth';
 import fnApi from '../api/function';
 import store from '../store';
-import { sortData } from '../assets/utils/componentUtils';
+import { sortData, generateRandomHarmoniousColor } from '../assets/utils/componentUtils';
 
 
 
-export async function initUserData(needNewData = true, options = { is2D: true }) {
+export async function initUserData(needNewData = true) {
     try {
         if (!store.state.auth.isAuthenticated) {
             throw new Error('未登录');
@@ -18,16 +18,8 @@ export async function initUserData(needNewData = true, options = { is2D: true })
         store.commit('auth/updateUserConfig', configRes.config);
         // 获取函数数据
         if (needNewData) {
-            const fnRes = await fnApi.getHistoricalData();
-            const fnData = sortData(fnRes.mathdatas);
-            const latestData = fnData.length > 0 ? fnData[fnData.length - 1] : [];
-            // 更新数据
-            const payload = {
-                data: latestData,
-                is2D: options.is2D,
-                needUpload: false
-            };
-            store.commit('syncData', payload);
+            await getWorkSpace2DData();
+            await getWorkSpace3DData();
         }
         return {
             success: true
@@ -40,12 +32,12 @@ export async function initUserData(needNewData = true, options = { is2D: true })
     }
 }
 
-export async function login(credentials, needNewData, options = { is2D: true }) {
+export async function login(credentials, needNewData) {
     try {
         const loginRes = await authApi.login(credentials);
         store.commit('auth/setToken', loginRes.token);
         // 登录后获取完整数据
-        return await initUserData(needNewData, options);
+        return await initUserData(needNewData);
     } catch (error) {
         const { head, messages } = error;
         return {
@@ -86,41 +78,27 @@ export async function uploadFunctionData(data, dimension) {
                     color: item.color,
                     nSamples: item.nSamples,
                     visible: item.visible,
-                    dimension: item.dimension,
+                    dimension: 2,
                     graphType: item.graphType,
                     closed: item.closed,
                     range: item.range
                 });
                 return acc;
             }, []);
-        } else {
-            
+        } else if (dimension === 3) {
+            data = data.reduceRight((acc, item) => {
+                acc.push({
+                    fn: item.fn,
+                    color: item.color || generateRandomHarmoniousColor(),
+                    visible: item.visible,
+                    dimension: 3,
+                });
+                return acc;
+            }, []);
         }
         await fnApi.uploadFunctionData(data);
         return {
             success: true
-        };
-    } catch (error) {
-        return {
-            success: false,
-            error
-        };
-    }
-}
-
-export async function getHistoricalData(currentPage) {
-    try {
-        const res = await fnApi.getHistoricalData(currentPage);
-        let fnData = res.mathdatas;
-        if (res.mathdatas?.length > 2) fnData.sort((a, b) => b.id - a.id);
-        const pagination = res.pagination;
-        const data = {
-            fnData,
-            pagination
-        };
-        return {
-            success: true,
-            data
         };
     } catch (error) {
         return {
@@ -274,4 +252,30 @@ export async function uploadAvatarUrl(url) {
             error
         };
     }
+}
+
+async function getWorkSpace2DData() {
+    const fnRes = await fnApi.getWorkSpace2DData();
+    const fnData = sortData(fnRes.mathdatas);
+    const latestData = fnData.length > 0 ? fnData[fnData.length - 1] : [];
+    // 更新数据
+    const payload = {
+        data: latestData,
+        is2D: true,
+        needUpload: false
+    };
+    store.commit('syncData', payload);
+}
+
+async function getWorkSpace3DData() {
+    const fnRes = await fnApi.getWorkSpace3DData();
+    const fnData = sortData(fnRes.mathdatas);
+    const latestData = fnData.length > 0 ? fnData[fnData.length - 1] : [];
+    // 更新数据
+    const payload = {
+        data: latestData,
+        is2D: false,
+        needUpload: false
+    };
+    store.commit('syncData', payload);
 }

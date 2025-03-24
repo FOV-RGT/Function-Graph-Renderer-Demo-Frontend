@@ -402,7 +402,7 @@ export default {
     async mounted() {
         const { success, error } = await service.initUserData();
         if (success) {
-            this.$refs.TwoDPlotCom.fuckRender(this.functionData_2D);
+            this.fuckRender();
             this.initFormData();
             this.show.info = true;
             console.log('初始化用户信息成功');
@@ -479,11 +479,11 @@ export default {
                 this.uploadUserData(newVal, 2);
             },
         },
-        // functionData_3D: {
-        //     handler(newVal) {
-        //         this.uploadUserData(newVal, 2);
-        //     },
-        // },
+        functionData_3D: {
+            handler(newVal) {
+                this.uploadUserData(newVal, 3);
+            },
+        },
         chartType: {
             handler(newVal) {
                 this.$refs.TwoDPlotCom.switchChartType(newVal);
@@ -491,6 +491,7 @@ export default {
         },
         closed: {
             handler(newVal) {
+                if (!this.is2D) return;
                 const newData = toRaw(this.currentData).map(item => ({
                     fn: item.fn,
                     color: item.color,
@@ -501,12 +502,13 @@ export default {
                     closed: newVal,
                     range: item.range
                 }));
-                this.fuckRender(newData);
+                this.$refs.TwoDPlotCom.fuckRender(newData);
                 this.storeDataToVuex(newData);
             },
         },
         range: {
             handler(newVal) {
+                if (!this.is2D) return
                 const newData = toRaw(this.currentData).map(item => ({
                     fn: item.fn,
                     color: item.color,
@@ -517,7 +519,7 @@ export default {
                     closed: item.closed,
                     range: newVal
                 }));
-                this.fuckRender(newData);
+                this.$refs.TwoDPlotCom.fuckRender(newData);
                 this.storeDataToVuex(newData);
             },
         },
@@ -566,13 +568,9 @@ export default {
             }
         },
 
-        fuckRender(data) {
-            console.log("fuckRender:", data);
-            if (this.show.render2D) {
-                this.$refs.TwoDPlotCom.fuckRender(data);
-            } else {
-                // this.$refs.ThreeDPlotCom.fuckRender(data);
-            }
+        fuckRender(data_2D = this.functionData_2D, data_3D = this.functionData_3D) {
+            this.$refs.TwoDPlotCom.fuckRender(data_2D);
+            this.$refs.ThreeDPlotCom.handleArrayInput(data_3D);
         },
 
         fuckList(evt, index) {
@@ -597,7 +595,6 @@ export default {
                             color: utils.generateRandomHarmoniousColor(),
                             visible: true,
                             uuid: null,
-                            previousOpacity: null,
                             dimension: 3
                         }
                     }
@@ -608,7 +605,7 @@ export default {
                 case 'minus': {
                     updatedData.splice(index, 1);
                     if (this.is2D) {
-                        this.fuckRender(updatedData);
+                        this.$refs.TwoDPlotCom.fuckRender(updatedData);
                     } else {
                         this.$refs.ThreeDPlotCom.delectObject(index);
                     }
@@ -618,7 +615,7 @@ export default {
                     updatedData[index].visible = !updatedData[index].visible;
                     this.storeData(updatedData[index]);
                     if (this.is2D) {
-                        this.fuckRender(updatedData);
+                        this.$refs.TwoDPlotCom.fuckRender(updatedData);
                     } else {
                         this.$refs.ThreeDPlotCom.switchObjectVisible(updatedData[index].visible, index);
                     }
@@ -634,14 +631,20 @@ export default {
             const needNewData = this.localFnData.length === 0 && this.currentData.length === 0;
             const { success, messages } = await service.login(data, needNewData);
             if (success) {
-                this.fuckRender(this.currentData);
+                if (needNewData) {
+                    this.fuckRender();
+                }
                 this.$store.commit('setUpload', true);
-                await this.uploadUserData(this.local2DData, 2);
-                await this.uploadUserData(this.local3DData, 3);
+                if (this.local2DData.length > 0) {
+                    await this.uploadUserData(this.local2DData, 2);
+                    this.local2DData = [];
+                }
+                if (this.local3DData.length > 0) {
+                    await this.uploadUserData(this.local3DData, 3);
+                    this.local3DData = [];
+                }
                 this.show.loginModal = false;
                 this.initFormData();
-                this.local2DData = [];
-                this.local3DData = [];
                 this.firework();
                 setTimeout(() => {
                     this.show.info = true;
@@ -710,11 +713,30 @@ export default {
         },
 
         renderFn(data) {
-            const { data_2D, data_3D } = data; // 3D要重做，历史记录暂时不接入
-            const newData_2D = [...toRaw(this.functionData_2D)];
-            newData_2D.push(...data_2D);
-            this.fuckRender(newData_2D);
-            this.storeDataToVuex(newData_2D);
+            const { data_2D, data_3D } = data;
+            if (data_2D.length > 0) {
+                const newData_2D = [...toRaw(this.functionData_2D)];
+                newData_2D.push(...data_2D);
+                const payload2D = {
+                    data: newData_2D,
+                    is2D: true,
+                    needUpload: true
+                };
+                this.$store.commit('syncData', payload2D);
+                this.$refs.TwoDPlotCom.fuckRender(newData_2D);
+            }
+            if (data_3D.length > 0) {
+                const newData_3D = [...toRaw(this.functionData_3D)];
+                const startIndex = newData_3D.length;
+                newData_3D.push(...data_3D);
+                const payload3D = {
+                    data: newData_3D,
+                    is2D: false,
+                    needUpload: true
+                };
+                this.$store.commit('syncData', payload3D);
+                this.$refs.ThreeDPlotCom.handleArrayInput(data_3D, startIndex);
+            }
         },
 
         async delectData(data, callback) {

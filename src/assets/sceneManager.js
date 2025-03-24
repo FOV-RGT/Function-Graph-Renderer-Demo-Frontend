@@ -221,13 +221,16 @@ export default class SceneManager {
         this.renderer.dispose();
     }
 
-    addObject(object, isFunctionObject) {
+    addObject(object, isFunctionObject, input) {
         object.userData = object.userData || {};
         if (isFunctionObject) {
             object.userData.isFunctionObject = isFunctionObject;
             console.log("添加函数对象:", object);
         }
         this.scene.add(object);
+        if (!input.visible) {
+            this.switchObjectVisible(false, object.uuid);
+        }
         return object.uuid;
     }
 
@@ -500,27 +503,23 @@ export default class SceneManager {
                 colorValue = `rgb(${match[1]}, ${match[2]}, ${match[3]})`;
             }
         }
-        console.log(opacity);
-
-        if (object) {
-            object.traverse(child => {
-                if (child.isMesh) {
+        object.traverse(child => {
+            if (child.isMesh || child.isLine || child.isLineSegments) {
+                if (child.material) {
                     child.material.color.set(colorValue);
                     child.material.opacity = opacity;
                 }
-            });
-        }
-    }
-
-    switchObjectVisible(visible, uuid, previousOpacity) {
-        const object = this.scene.getObjectByProperty('uuid', uuid);
-        const currentOpacity = this.getObjectOpacity(uuid);
-        object.traverse(child => {
-            if (child.isMesh) {
-                child.material.opacity = visible ? previousOpacity || 1 : 0;
             }
         });
-        return currentOpacity
+    }
+
+    switchObjectVisible(visible, uuid) {
+        const object = this.scene.getObjectByProperty('uuid', uuid);
+        object.traverse(child => {
+            if (child.isMesh || child.isLine || child.isLineSegments) {
+                child.visible = visible ? true : false;
+            }
+        });
     }
 
     getObjectOpacity(uuid) {

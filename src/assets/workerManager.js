@@ -7,7 +7,7 @@ export default class WorkerManager {
         const step = 0.26;
         const range = 400;
         const chunkSize = range / this.workerCount;
-        const exprString = input;
+        const exprString = input.fn;
         let chunksReceived = 0;
         const totalPointsPerChunk =
             Math.ceil(chunkSize / step + 1) *
@@ -36,7 +36,7 @@ export default class WorkerManager {
                 console.log(`当前进度: ${chunksReceived}/${this.workerCount}`);
                 if (chunksReceived === this.workerCount) {
                     console.log("分块计算完成");
-                    onComplete(points, color);
+                    onComplete(points, color, input);
                 }
             };
         }

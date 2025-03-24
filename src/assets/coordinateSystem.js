@@ -160,9 +160,11 @@ export default class CoordinateSystem {
         texture.minFilter = THREE.LinearFilter;
         texture.magFilter = THREE.LinearFilter;
         texture.anisotropy = 4; // 增加各向异性过滤级别
+        texture.premultiplyAlpha = true;
         // 创建精灵材质
         const spriteMaterial = new THREE.SpriteMaterial({
             map: texture,
+            alphaTest: 0.1,
             transparent: true,
         });
         // 创建精灵并设置位置

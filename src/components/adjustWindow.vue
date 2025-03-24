@@ -131,8 +131,8 @@ export default {
         },
 
         async updateUserConfig() {
-            if (!this.isAuthenticated) return;
             this.$store.commit('auth/updateUserConfig', this.userConfig);
+            if (!this.isAuthenticated) return;
             const { success, error } = await uploadUserConfig(this.userConfig);
             if (success) {
                 console.log('设置已保存');
