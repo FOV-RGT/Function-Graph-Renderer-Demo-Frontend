@@ -361,7 +361,7 @@ export default {
                 if (this.is2D) {
                     this.$refs.TwoDPlotCom.fuckRender(this.currentData);
                 } else {
-                    this.$refs.ThreeDPlotCom.handleInput(newData[index]);
+                    this.$refs.ThreeDPlotCom.handleInput(newData[index], index);
                 }
             }
         }, 400);
@@ -391,7 +391,11 @@ export default {
             this.storeData(currentData[index]);
             this.storeDataToVuex(currentData);
             if (this.currentData[index].visible) {
-                this.$refs.TwoDPlotCom.fuckRender(this.functionData_2D);
+                if (this.is2D) {
+                    this.$refs.TwoDPlotCom.fuckRender(this.functionData_2D);
+                } else {
+                    // this.$refs.ThreeDPlotCom.handleInput(currentData[index], index);
+                }
             }
         }, 25);
     },
@@ -587,6 +591,7 @@ export default {
                             fn: '',
                             color: utils.generateRandomHarmoniousColor(),
                             visible: true,
+                            uuid: null,
                             dimension: 3
                         }
                     }
@@ -596,20 +601,21 @@ export default {
                 }
                 case 'minus': {
                     updatedData.splice(index, 1);
-                    this.fuckRender(updatedData);
-                    break;
-                }
-                case 'delect': {
-                    updatedData[index].fn = '';
-                    this.storeData(updatedData[index]);
-                    this.fuckRender(updatedData);
+                    if (this.is2D) {
+                        this.fuckRender(updatedData);
+                    } else {
+                        this.$refs.ThreeDPlotCom.delectObject(index);
+                    }
                     break;
                 }
                 case 'visible': {
                     updatedData[index].visible = !updatedData[index].visible;
                     this.storeData(updatedData[index]);
-                    this.fuckRender(updatedData);
-                    console.log(this.currentPagination)
+                    if (this.is2D) {
+                        this.fuckRender(updatedData);
+                    } else {
+                        this.fuckRender(updatedData[index]);
+                    }
                     break;
                 }
             }
@@ -638,9 +644,8 @@ export default {
                 const data = {
                     head: '登录失败：',
                     messages,
-                    target: '.main-right'
+                    target: 'body'
                 }
-                console.log(data);
                 this.$refs.popupWindow.addMessage(data);
             }
             if (typeof callback === 'function') {
@@ -702,7 +707,7 @@ export default {
             const { data_2D, data_3D } = data; // 3D要重做，历史记录暂时不接入
             const newData_2D = [...toRaw(this.functionData_2D)];
             newData_2D.push(...data_2D);
-            this.fuckRender(this.currentData);
+            this.fuckRender(newData_2D);
             this.storeDataToVuex(newData_2D);
         },
 

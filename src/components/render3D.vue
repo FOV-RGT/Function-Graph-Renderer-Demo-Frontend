@@ -16,7 +16,7 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(['is2D', 'GLTFfile', 'functionData_3D']),
+        ...mapGetters(['is2D', 'GLTFfile', 'functionData_3D', 'Objectuuid']),
     },
     watch: {
         is2D: {
@@ -35,13 +35,6 @@ export default {
                 }
             }
         },
-        functionData_3D: {
-            handler(newVal) {
-                if (newVal && true) {
-                    this.handleArrayInput(newVal);
-                }
-            },
-        }
     },
     mounted() {
         this.init();
@@ -61,14 +54,30 @@ export default {
             this.sceneManager.resize();
         },
 
-        handleInput(input) {
-            this.functionRenderer.renderFunction(input);
+        async handleInput(input, index) {
+            const uuid = await this.functionRenderer.renderFunction(input);
+            const payload = {
+                uuid,
+                index
+            }
+            this.$store.commit('syncObjectuuid', payload)
         },
 
-        handleArrayInput(inputs) {
-            inputs.forEach(input => {
-                this.functionRenderer.renderFunction(input);
-            });
+        async handleArrayInput(inputs, index = 0) {
+            for (const input of inputs) {
+                const uuid = await this.functionRenderer.renderFunction(input);
+                const payload = {
+                    uuid,
+                    index
+                }
+                this.$store.commit('syncObjectuuid', payload)
+                index++;
+            }
+        },
+
+        delectObject(index) {
+            const uuid = this.Objectuuid[index];
+            this.sceneManager.delectObject(uuid);
         },
 
         setView(evt, zoomStep, moveStep) {

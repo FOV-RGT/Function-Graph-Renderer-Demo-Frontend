@@ -175,7 +175,7 @@ export default {
                 const data = {
                     head: '注册失败：',
                     messages,
-                    target: '.main-right'
+                    target: 'body'
                 }
                 this.$refs.popupWindow.addMessage(data);
             }
@@ -196,7 +196,6 @@ export default {
                 } else {
                     this.loading.loginSuccess = false;
                 }
-                this.loading.tryLogin = false;
             }
             this.loading.tryLogin = true;
             this.$emit('login', loginData, callback);

@@ -27,7 +27,7 @@ export default class SceneManager {
         // 开始动画循环
         this.animate();
         // setTimeout(() => {
-        //     this.coordinateSystem.exportToGLTF('axis_system_200.glb');
+        //     this.coordinateSystem.exportToGLTF('axisSystem.glb');
         // }, 3000);
     }
 
@@ -157,7 +157,6 @@ export default class SceneManager {
         this.cameraLights.add(this.cameraFill);
         // 将灯光组添加到相机
         this.camera.add(this.cameraLights);
-        // 将相机添加到场景(这一步很重要，否则相机上的灯光不会被渲染)
         this.scene.add(this.camera);
     }
 
@@ -210,6 +209,12 @@ export default class SceneManager {
         }
     }
 
+    delectObject(uuid) {
+        console.log("删除对象uuid:", uuid);
+        const object = this.scene.getObjectByProperty('uuid', uuid);
+        this.scene.remove(object);
+    }
+
     dispose() {
         // 清理资源
         this.controls.removeEventListener('change', this.updateLight);
@@ -217,10 +222,14 @@ export default class SceneManager {
         this.renderer.dispose();
     }
 
-    addObject(object, isFunctionObject = true) {
+    addObject(object, isFunctionObject) {
         object.userData = object.userData || {};
-        object.userData.isFunctionObject = isFunctionObject;
+        if (isFunctionObject) {
+            object.userData.isFunctionObject = isFunctionObject;
+            console.log("添加函数对象:", object);
+        }
         this.scene.add(object);
+        return object.uuid;
     }
 
     // 添加到SceneManager类中
@@ -477,5 +486,4 @@ export default class SceneManager {
         model.position.sub(center.multiplyScalar(scaleFactor));
         console.log(`模型已缩放: ${scaleFactor.toFixed(3)}倍`);
     }
-
 }
