@@ -94,7 +94,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters('auth', ['remoteConfig']),
+        ...mapGetters('auth', ['remoteConfig', 'isAuthenticated']),
     },
     mounted() {
         this.userConfig = deepClone(this.remoteConfig);
@@ -131,6 +131,7 @@ export default {
         },
 
         async updateUserConfig() {
+            if (!this.isAuthenticated) return;
             this.$store.commit('auth/updateUserConfig', this.userConfig);
             const { success, error } = await uploadUserConfig(this.userConfig);
             if (success) {
