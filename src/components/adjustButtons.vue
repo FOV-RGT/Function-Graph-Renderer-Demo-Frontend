@@ -1,9 +1,9 @@
 <template>
     <div class="overflow-hidden h-full flex flex-row justify-end items-center gap-8 select-none pl-2">
-        <div v-if="!is2D" class="file-upload-container">
+        <div v-if="!is2D" class="h-2/3">
             <input type="file" ref="GLTFFileInput" accept=".glb,.gltf" class="hidden"
                 @change="handleFileSelected" />
-            <button class="btn btn-soft btn-info btn-xl text-2xl" @click="triggerFileSelect">
+            <button class="btn btn-soft btn-info btn-xl text-xl h-full" @click="triggerFileSelect">
                 上传GLTF|GLB模型
             </button>
         </div>

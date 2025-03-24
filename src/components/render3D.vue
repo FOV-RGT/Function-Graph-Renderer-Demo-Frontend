@@ -3,7 +3,6 @@
 </template>
 
 <script>
-import { toRaw } from "vue";
 import { mapGetters } from "vuex";
 import SceneManager from '../assets/sceneManager.js';
 import FunctionRenderer from '../assets/functionRender.js';
@@ -17,14 +16,23 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(['is2D', 'GLTFfile']),
+        ...mapGetters(['is2D', 'GLTFfile', 'Objectuuid']),
     },
     watch: {
-        is2D(newVal) {
-            if (newVal) {
-                this.$nextTick(() => {
-                    this.sceneManager.resize();
-                });
+        is2D: {
+            handler(newVal) {
+                if (newVal) {
+                    this.$nextTick(() => {
+                        this.sceneManager.resize();
+                    });
+                }
+            }
+        },
+        GLTFfile: {
+            handler(newVal) {
+                if (newVal) {
+                    this.sceneManager.loadGLTFModel(newVal);
+                }
             }
         },
         GLTFfile(newVal) {
@@ -50,27 +58,51 @@ export default {
             this.sceneManager.resize();
         },
 
-        formatInput(inputs, index) {
-            // 每次用户输入函数，清除旧的渲染
-            this.sceneManager.clearScene();
-            // 格式化输入并保存到store
-            const fn = inputs.map(evt => ({ fn: evt }));
-            const rawData = toRaw(this.$store.state.functionData_3D);
-            const newFunctionData = [...rawData];
-            newFunctionData.splice(index, 1, ...fn);
-            this.$store.commit('syncData', {
-                data: newFunctionData,
-                is2D: false,
-            });
-            console.log(newFunctionData);
-            // 渲染函数
-            newFunctionData.forEach(input => {
-                this.functionRenderer.renderFunction(input.fn);
-            });
+        async handleInput(input, index) {
+            this.delectObject(index);
+            const uuid = await this.functionRenderer.renderFunction(input);
+            const payload = {
+                uuid,
+                index
+            }
+            this.$store.commit('syncObjectuuid', payload)
+        },
+
+        async handleArrayInput(inputs, index = 0) {
+            for (const input of inputs) {
+                console.log("添加3D数据", input);
+                const uuid = await this.functionRenderer.renderFunction(input);
+                const payload = {
+                    uuid,
+                    index
+                }
+                this.$store.commit('syncObjectuuid', payload)
+                index++;
+            }
+        },
+
+        delectObject(index) {
+            const uuid = this.Objectuuid[index];
+            this.sceneManager.delectObject(uuid);
         },
 
         setView(evt, zoomStep, moveStep) {
             this.sceneManager.setView(evt, zoomStep, moveStep);
+        },
+
+        setObjectColor(color, index) {
+            const uuid = this.Objectuuid[index];
+            this.sceneManager.setObjectColor(color, uuid);
+        },
+
+        switchObjectVisible(visible, index) {
+            const uuid = this.Objectuuid[index];
+            this.sceneManager.switchObjectVisible(visible, uuid);
+            const payload = {
+                visible,
+                index
+            }
+            this.$store.commit('storeObjectVisible', payload);
         }
     }
 };

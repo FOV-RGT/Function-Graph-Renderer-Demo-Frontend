@@ -11,50 +11,52 @@ export default class FunctionRenderer {
         this.workerManager = new WorkerManager();
     }
 
-    renderFunction(input) {
-        if (!input) return;
+    async renderFunction(input) {
+        const fn = input.fn;
         const startTime = performance.now();
+        let uuid;
         // 处理显式函数 x=f(y,z), y=f(x,z), z=f(x,y)
-        if (input.startsWith("x=")) {
-            this.renderExplicitFunction(input, "x", startTime);
+        if (fn.startsWith("x=")) {
+            uuid = await this.renderExplicitFunction(input, "x", startTime);
         }
-        else if (input.startsWith("y=")) {
-            this.renderExplicitFunction(input, "y", startTime);
+        else if (fn.startsWith("y=")) {
+            uuid = await this.renderExplicitFunction(input, "y", startTime);
         }
-        else if (input.startsWith("z=")) {
-            this.renderExplicitFunction(input, "z", startTime);
+        else if (fn.startsWith("z=")) {
+            uuid = await this.renderExplicitFunction(input, "z", startTime);
         }
         // 处理几何体
-        else if (input.startsWith("sphere")) {
-            this.renderSphere(input);
+        else if (fn.startsWith("sphere")) {
+            uuid = await this.renderSphere(input);
         }
-        else if (input.startsWith("cube")) {
-            this.renderCube(input);
+        else if (fn.startsWith("cube")) {
+            uuid = await this.renderCube(input);
         }
+        return uuid
     }
 
-    renderExplicitFunction(input, variableType, startTime) {
+    async renderExplicitFunction(input, variableType, startTime) {
         // 检查是否为常数
-        const allNumbers = /^\d+(\.\d+)?$/.test(input.slice(2));
+        const allNumbers = /^\d+(\.\d+)?$/.test(input.fn.slice(2));
         if (allNumbers) {
-            this.renderConstantFunction(input, variableType);
+            return await this.renderConstantFunction(input, variableType);
         } else {
             try {
-                const expr = parse(input);
+                const expr = parse(input.fn);
                 const variables = this.extractVariables(expr);
                 if (variables.length === 1) {
-                    this.renderOneDimensionalFunction(expr, variables[0], variableType);
+                    return await this.renderOneDimensionalFunction(input, expr, variables[0], variableType);
                 } else {
-                    this.renderTwoDimensionalFunction(input, variableType, startTime);
+                    return await this.renderTwoDimensionalFunction(input, variableType, startTime);
                 }
             } catch (error) {
-                console.error("Error rendering function:", error);
+                console.error("渲染方程出错:", error);
             }
         }
     }
 
-    renderConstantFunction(input, variableType) {
-        const value = parseFloat(input.slice(2));
+    async renderConstantFunction(input, variableType) {
+        const value = parseFloat(input.fn.slice(2));
         let points = [];
         switch (variableType) {
             case "x":
@@ -76,17 +78,17 @@ export default class FunctionRenderer {
                 ];
                 break;
         }
-        const line = this.geometryBuilder.createLine(points);
-        this.sceneManager.addObject(line);
+        const line = this.geometryBuilder.createLine(points, input.color);
+        return await this.sceneManager.addObject(line, true, input);
     }
 
-    renderOneDimensionalFunction(expr, variable, variableType) {
+    async renderOneDimensionalFunction(input, expr, variable, variableType) {
         const points = [];
         for (let i = -200; i <= 200; i += 0.001) {
             const scope = { [variable]: i };
             let value;
             try {
-                value = THREE.MathUtils.clamp(expr.evaluate(scope), -7, 7);
+                value = expr.evaluate(scope);
             } catch (e) {
                 continue; // 跳过计算错误
             }
@@ -111,42 +113,49 @@ export default class FunctionRenderer {
             points.push(point);
         }
         if (points.length > 0) {
-            const line = this.geometryBuilder.createLine(points);
-            this.sceneManager.addObject(line);
+            const line = this.geometryBuilder.createLine(points, input.color);
+            return await this.sceneManager.addObject(line, true, input);
         }
     }
 
-    renderTwoDimensionalFunction(input, variableType, startTime) {
-        const onComplete = (points) => {
-            const surface = this.geometryBuilder.createSurface(points);
-            this.sceneManager.addObject(surface);
-            const elapsedTime = performance.now() - startTime;
-            console.log("生成完成，耗时", elapsedTime / 1000, "秒");
-        };
-        this.workerManager.calculateSurface(input, variableType, onComplete);
+    async renderTwoDimensionalFunction(input, variableType, startTime) {
+        return new Promise((resolve, reject) => {
+            const onComplete = (points, color, input) => {
+                try {
+                    const surface = this.geometryBuilder.createSurface(points, color);
+                    const uuid = this.sceneManager.addObject(surface, true, input);
+                    const elapsedTime = performance.now() - startTime;
+                    console.log("生成完成，耗时", elapsedTime / 1000, "秒");
+                    resolve(uuid);
+                } catch (error) {
+                    reject(error);
+                }
+            };
+            this.workerManager.calculateSurface(input, variableType, onComplete, input.color);
+        });
     }
 
-    renderSphere(input) {
-        const params = this.parseParameters(input);
+    async renderSphere(input) {
+        const params = this.parseParameters(input.fn);
         const radius = parseFloat(params.radius || 1);
         const segments = parseInt(params.segments || 32, 10);
         const rings = parseInt(params.rings || 32, 10);
-        const sphere = this.geometryBuilder.createSphere(radius, segments, rings);
+        const sphere = this.geometryBuilder.createSphere(radius, segments, rings, input.color);
         // 使用SceneManager的复杂几何体创建方法
         // const sphere = this.sceneManager.createComplexGeometry('sphere', {
         //     radius,
         //     segments
         // });
-        this.sceneManager.addObject(sphere);
+        return await this.sceneManager.addObject(sphere, true, input);
     }
 
-    renderCube(input) {
-        const params = this.parseParameters(input);
+    async renderCube(input) {
+        const params = this.parseParameters(input.fn);
         const width = parseFloat(params.width || 1);
         const height = parseFloat(params.height || 1);
         const depth = parseFloat(params.depth || 1);
-        const cube = this.geometryBuilder.createCube(width, height, depth);
-        this.sceneManager.addObject(cube);
+        const cube = this.geometryBuilder.createCube(width, height, depth, input.color);
+        return await this.sceneManager.addObject(cube, true, input);
     }
 
     parseParameters(input) {
@@ -158,7 +167,6 @@ export default class FunctionRenderer {
                 params[key] = parts[1].trim();
             }
         });
-        console.log("66666", params);
         return params;
     }
 

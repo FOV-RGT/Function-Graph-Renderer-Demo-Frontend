@@ -3,7 +3,6 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import CoordinateSystem from './coordinateSystem.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-
 export default class SceneManager {
     constructor(container) {
         this.container = container;
@@ -27,7 +26,7 @@ export default class SceneManager {
         // 开始动画循环
         this.animate();
         // setTimeout(() => {
-        //     this.coordinateSystem.exportToGLTF('axis_system_200.glb');
+        //     this.coordinateSystem.exportToGLTF('axisSystem.glb');
         // }, 3000);
     }
 
@@ -157,7 +156,6 @@ export default class SceneManager {
         this.cameraLights.add(this.cameraFill);
         // 将灯光组添加到相机
         this.camera.add(this.cameraLights);
-        // 将相机添加到场景(这一步很重要，否则相机上的灯光不会被渲染)
         this.scene.add(this.camera);
     }
 
@@ -210,6 +208,12 @@ export default class SceneManager {
         }
     }
 
+    delectObject(uuid) {
+        console.log("删除对象uuid:", uuid);
+        const object = this.scene.getObjectByProperty('uuid', uuid);
+        this.scene.remove(object);
+    }
+
     dispose() {
         // 清理资源
         this.controls.removeEventListener('change', this.updateLight);
@@ -217,10 +221,17 @@ export default class SceneManager {
         this.renderer.dispose();
     }
 
-    addObject(object, isFunctionObject = true) {
+    addObject(object, isFunctionObject, input) {
         object.userData = object.userData || {};
-        object.userData.isFunctionObject = isFunctionObject;
+        if (isFunctionObject) {
+            object.userData.isFunctionObject = isFunctionObject;
+            console.log("添加函数对象:", object);
+        }
         this.scene.add(object);
+        if (!input.visible) {
+            this.switchObjectVisible(false, object.uuid);
+        }
+        return object.uuid;
     }
 
     // 添加到SceneManager类中
@@ -478,4 +489,48 @@ export default class SceneManager {
         console.log(`模型已缩放: ${scaleFactor.toFixed(3)}倍`);
     }
 
+    setObjectColor(color, uuid) {
+        const object = this.scene.getObjectByProperty('uuid', uuid);
+        let colorValue = color || generateRandomHarmoniousColor();
+        let opacity = 1.0;
+        // 处理rgba字符串格式
+        if (colorValue.startsWith('rgba')) {
+            const match = colorValue.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+            if (match && match[4] !== undefined) {
+                // 提取透明度值
+                opacity = parseFloat(match[4]);
+                // 重构为rgb格式，移除透明度部分
+                colorValue = `rgb(${match[1]}, ${match[2]}, ${match[3]})`;
+            }
+        }
+        object.traverse(child => {
+            if (child.isMesh || child.isLine || child.isLineSegments) {
+                if (child.material) {
+                    child.material.color.set(colorValue);
+                    child.material.opacity = opacity;
+                }
+            }
+        });
+    }
+
+    switchObjectVisible(visible, uuid) {
+        const object = this.scene.getObjectByProperty('uuid', uuid);
+        object.traverse(child => {
+            if (child.isMesh || child.isLine || child.isLineSegments) {
+                child.visible = visible ? true : false;
+            }
+        });
+    }
+
+    getObjectOpacity(uuid) {
+        const object = this.scene.getObjectByProperty('uuid', uuid);
+        let opacity;
+        object.traverse(child => {
+            if (child.isMesh && child.material) {
+                opacity = child.material.opacity;
+                return
+            }
+        });
+        return opacity
+    }
 }
