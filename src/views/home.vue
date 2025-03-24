@@ -394,7 +394,7 @@ export default {
                 if (this.is2D) {
                     this.$refs.TwoDPlotCom.fuckRender(this.functionData_2D);
                 } else {
-                    // this.$refs.ThreeDPlotCom.handleInput(currentData[index], index);
+                    this.$refs.ThreeDPlotCom.setObjectColor(color, index);
                 }
             }
         }, 25);

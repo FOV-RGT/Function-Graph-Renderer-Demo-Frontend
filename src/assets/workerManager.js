@@ -3,7 +3,7 @@ export default class WorkerManager {
         this.workerCount = 10;  // 工作线程数量
     }
 
-    calculateSurface(input, target, onComplete) {
+    calculateSurface(input, target, onComplete, color) {
         const step = 0.26;
         const range = 400;
         const chunkSize = range / this.workerCount;
@@ -36,7 +36,7 @@ export default class WorkerManager {
                 console.log(`当前进度: ${chunksReceived}/${this.workerCount}`);
                 if (chunksReceived === this.workerCount) {
                     console.log("分块计算完成");
-                    onComplete(points);
+                    onComplete(points, color);
                 }
             };
         }

@@ -82,6 +82,11 @@ export default {
 
         setView(evt, zoomStep, moveStep) {
             this.sceneManager.setView(evt, zoomStep, moveStep);
+        },
+
+        setObjectColor(color, index) {
+            const uuid = this.Objectuuid[index];
+            this.sceneManager.setObjectColor(color, uuid);
         }
     }
 };

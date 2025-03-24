@@ -486,4 +486,30 @@ export default class SceneManager {
         model.position.sub(center.multiplyScalar(scaleFactor));
         console.log(`模型已缩放: ${scaleFactor.toFixed(3)}倍`);
     }
+
+    setObjectColor(color, uuid) {
+        const object = this.scene.getObjectByProperty('uuid', uuid);
+        let colorValue = color || generateRandomHarmoniousColor();
+        let opacity = 1.0;
+        // 处理rgba字符串格式
+        if (colorValue.startsWith('rgba')) {
+            const match = colorValue.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+            if (match && match[4] !== undefined) {
+                // 提取透明度值
+                opacity = parseFloat(match[4]);
+                // 重构为rgb格式，移除透明度部分
+                colorValue = `rgb(${match[1]}, ${match[2]}, ${match[3]})`;
+            }
+        }
+        console.log(opacity);
+        
+        if (object) {
+            object.traverse(child => {
+                if (child.isMesh) {
+                    child.material.color.set(colorValue);
+                    child.material.opacity = opacity;
+                }
+            });
+        }
+    }
 }
