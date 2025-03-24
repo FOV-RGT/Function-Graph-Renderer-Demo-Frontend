@@ -479,6 +479,11 @@ export default {
                 this.uploadUserData(newVal, 2);
             },
         },
+        // functionData_3D: {
+        //     handler(newVal) {
+        //         this.uploadUserData(newVal, 2);
+        //     },
+        // },
         chartType: {
             handler(newVal) {
                 this.$refs.TwoDPlotCom.switchChartType(newVal);
@@ -592,6 +597,7 @@ export default {
                             color: utils.generateRandomHarmoniousColor(),
                             visible: true,
                             uuid: null,
+                            previousOpacity: null,
                             dimension: 3
                         }
                     }
@@ -614,7 +620,7 @@ export default {
                     if (this.is2D) {
                         this.fuckRender(updatedData);
                     } else {
-                        this.fuckRender(updatedData[index]);
+                        this.$refs.ThreeDPlotCom.switchObjectVisible(updatedData[index].visible, index);
                     }
                     break;
                 }

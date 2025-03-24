@@ -17,7 +17,8 @@ const store = createStore({
         functionData_3D: state => state.functionData_3D,
         needUpload: state => state.needUpload,
         GLTFfile: state => state.GLTFfile,
-        Objectuuid: state => state.functionData_3D.map(item => item.uuid)
+        Objectuuid: state => state.functionData_3D.map(item => item.uuid),
+        previousOpacity: state => state.functionData_3D.map(item => item.previousOpacity)
     },
     mutations: {
         switchRender(state) {
@@ -40,6 +41,9 @@ const store = createStore({
         },
         syncObjectuuid(state, payload) {
             state.functionData_3D[payload.index].uuid = payload.uuid;
+        },
+        storePreviousOpacity(state, payload) {
+            state.functionData_3D[payload.index].previousOpacity = payload.currentOpacity;
         }
     },
     actions: {

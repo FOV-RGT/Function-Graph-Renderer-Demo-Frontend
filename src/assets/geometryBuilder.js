@@ -36,7 +36,7 @@ export default class GeometryBuilder {
         let opacity = 1.0;
         
         // 处理rgba字符串格式
-        if (typeof colorValue === 'string' && colorValue.startsWith('rgba')) {
+        if (colorValue.startsWith('rgba')) {
             const match = colorValue.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
             if (match && match[4] !== undefined) {
                 // 提取透明度值
@@ -62,7 +62,7 @@ export default class GeometryBuilder {
         let opacity = 1.0;
         
         // 处理rgba字符串格式
-        if (typeof colorValue === 'string' && colorValue.startsWith('rgba')) {
+        if (colorValue.startsWith('rgba')) {
             const match = colorValue.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
             if (match && match[4] !== undefined) {
                 opacity = parseFloat(match[4]);

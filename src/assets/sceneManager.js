@@ -3,7 +3,6 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import CoordinateSystem from './coordinateSystem.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-
 export default class SceneManager {
     constructor(container) {
         this.container = container;
@@ -502,7 +501,7 @@ export default class SceneManager {
             }
         }
         console.log(opacity);
-        
+
         if (object) {
             object.traverse(child => {
                 if (child.isMesh) {
@@ -511,5 +510,28 @@ export default class SceneManager {
                 }
             });
         }
+    }
+
+    switchObjectVisible(visible, uuid, previousOpacity) {
+        const object = this.scene.getObjectByProperty('uuid', uuid);
+        const currentOpacity = this.getObjectOpacity(uuid);
+        object.traverse(child => {
+            if (child.isMesh) {
+                child.material.opacity = visible ? previousOpacity || 1 : 0;
+            }
+        });
+        return currentOpacity
+    }
+
+    getObjectOpacity(uuid) {
+        const object = this.scene.getObjectByProperty('uuid', uuid);
+        let opacity;
+        object.traverse(child => {
+            if (child.isMesh && child.material) {
+                opacity = child.material.opacity;
+                return
+            }
+        });
+        return opacity
     }
 }

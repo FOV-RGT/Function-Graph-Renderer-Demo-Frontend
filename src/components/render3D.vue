@@ -16,7 +16,7 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(['is2D', 'GLTFfile', 'functionData_3D', 'Objectuuid']),
+        ...mapGetters(['is2D', 'GLTFfile', 'functionData_3D', 'Objectuuid', 'previousOpacity']),
     },
     watch: {
         is2D: {
@@ -87,6 +87,17 @@ export default {
         setObjectColor(color, index) {
             const uuid = this.Objectuuid[index];
             this.sceneManager.setObjectColor(color, uuid);
+        },
+
+        switchObjectVisible(visible, index) {
+            const uuid = this.Objectuuid[index];
+            const previousOpacity = this.previousOpacity[index];
+            const currentOpacity = this.sceneManager.switchObjectVisible(visible, uuid, previousOpacity);
+            const payload = {
+                currentOpacity,
+                index
+            }
+            this.$store.commit('storePreviousOpacity', payload);
         }
     }
 };
