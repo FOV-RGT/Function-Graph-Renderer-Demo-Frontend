@@ -35,6 +35,11 @@ export default {
                 }
             }
         },
+        GLTFfile(newVal) {
+            if (newVal) {
+                this.sceneManager.loadGLTFModel(newVal);
+            }
+        }
     },
     mounted() {
         this.init();
