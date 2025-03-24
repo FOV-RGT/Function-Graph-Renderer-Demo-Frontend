@@ -246,7 +246,7 @@
                                 <div class="flex w-full justify-center items-center shrink-0">
                                     <div class="flex flex-1 justify-center items-center gap-5">
                                         <img src="/加号/加号.png" alt="" class="cursor-pointer w-1/15"
-                                            @click="fuckList('plus-b', displayData.startIndex + displayData.endIndex + 1)">
+                                            @click="fuckList('plus', displayData.startIndex + displayData.endIndex + 1)">
                                     </div>
                                 </div>
                             </li>
@@ -334,32 +334,35 @@ export default {
             formData: {},
             fnData: [],
             pagination: {},
-            localFnData: [],
             selectedAvatarFile: null,
             currentPage: 1,
-            leftPin: true
+            leftPin: true,
+            local2DData: [],
+            local3DData: [],
         };
     },
     created() {
         // 输入防抖
         this.debouncedAddInput = utils.debounce((input, index) => {
             const formatInput = input.replace(/\s+/g, "");
+            const newData = [...toRaw(this.currentData)];
+            newData[index].fn = formatInput;
+            this.storeData(newData[index]);
+            this.storeDataToVuex(newData);
             if (this.show.render2D) {
                 try {
                     parse(formatInput);
-                    const newData = [...toRaw(this.currentData)];
-                    newData[index].fn = formatInput;
-                    this.storeData(newData[index]);
-                    this.storeDataToVuex(newData);
-                    if (this.currentData[index].visible) {
-                        this.$refs.TwoDPlotCom.fuckRender(this.functionData_2D);
-                    }
                 } catch (error) {
                     console.log('输入错误:', error);
                     return;
                 }
-            } else {
-                this.$refs.ThreeDPlotCom.formatInput([formatInput], index);
+            }
+            if (this.currentData[index].visible) {
+                if (this.is2D) {
+                    this.$refs.TwoDPlotCom.fuckRender(this.currentData);
+                } else {
+                    this.$refs.ThreeDPlotCom.handleInput(newData[index]);
+                }
             }
         }, 400);
         this.debouncedUpdateSamplePoints = utils.debounce((samples, index) => {
@@ -461,14 +464,16 @@ export default {
         },
         displayPageCount() {
             return this.currentPage < this.currentPagination.totalPage ? this.currentPagination.totalPage : this.currentPage;
+        },
+        localFnData() {
+            return this.is2D ? this.local2DData : this.local3DData;
         }
     },
     watch: {
         functionData_2D: {
             handler(newVal) {
-                this.uploadUserData(newVal);
+                this.uploadUserData(newVal, 2);
             },
-            deep: true
         },
         chartType: {
             handler(newVal) {
@@ -565,31 +570,26 @@ export default {
             const updatedData = [...toRaw(this.currentData)];
             switch (evt) {
                 case 'plus': {
-                    const fnData = {
-                        fn: '',
-                        color: utils.generateRandomHarmoniousColor(),
-                        nSamples: 2025, // 确保有默认采样点数
-                        visible: true,
-                        dimension: 2,
-                        graphType: 'interval', // 添加默认图表类型
-                        closed: this.closed,
-                        range: this.range
-                    };
-                    this.storeData(fnData);
-                    updatedData.splice(index + 1, 0, fnData);
-                    break;
-                }
-                case 'plus-b': {
-                    const fnData = {
-                        fn: '',
-                        color: utils.generateRandomHarmoniousColor(),
-                        nSamples: 2025, // 确保有默认采样点数
-                        visible: true,
-                        dimension: 2,
-                        graphType: 'interval', // 添加默认图表类型
-                        closed: this.closed,
-                        range: this.range
-                    };
+                    let fnData = {};
+                    if (this.is2D) {
+                        fnData = {
+                            fn: '',
+                            color: utils.generateRandomHarmoniousColor(),
+                            nSamples: 2025, // 确保有默认采样点数
+                            visible: true,
+                            dimension: 2,
+                            graphType: 'interval', // 添加默认图表类型
+                            closed: this.closed,
+                            range: this.range
+                        };
+                    } else {
+                        fnData = {
+                            fn: '',
+                            color: utils.generateRandomHarmoniousColor(),
+                            visible: true,
+                            dimension: 3
+                        }
+                    }
                     this.storeData(fnData);
                     updatedData.push(fnData);
                     break;
@@ -624,10 +624,12 @@ export default {
             if (success) {
                 this.fuckRender(this.currentData);
                 this.$store.commit('setUpload', true);
-                await this.uploadUserData(this.localFnData);
+                await this.uploadUserData(this.local2DData, 2);
+                await this.uploadUserData(this.local3DData, 3);
                 this.show.loginModal = false;
                 this.initFormData();
-                this.localFnData = [];
+                this.local2DData = [];
+                this.local3DData = [];
                 this.firework();
                 setTimeout(() => {
                     this.show.info = true;
@@ -650,9 +652,10 @@ export default {
         logout() {
             this.show.loginModal = false;
             const data_2D = utils.deepClone(this.functionData_2D)
-            // const data_3D = utils.deepClone(this.functionData_3D)
-            const data_3D = [];
-            this.localFnData = [...data_2D, ...data_3D];
+            const data_3D = utils.deepClone(this.functionData_3D)
+            // const data_3D = [];
+            this.local2DData = [...data_2D];
+            this.local3DData = [...data_3D];
             setTimeout(() => {
                 this.$store.commit('auth/cleanState');
                 this.formData = {};
@@ -713,9 +716,9 @@ export default {
             }
         },
 
-        async uploadUserData(data) {
+        async uploadUserData(data, dimension) {
             if (!this.isAuthenticated || data.length === 0) return;
-            const { success, skip, error } = await service.uploadFunctionData(data);
+            const { success, skip, error } = await service.uploadFunctionData(data, dimension);
             if (success) {
                 console.log('上传数据成功');
             } else if (skip) {
@@ -726,7 +729,11 @@ export default {
         },
 
         deleteLocalData(deleteIds) {
-            this.localFnData = this.localFnData.filter(item => !deleteIds.has(item.id));
+            if (this.is2D) {
+                this.local2DData = this.local2DData.filter(item => !deleteIds.has(item.id));
+            } else {
+                this.local3DData = this.local3DData.filter(item => !deleteIds.has(item.id));
+            }
         },
 
         switchModal() {
@@ -748,7 +755,12 @@ export default {
 
         storeData(data) {
             if (!this.isAuthenticated) {
-                this.localFnData.unshift(utils.deepClone(data));
+                const storeData = utils.deepClone(data);
+                if (this.is2D) {
+                    this.local2DData.unshift(storeData);
+                } else {
+                    this.local3DData.unshift(storeData);
+                }
             } else {
                 this.uploadChangeData(data);
             }

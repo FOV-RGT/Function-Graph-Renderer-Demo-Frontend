@@ -72,26 +72,30 @@ export async function updateUserInfo(info) {
     }
 }
 
-export async function uploadFunctionData(data) {
+export async function uploadFunctionData(data, dimension) {
     if (!store.state.needUpload) {
         return {
             skip: true
         }
     }
     try {
-        data = data.reduceRight((acc, item) => {
-            acc.push({
-                fn: item.fn,
-                color: item.color,
-                nSamples: item.nSamples,
-                visible: item.visible,
-                dimension: item.dimension,
-                graphType: item.graphType,
-                closed: item.closed,
-                range: item.range
-            });
-            return acc;
-        }, []);
+        if (dimension === 2) {
+            data = data.reduceRight((acc, item) => {
+                acc.push({
+                    fn: item.fn,
+                    color: item.color,
+                    nSamples: item.nSamples,
+                    visible: item.visible,
+                    dimension: item.dimension,
+                    graphType: item.graphType,
+                    closed: item.closed,
+                    range: item.range
+                });
+                return acc;
+            }, []);
+        } else {
+            
+        }
         await fnApi.uploadFunctionData(data);
         return {
             success: true

@@ -3,7 +3,6 @@
 </template>
 
 <script>
-import { toRaw } from "vue";
 import { mapGetters } from "vuex";
 import SceneManager from '../assets/sceneManager.js';
 import FunctionRenderer from '../assets/functionRender.js';
@@ -17,24 +16,36 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(['is2D', 'GLTFfile']),
+        ...mapGetters(['is2D', 'GLTFfile', 'functionData_3D']),
     },
     watch: {
-        is2D(newVal) {
-            if (newVal) {
-                this.$nextTick(() => {
-                    this.sceneManager.resize();
-                });
+        is2D: {
+            handler(newVal) {
+                if (newVal) {
+                    this.$nextTick(() => {
+                        this.sceneManager.resize();
+                    });
+                }
             }
         },
-        GLTFfile(newVal) {
-            if (newVal) {
-                this.sceneManager.loadGLTFModel(newVal);
+        GLTFfile: {
+            handler(newVal) {
+                if (newVal) {
+                    this.sceneManager.loadGLTFModel(newVal);
+                }
             }
+        },
+        functionData_3D: {
+            handler(newVal) {
+                if (newVal && true) {
+                    this.handleArrayInput(newVal);
+                }
+            },
         }
     },
     mounted() {
         this.init();
+        this.handleArrayInput(this.functionData_3D);
     },
     beforeUnmount() {
         this.sceneManager.dispose();
@@ -50,22 +61,13 @@ export default {
             this.sceneManager.resize();
         },
 
-        formatInput(inputs, index) {
-            // 每次用户输入函数，清除旧的渲染
-            this.sceneManager.clearScene();
-            // 格式化输入并保存到store
-            const fn = inputs.map(evt => ({ fn: evt }));
-            const rawData = toRaw(this.$store.state.functionData_3D);
-            const newFunctionData = [...rawData];
-            newFunctionData.splice(index, 1, ...fn);
-            this.$store.commit('syncData', {
-                data: newFunctionData,
-                is2D: false,
-            });
-            console.log(newFunctionData);
-            // 渲染函数
-            newFunctionData.forEach(input => {
-                this.functionRenderer.renderFunction(input.fn);
+        handleInput(input) {
+            this.functionRenderer.renderFunction(input);
+        },
+
+        handleArrayInput(inputs) {
+            inputs.forEach(input => {
+                this.functionRenderer.renderFunction(input);
             });
         },
 

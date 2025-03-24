@@ -12,24 +12,24 @@ export default class FunctionRenderer {
     }
 
     renderFunction(input) {
-        if (!input) return;
+        const fn = input.fn;
         const startTime = performance.now();
         // 处理显式函数 x=f(y,z), y=f(x,z), z=f(x,y)
-        if (input.startsWith("x=")) {
-            this.renderExplicitFunction(input, "x", startTime);
+        if (fn.startsWith("x=")) {
+            this.renderExplicitFunction(fn, "x", startTime);
         }
-        else if (input.startsWith("y=")) {
-            this.renderExplicitFunction(input, "y", startTime);
+        else if (fn.startsWith("y=")) {
+            this.renderExplicitFunction(fn, "y", startTime);
         }
-        else if (input.startsWith("z=")) {
-            this.renderExplicitFunction(input, "z", startTime);
+        else if (fn.startsWith("z=")) {
+            this.renderExplicitFunction(fn, "z", startTime);
         }
         // 处理几何体
-        else if (input.startsWith("sphere")) {
-            this.renderSphere(input);
+        else if (fn.startsWith("sphere")) {
+            this.renderSphere(fn);
         }
-        else if (input.startsWith("cube")) {
-            this.renderCube(input);
+        else if (fn.startsWith("cube")) {
+            this.renderCube(fn);
         }
     }
 

@@ -132,6 +132,7 @@ export default {
         }
     },
     computed: {
+        ...mapGetters(['is2D']),
         ...mapGetters('auth', ['isAuthenticated']),
         isSelectedAll() {
             return this.displayData?.length > 0 ? this.selection.length === this.displayData.length : false;
