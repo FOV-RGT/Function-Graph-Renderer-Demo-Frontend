@@ -466,7 +466,7 @@ export default {
     computed: {
         ...mapGetters(["functionData_2D", "functionData_3D", "is2D"]),
         ...mapGetters('auth', ['userInfo', 'displayName', 'isAuthenticated',
-            'chartType', 'closed', 'range', 'dash', 'grid', 'zoomFactor', 'moveFactor'
+            'chartType', 'closed', 'range', 'dash', 'grid', 'zoomFactor', 'moveFactor','nSamples'
         ]),
         currentInputExample() {
             return this.show.render2D ? 'e.g. 8log(cos(sin(sqrt(x^3))))'
@@ -600,6 +600,23 @@ export default {
                 this.show.render2D = newVal;
             },
         },
+        nSamples: {
+            handler(newVal) {
+                if (!this.show.render2D) return
+                const newData = toRaw(this.currentData).map(item => ({
+                    fn: item.fn,
+                    color: item.color,
+                    nSamples: newVal,
+                    visible: item.visible,
+                    dimension: item.dimension,
+                    graphType: item.graphType,
+                    closed: item.closed,
+                    range: item.range
+                }));
+                this.$refs.TwoDPlotCom.fuckRender(newData);
+                this.storeDataToVuex(newData);
+            },
+        },
     },
     methods: {
         switchRenderer() {
@@ -630,12 +647,12 @@ export default {
                         fnData = {
                             fn: '',
                             color: utils.generateRandomHarmoniousColor(),
-                            nSamples: 2025, // 确保有默认采样点数
+                            nSamples: this.nSamples || 2025,
                             visible: true,
                             dimension: 2,
                             graphType: 'interval', // 添加默认图表类型
                             closed: this.closed,
-                            range: this.range
+                            range: this.range,
                         };
                     } else {
                         fnData = {

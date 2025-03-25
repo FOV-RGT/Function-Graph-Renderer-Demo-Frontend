@@ -23,7 +23,7 @@ export default {
             grid: true,
             zoomFactor: 0.5,
             moveFactor: 0.2,
-            globalSamples: '',//默认为空
+            nSamples: 2025
         }
     },
     
@@ -46,6 +46,7 @@ export default {
         grid: state => state.userConfig.grid,
         zoomFactor: state => state.userConfig.zoomFactor,
         moveFactor: state => state.userConfig.moveFactor,
+        nSamples : state => state.userConfig.nSamples,//hhhh
         remoteConfig: state => Object.freeze({
             chartType: state.userConfig.chartType,
             closed: state.userConfig.closed,
@@ -107,10 +108,10 @@ export default {
         setUserAvatarUrl(state, avatarUrl) {
             state.avatarUrl = avatarUrl;
             localStorage.setItem('avatarUrl', avatarUrl);
-        }
+        },
+        
     },
     
     actions: {
-        
     }
 };

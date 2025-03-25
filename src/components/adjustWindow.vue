@@ -66,7 +66,7 @@
             <div class="flex flex-row items-center justify-start ">
                 <p class="mr-4 text-2xl">全局采样点数</p>
                 <input type="number" 
-                        v-model="globalSamples" 
+                        v-model="nSamples" 
                         min="500" max="5000" step="1"
                         placeholder="500-5000"
                         class="input w-20 input-xs self-center" 
@@ -98,15 +98,16 @@ export default {
                 grid: true,
                 zoomFactor: 0.5,
                 moveFactor: 0.2,
+                nSamples: ''// ，默认为空
             },
             minVal: '',
             maxVal: '',
-            globalSamples: ''// ，默认为空
         }
     },
 
     computed: {
-    ...mapGetters('auth', ['remoteConfig', 'isAuthenticated'])
+    ...mapGetters('auth', ['remoteConfig', 'isAuthenticated']),
+    ...mapGetters(['nSamples'])
     },
 
     mounted() {
@@ -145,15 +146,16 @@ export default {
         },
 
         updateAllSamples() {
-            if (this.globalSamples === '' || isNaN(Number(this.globalSamples))) {
+            if (this.nSamples === '' || isNaN(Number(this.nSamples))) {
                 return;}
-            const validSamples = Math.max(500, Math.min(5000, Number(this.globalSamples)));
-            this.globalSamples = validSamples;
-            this.$emit('update-all-samples', validSamples);
+            const validSamples = utils.clamp(Number(this.nSamples), 500, 5000);
+            this.nSamples = validSamples;
+            this.updateUserConfig();
+            
         },
 
         async updateUserConfig() {
-            this.$store.commit('auth/updateUserConfig', this.userConfig);
+            
             if (!this.isAuthenticated) return;
             const { success, error } = await uploadUserConfig(this.userConfig);
             if (success) {
