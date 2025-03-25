@@ -38,7 +38,7 @@ export default {
             avatarUrl: state.avatarUrl || '爱门.jpg'
         }),
         // 获取显示名称（优先使用昵称）
-        displayName: state => state.nickname || state.username || null,
+        displayName: state => state.nickname || state.username || "千早爱音世界第一可爱",
         chartType: state => state.userConfig.chartType,
         closed: state => state.userConfig.closed,
         range: state => state.userConfig.range,

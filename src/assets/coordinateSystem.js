@@ -125,20 +125,22 @@ export default class CoordinateSystem {
                 // 只在主要刻度点添加标签
                 if (isMajorTick) {
                     // X轴标记
-                    this.createAxisLabel(new THREE.Vector3(i, -0.2, 0), i, 0xff0000, "x");
+                    this.createAxisLabel(new THREE.Vector3(i, -0.6, 0), i, 0xff0000);
                     // Y轴标记
-                    this.createAxisLabel(new THREE.Vector3(-0.2, i, 0), i, 0x0000ff, "y");
+                    this.createAxisLabel(new THREE.Vector3(-0.8, i, 0), i, 0x0000ff);
                     // Z轴标记
-                    this.createAxisLabel(new THREE.Vector3(0, -0.2, i), i, 0x00ff00, "z");
+                    this.createAxisLabel(new THREE.Vector3(0, -0.6, i), i, 0x00ff00);
                 }
             }
         }
+        this.createAxisLabel(new THREE.Vector3(200, 5, 0), "X", 0xff0000, 2048);
+        this.createAxisLabel(new THREE.Vector3(5, 200, 0), "Y", 0x0000ff, 2048);
+        this.createAxisLabel(new THREE.Vector3(0, 5, 200), "Z", 0x00ff00, 2048);
     }
 
-    createAxisLabel(position, text, color, axis) {
+    createAxisLabel(position, text, color, canvasSize = 128) {
         // 增加画布分辨率以提高清晰度
         const pixelRatio = window.devicePixelRatio || 2;
-        const canvasSize = 128; // 更大的画布尺寸
         const canvas = document.createElement('canvas');
         canvas.width = canvasSize * pixelRatio;
         canvas.height = canvasSize / 2 * pixelRatio;
@@ -170,16 +172,9 @@ export default class CoordinateSystem {
         // 创建精灵并设置位置
         const sprite = new THREE.Sprite(spriteMaterial);
         sprite.position.copy(position);
+        const scaleFactor = canvasSize / 128;
         // 调整缩放以适应更大的纹理，保持视觉大小一致
-        sprite.scale.set(1.0, 0.5, 1);
-        // 根据轴调整位置
-        if (axis === "x") {
-            sprite.position.y -= 0.4;
-        } else if (axis === "y") {
-            sprite.position.x -= 0.6;
-        } else if (axis === "z") {
-            sprite.position.y -= 0.4;
-        }
+        sprite.scale.set(1.0 * scaleFactor, 0.5 * scaleFactor, 1);
         this.axes.add(sprite);
     }
 

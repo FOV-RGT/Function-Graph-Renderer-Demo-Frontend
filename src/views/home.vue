@@ -427,7 +427,7 @@ export default {
         this.throttleupdateColor = utils.throttle((color, index) => {
             const currentData = [...toRaw(this.currentData)];
             currentData[index].color = color;
-            this.storeData(currentData[index]);
+            this.throttleStoreData(currentData[index]);
             this.storeDataToVuex(currentData);
             if (this.currentData[index].visible) {
                 if (this.is2D) {
@@ -437,6 +437,15 @@ export default {
                 }
             }
         }, 25);
+        this.throttleStoreData = utils.throttle((data) => {
+            this.storeData(data);
+        }, 750);
+        this.throttleUploadUserData2D = utils.throttle((data) => {
+            this.uploadUserData(data, 2);
+        }, 750);
+        this.throttleUploadUserData3D = utils.throttle((data) => {
+            this.uploadUserData(data, 3);
+        }, 750);
     },
     async mounted() {
         const { success, error } = await service.initUserData();
@@ -515,12 +524,12 @@ export default {
     watch: {
         functionData_2D: {
             handler(newVal) {
-                this.uploadUserData(newVal, 2);
+                this.throttleUploadUserData2D(newVal);
             },
         },
         functionData_3D: {
             handler(newVal) {
-                this.uploadUserData(newVal, 3);
+                this.throttleUploadUserData3D(newVal);
             },
         },
         chartType: {
@@ -750,7 +759,7 @@ export default {
             const validSamples = Math.max(500, Math.min(5000, Number(samples)));
             this.$refs.TwoDPlotCom.updateSamplePoints(validSamples);
             //同步更新所有函数的采样点数据到本地和Vuex
-            const data = [...toRaw(this.currentData)].map(item => {
+            const data = toRaw(this.currentData).map(item => {
                 if (item) {
                     return { ...item, nSamples: validSamples };
                 }

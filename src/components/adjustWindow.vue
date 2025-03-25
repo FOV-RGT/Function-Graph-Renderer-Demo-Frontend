@@ -45,14 +45,14 @@
                         @keyup.enter="updateMoveFactor" />
                 </div>
             </div>
-            <div class="flex flex-row items-center justify-start">
+            <!-- <div class="flex flex-row items-center justify-start">
                 <p class="mr-4 text-2xl">绘制函数阴影</p>
                 <input type="checkbox" checked="checked" class="toggle toggle-primary" v-model="userConfig.closed"
                     @change="updateUserConfig" />
                 <div class="warningCircle tooltip tooltip-warning tooltip-right ml-5" data-tip="该选项极其消耗性能">
                     <icon type="warningCircle" class="self-center text-warning" />
                 </div>
-            </div>
+            </div> -->
             <div class="flex flex-row items-center justify-start">
                 <p class="mr-4 text-2xl">辅助虚线</p>
                 <input type="checkbox" checked="checked" class="toggle toggle-primary" v-model="userConfig.dash"
@@ -92,7 +92,7 @@ export default {
         return {
             userConfig: {
                 chartType: 'linear',
-                closed: false,
+                // closed: false,
                 range: null,
                 dash: false,
                 grid: true,
@@ -167,11 +167,11 @@ export default {
 </script>
 
 <style scoped>
-.warningCircle .iconfont {
+/* .warningCircle .iconfont {
     font-size: 1.5em;
 }
 
 .warningCircle::before {
     font-size: large;
-}
+} */
 </style>
