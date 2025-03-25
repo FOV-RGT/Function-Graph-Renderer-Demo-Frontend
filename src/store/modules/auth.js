@@ -23,7 +23,7 @@ export default {
             grid: true,
             zoomFactor: 0.5,
             moveFactor: 0.2,
-            globalSamples: '',
+            globalSamples: '',//默认为空
         }
     },
     

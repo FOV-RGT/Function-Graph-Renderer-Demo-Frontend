@@ -287,21 +287,18 @@
                         <div class="max-h-[50vh] overflow-y-auto pr-1">
                             <div v-for="(item, index) in currentData" :key="index"
                                 class="flex flex-col gap-2 py-2 border-b border-base-content/10 last:border-0">
-
                                 <!-- 函数基本信息 -->
                                 <div class="flex items-center gap-2">
                                     <div class="w-3 h-3 rounded-full" :style="{ backgroundColor: item.color }"></div>
-                                    <div class="truncate max-w-[120px]" :title="item.fn">{{item.fn}}</div>
+                                    <div class="truncate max-w-[120px]" :title="item.fn">{{ item.fn }}</div>
                                 </div>
-
                                 <!-- 采样点设置 -->
                                 <div class="flex items-center gap-2">
                                     <span class="text-xs">采样点:</span>
-                                    <input type="number" :value="item.nSamples" min="500" max="5000" step="100"
+                                    <input type="number" :value="item.nSamples" min="500" max="5000" step="1"
                                         class="input input-xs w-20 text-center ml-auto"
                                         @change="updateFunctionSamplePoints($event.target.value, index)" />
                                 </div>
-                                
                             </div>
                         </div>
                     </div>
@@ -368,7 +365,7 @@ export default {
                 adjustWindow: false,
                 menu: true,
                 avatarPreview: false,
-                rightSlide: false, // 控制采样点侧边栏的显示/隐藏
+                rightSlide: false, // 右侧侧边栏的显示/隐藏
             },
             account: "",
             password: "",
@@ -382,6 +379,7 @@ export default {
             local3DData: [],
         };
     },
+
     created() {
         // 输入防抖
         this.debouncedAddInput = utils.debounce((input, index) => {

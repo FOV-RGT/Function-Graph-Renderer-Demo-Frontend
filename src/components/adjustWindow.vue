@@ -101,7 +101,7 @@ export default {
             },
             minVal: '',
             maxVal: '',
-            globalSamples: ''// 定义全局采样点
+            globalSamples: ''// ，默认为空
         }
     },
 

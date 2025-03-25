@@ -330,3 +330,11 @@
         fill: #fff;
     }
 }
+
+.rightSlide {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    width: auto;
+    max-height: 100vh;
+}
