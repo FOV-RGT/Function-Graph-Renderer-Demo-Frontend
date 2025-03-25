@@ -63,6 +63,16 @@
                 <input type="checkbox" checked="checked" class="toggle toggle-primary" v-model="userConfig.grid"
                     @change="updateUserConfig" />
             </div>
+            <div class="flex flex-row items-center justify-start ">
+                <p class="mr-4 text-2xl">全局采样点数</p>
+                <input type="number" 
+                        v-model="globalSamples" 
+                        min="500" max="5000" step="1"
+                        placeholder="500-5000"
+                        class="input w-20 input-xs self-center" 
+                        @change="updateAllSamples"
+                        @keyup.enter="updateAllSamples" />
+            </div>
         </div>
     </div>
 </template>
@@ -91,16 +101,20 @@ export default {
             },
             minVal: '',
             maxVal: '',
+            globalSamples: ''// 定义全局采样点
         }
     },
+
     computed: {
-        ...mapGetters('auth', ['remoteConfig', 'isAuthenticated']),
+    ...mapGetters('auth', ['remoteConfig', 'isAuthenticated'])
     },
+
     mounted() {
         this.userConfig = deepClone(this.remoteConfig);
         this.minVal = this.userConfig.range ? this.userConfig.range[0] : '';
         this.maxVal = this.userConfig.range ? this.userConfig.range[1] : '';
     },
+
     methods: {
         selfClose() {
             this.$emit('close');
@@ -128,6 +142,14 @@ export default {
         updateMoveFactor() {
             this.userConfig.moveFactor = clamp(this.userConfig.moveFactor, 0.01, 1.00);
             this.updateUserConfig();
+        },
+
+        updateAllSamples() {
+            if (this.globalSamples === '' || isNaN(Number(this.globalSamples))) {
+                return;}
+            const validSamples = Math.max(500, Math.min(5000, Number(this.globalSamples)));
+            this.globalSamples = validSamples;
+            this.$emit('update-all-samples', validSamples);
         },
 
         async updateUserConfig() {

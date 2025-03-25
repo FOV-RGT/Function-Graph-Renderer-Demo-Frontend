@@ -69,6 +69,7 @@
     color: rgba(197, 159, 105);
 }
 
+
 .moveStepControl .input:focus {
     border-color: rgba(197, 159, 105);
     outline: none;

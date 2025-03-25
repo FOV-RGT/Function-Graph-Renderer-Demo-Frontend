@@ -43,6 +43,7 @@ export default {
     },
     mounted() {
         this.init();
+        // this.handleArrayInput(this.functionData_3D);
     },
     beforeUnmount() {
         this.sceneManager.dispose();

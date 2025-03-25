@@ -75,9 +75,8 @@ export default {
         updateSamplePoints(samples, index) {
             if (!this.chartInstance) return;
             try {
-                if (typeof this.chartInstance.setSamplePoints === 'function') {
-                    this.chartInstance.setSamplePoints(samples, index);
-                }
+                const validSamples = Math.max(500, Math.min(5000, Number(samples)));
+                this.chartInstance.setSamplePoints(validSamples, index);
             } catch (error) {
                 console.error("采样点更新失败");
             }

@@ -200,7 +200,7 @@
             <transition name="table">
                 <adjustWindow v-if="show.adjustWindow" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
                 bg-base-100 rounded-box border border-base-content/10 overflow-auto w-lg h-auto z-80"
-                    @close="show.adjustWindow = false" />
+                    @close="show.adjustWindow = false" @update-all-samples="updateAllFunctionSamplePoints" />
             </transition>
             <transition name="bg">
                 <div v-if="show.avatarPreview" class="fixed inset-0 z-40 select-none"
@@ -275,6 +275,46 @@
                     <div class="fixed inset-0"></div>
                 </div>
             </transition>
+
+            <!-- 临时的右侧小侧边栏（可以考虑以此为原型完成图例以及单一函数的采样点数和图表类型更新） -->
+            <transition name="rightSlide">
+                <div v-if="show.rightSlide"
+                    class="rightSlide fixed top-1/3 right-0 bg-base-100 rounded-l-box shadow-lg border-l border-t border-b border-base-content/10 z-40 select-none">
+                    <div class="p-3 flex flex-col gap-3">
+                        <div class="flex justify-between items-center mb-2">
+                            <button class="btn btn-xs btn-circle" @click="show.rightSlide = false"> DONGMING</button>
+                        </div>
+                        <div class="max-h-[50vh] overflow-y-auto pr-1">
+                            <div v-for="(item, index) in currentData" :key="index"
+                                class="flex flex-col gap-2 py-2 border-b border-base-content/10 last:border-0">
+
+                                <!-- 函数基本信息 -->
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded-full" :style="{ backgroundColor: item.color }"></div>
+                                    <div class="truncate max-w-[120px]" :title="item.fn">{{item.fn}}</div>
+                                </div>
+
+                                <!-- 采样点设置 -->
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs">采样点:</span>
+                                    <input type="number" :value="item.nSamples" min="500" max="5000" step="100"
+                                        class="input input-xs w-20 text-center ml-auto"
+                                        @change="updateFunctionSamplePoints($event.target.value, index)" />
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+            <!-- 小侧边栏的唤出按钮 -->
+            <button
+                class="rightSlide-trigger fixed right-0 top-1/3 bg-base-100 rounded-l-box shadow-md border-l border-t border-b border-base-content/10 z-50 p-2 flex items-center justify-center cursor-pointer transform -translate-x-0 hover:brightness-105"
+                @click="show.rightSlide = !show.rightSlide">
+                <div class="flex flex-col items-center">
+                    <icon type="settings" class="text-base-content mb-1" />
+                </div>
+            </button>
         </div>
     </div>
 </template>
@@ -327,7 +367,8 @@ export default {
                 render2D: true,
                 adjustWindow: false,
                 menu: true,
-                avatarPreview: false
+                avatarPreview: false,
+                rightSlide: false, // 控制采样点侧边栏的显示/隐藏
             },
             account: "",
             password: "",
@@ -690,6 +731,35 @@ export default {
             if (this.show.render2D) {
                 this.$refs.TwoDPlotCom.updateMoveFactor(moveFactor);
             }
+        },
+
+        //单一函数采样点数更新
+        updateFunctionSamplePoints(samples, index) {
+            if (!this.show.render2D || !this.$refs.TwoDPlotCom) return;
+            const validSamples = Math.max(500, Math.min(5000, Number(samples)));
+            this.$refs.TwoDPlotCom.updateSamplePoints(validSamples, index);
+            //同步更新本地数据和Vuex数据
+            const data = [...toRaw(this.currentData)];
+            if (data[index]) {
+                data[index].nSamples = validSamples;
+                this.storeDataToVuex(data);
+            }
+        },
+
+        //全部函数采样点数更新（无敌蜜汁超绝长命名）
+        updateAllFunctionSamplePoints(samples) {
+            if (!this.show.render2D || !this.$refs.TwoDPlotCom) return;
+            const validSamples = Math.max(500, Math.min(5000, Number(samples)));
+            this.$refs.TwoDPlotCom.updateSamplePoints(validSamples);
+            //同步更新所有函数的采样点数据到本地和Vuex
+            const data = [...toRaw(this.currentData)].map(item => {
+                if (item) {
+                    return { ...item, nSamples: validSamples };
+                }
+                return item;
+            });
+            //存储到Vuex (确保触发响应式更新)
+            this.storeDataToVuex(data);
         },
 
         async updateUserInfo() {
