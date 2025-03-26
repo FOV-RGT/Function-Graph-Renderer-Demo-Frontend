@@ -104,7 +104,6 @@ export default {
 
     computed: {
         ...mapGetters('auth', ['remoteConfig', 'isAuthenticated']),
-        ...mapGetters('auth', ['globalSamples'])
     },
 
     mounted() {
