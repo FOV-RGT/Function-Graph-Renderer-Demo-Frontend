@@ -65,13 +65,10 @@
             </div>
             <div class="flex flex-row items-center justify-start ">
                 <p class="mr-4 text-2xl">全局采样点数</p>
-                <input type="number" 
-                        v-model="nSamples" 
-                        min="500" max="5000" step="1"
-                        placeholder="500-5000"
-                        class="input w-20 input-xs self-center" 
-                        @change="updateAllSamples"
-                        @keyup.enter="updateAllSamples" />
+                <input type="number"  v-model.number="userConfig.globalSamples" min="500" max="5000" step="1" placeholder="50-5000"
+                    class="input w-20 input-xs self-center" 
+                    @change="updateAllSamples"
+                    @keyup.enter="updateAllSamples" />
             </div>
         </div>
     </div>
@@ -98,7 +95,7 @@ export default {
                 grid: true,
                 zoomFactor: 0.5,
                 moveFactor: 0.2,
-                nSamples: ''// ，默认为空
+                globalSamples: ''// ，默认为空
             },
             minVal: '',
             maxVal: '',
@@ -106,14 +103,15 @@ export default {
     },
 
     computed: {
-    ...mapGetters('auth', ['remoteConfig', 'isAuthenticated']),
-    ...mapGetters(['nSamples'])
+        ...mapGetters('auth', ['remoteConfig', 'isAuthenticated']),
+        ...mapGetters('auth', ['globalSamples'])
     },
 
     mounted() {
         this.userConfig = deepClone(this.remoteConfig);
         this.minVal = this.userConfig.range ? this.userConfig.range[0] : '';
         this.maxVal = this.userConfig.range ? this.userConfig.range[1] : '';
+        this.userConfig.globalSamples = clamp(this.globalSamples || 2025, 500, 5000);
     },
 
     methods: {
@@ -145,17 +143,24 @@ export default {
             this.updateUserConfig();
         },
 
+        handleSamplesInput(e) {
+            const samples = clamp(Number(e.target.value), 500, 5000);
+            this.$store.commit('auth/updateGlobalSamples', samples);
+            this.userConfig.globalSamples = samples;
+        },
+
         updateAllSamples() {
-            if (this.nSamples === '' || isNaN(Number(this.nSamples))) {
-                return;}
-            const validSamples = utils.clamp(Number(this.nSamples), 500, 5000);
-            this.nSamples = validSamples;
+            const validSamples = clamp(Number(this.userConfig.globalSamples), 500, 5000);
+            console.log('Updating global samples:', validSamples);////
+            console.log('Local samples:', this.userConfig.globalSamples);////
+            this.$store.commit('auth/updateGlobalSamples', validSamples);
+            this.userConfig.globalSamples = validSamples;
             this.updateUserConfig();
-            
+
         },
 
         async updateUserConfig() {
-            
+            this.$store.commit('auth/updateUserConfig', this.userConfig);
             if (!this.isAuthenticated) return;
             const { success, error } = await uploadUserConfig(this.userConfig);
             if (success) {

@@ -332,6 +332,8 @@ import popupWindow from '../components/popupWindow.vue';
 import adjustButtons from '../components/adjustButtons.vue';
 import adjustWindow from '../components/adjustWindow.vue';
 import menuButtons from '../components/menuButtons.vue';
+import {clamp} from '../assets/utils/componentUtils.js'; 
+
 
 
 
@@ -406,7 +408,7 @@ export default {
         }, 400);
         this.debouncedUpdateSamplePoints = utils.debounce((samples, index) => {
             if (!this.show.render2D) return
-            const validSamples = utils.clamp(samples, 500, 5000);
+            const validSamples = clamp(Number(this.nSamples), 500, 5000);
             const data = [...toRaw(this.currentData)];
             data[index].nSamples = validSamples;
             this.storeData(data[index]);
@@ -466,7 +468,7 @@ export default {
     computed: {
         ...mapGetters(["functionData_2D", "functionData_3D", "is2D"]),
         ...mapGetters('auth', ['userInfo', 'displayName', 'isAuthenticated',
-            'chartType', 'closed', 'range', 'dash', 'grid', 'zoomFactor', 'moveFactor','nSamples'
+            'chartType', 'closed', 'range', 'dash', 'grid', 'zoomFactor', 'moveFactor','globalSamples'
         ]),
         currentInputExample() {
             return this.show.render2D ? 'e.g. 8log(cos(sin(sqrt(x^3))))'
@@ -600,7 +602,7 @@ export default {
                 this.show.render2D = newVal;
             },
         },
-        nSamples: {
+        globalSamples: {
             handler(newVal) {
                 if (!this.show.render2D) return
                 const newData = toRaw(this.currentData).map(item => ({
@@ -647,7 +649,7 @@ export default {
                         fnData = {
                             fn: '',
                             color: utils.generateRandomHarmoniousColor(),
-                            nSamples: this.nSamples || 2025,
+                            nSamples: this.globalSamples || 2025,
                             visible: true,
                             dimension: 2,
                             graphType: 'interval', // 添加默认图表类型
@@ -760,7 +762,7 @@ export default {
         //单一函数采样点数更新
         updateFunctionSamplePoints(samples, index) {
             if (!this.show.render2D || !this.$refs.TwoDPlotCom) return;
-            const validSamples = Math.max(500, Math.min(5000, Number(samples)));
+            const validSamples = clamp(Number(samples), 500, 5000);
             this.$refs.TwoDPlotCom.updateSamplePoints(validSamples, index);
             //同步更新本地数据和Vuex数据
             const data = [...toRaw(this.currentData)];
@@ -773,8 +775,8 @@ export default {
         //全部函数采样点数更新（无敌蜜汁超绝长命名）
         updateAllFunctionSamplePoints(samples) {
             if (!this.show.render2D || !this.$refs.TwoDPlotCom) return;
-            const validSamples = Math.max(500, Math.min(5000, Number(samples)));
-            this.$refs.TwoDPlotCom.updateSamplePoints(validSamples);
+            const validSamples = clamp(Number(samples), 500, 5000);
+            this.$store.commit('auth/updateGlobalSamples', validSamples);
             //同步更新所有函数的采样点数据到本地和Vuex
             const data = toRaw(this.currentData).map(item => {
                 if (item) {
@@ -784,6 +786,7 @@ export default {
             });
             //存储到Vuex (确保触发响应式更新)
             this.storeDataToVuex(data);
+            
         },
 
         async updateUserInfo() {

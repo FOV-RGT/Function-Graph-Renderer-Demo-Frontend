@@ -23,7 +23,7 @@ export default {
             grid: true,
             zoomFactor: 0.5,
             moveFactor: 0.2,
-            nSamples: 2025
+            globalSamples: 2025
         }
     },
     
@@ -46,7 +46,7 @@ export default {
         grid: state => state.userConfig.grid,
         zoomFactor: state => state.userConfig.zoomFactor,
         moveFactor: state => state.userConfig.moveFactor,
-        nSamples : state => state.userConfig.nSamples,//hhhh
+        globalSamples : state => state.userConfig.globalSamples,
         remoteConfig: state => Object.freeze({
             chartType: state.userConfig.chartType,
             closed: state.userConfig.closed,
@@ -110,6 +110,10 @@ export default {
             localStorage.setItem('avatarUrl', avatarUrl);
         },
         
+        updateGlobalSamples(state, samples) {
+            console.log('Vuex中globalSamples更新:', samples);////
+            state.userConfig.globalSamples = samples;
+        }
     },
     
     actions: {

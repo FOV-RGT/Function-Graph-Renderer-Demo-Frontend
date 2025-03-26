@@ -4,6 +4,7 @@
 
 <script>
 import { chartInstance } from '../assets/utils/chartSetter';
+import {clamp} from '../assets/utils/componentUtils.js'; 
 
 export default {
     data() {
@@ -75,7 +76,7 @@ export default {
         updateSamplePoints(samples, index) {
             if (!this.chartInstance) return;
             try {
-                const validSamples = utils.clamp(Number(samples), 500, 5000);
+                const validSamples = clamp(Number(samples), 500, 5000);
                 this.chartInstance.setSamplePoints(validSamples, index);
             } catch (error) {
                 console.error("采样点数更新失败");
