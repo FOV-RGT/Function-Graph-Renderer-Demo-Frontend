@@ -68,9 +68,9 @@ const fnApi = {
             }
         }
     },
-    async getChangeData(currentPage = 1, pageSize = 4) {
+    async getChangeData(currentPage = 1, dimension = 2) {
         try {
-            return await api.get('/mathdata/change', {params: {currentPage, pageSize}});
+            return await api.get('/mathdata/change', {params: {currentPage, pageSize: 4, dimension}});
         } catch (error) {
             console.log("获取历史记录错误：", error.status);
             switch (error.status) {

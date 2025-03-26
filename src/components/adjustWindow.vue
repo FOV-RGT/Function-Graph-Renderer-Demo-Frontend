@@ -65,10 +65,10 @@
             </div>
             <div class="flex flex-row items-center justify-start ">
                 <p class="mr-4 text-2xl">全局采样点数</p>
-                <input type="number"  v-model.number="userConfig.globalSamples" min="500" max="5000" step="1" placeholder="50-5000"
+                <input type="number" :value="userConfig.globalSamples" min="500" max="5000" step="1" placeholder="50-5000"
                     class="input w-20 input-xs self-center" 
-                    @change="updateAllSamples"
-                    @keyup.enter="updateAllSamples" />
+                    @change="updateAllSamples($event.target.value, $event)"
+                    @keyup.enter="updateAllSamples($event.target.value, $event)" />
             </div>
         </div>
     </div>
@@ -95,7 +95,7 @@ export default {
                 grid: true,
                 zoomFactor: 0.5,
                 moveFactor: 0.2,
-                globalSamples: ''// ，默认为空
+                globalSamples: 2025// ，默认为空
             },
             minVal: '',
             maxVal: '',
@@ -110,7 +110,6 @@ export default {
         this.userConfig = deepClone(this.remoteConfig);
         this.minVal = this.userConfig.range ? this.userConfig.range[0] : '';
         this.maxVal = this.userConfig.range ? this.userConfig.range[1] : '';
-        this.userConfig.globalSamples = clamp(this.globalSamples || 2025, 500, 5000);
     },
 
     methods: {
@@ -142,20 +141,14 @@ export default {
             this.updateUserConfig();
         },
 
-        handleSamplesInput(e) {
-            const samples = clamp(Number(e.target.value), 500, 5000);
-            this.$store.commit('auth/updateGlobalSamples', samples);
-            this.userConfig.globalSamples = samples;
-        },
-
-        updateAllSamples() {
-            const validSamples = clamp(Number(this.userConfig.globalSamples), 500, 5000);
-            console.log('Updating global samples:', validSamples);////
-            console.log('Local samples:', this.userConfig.globalSamples);////
-            this.$store.commit('auth/updateGlobalSamples', validSamples);
-            this.userConfig.globalSamples = validSamples;
-            this.updateUserConfig();
-
+        updateAllSamples(value, evt) {
+            const validSamples = clamp(value, 500, 5000);
+            const isValidNumber = /^\d+$/.test(value);
+            if (isValidNumber) {
+                this.userConfig.globalSamples = validSamples;
+                this.updateUserConfig();
+            }
+            evt.target.value = validSamples;
         },
 
         async updateUserConfig() {

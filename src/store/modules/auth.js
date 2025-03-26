@@ -54,7 +54,8 @@ export default {
             dash: state.userConfig.dash,
             grid: state.userConfig.grid,
             zoomFactor: state.userConfig.zoomFactor,
-            moveFactor: state.userConfig.moveFactor
+            moveFactor: state.userConfig.moveFactor,
+            globalSamples: state.userConfig.globalSamples
         })
     },
     
@@ -111,7 +112,7 @@ export default {
         },
         
         updateGlobalSamples(state, samples) {
-            console.log('Vuex中globalSamples更新:', samples);////
+            console.log('Vuex中globalSamples更新:', samples);
             state.userConfig.globalSamples = samples;
         }
     },
