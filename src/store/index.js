@@ -10,7 +10,8 @@ const store = createStore({
         functionData_3D: [],
         needUpload: true,
         GLTFfile: null,
-        globalSamples: 2025
+        globalSamples: 2025,
+        messagesData: {}
     },
     getters: {
         is2D: state => state.is2D,
@@ -19,7 +20,8 @@ const store = createStore({
         needUpload: state => state.needUpload,
         GLTFfile: state => state.GLTFfile,
         Objectuuid: state => state.functionData_3D.map(item => item.uuid),
-        globalSamples: state => state.globalSamples
+        globalSamples: state => state.globalSamples,
+        messagesData: state => state.messagesData
     },
     mutations: {
         switchRender(state) {
@@ -45,6 +47,9 @@ const store = createStore({
         },
         storeObjectVisible(state, payload) {
             state.functionData_3D[payload.index].visible = payload.visible;
+        },
+        toast(state, data) {
+            state.messagesData = data;
         }
     },
     actions: {

@@ -25,16 +25,17 @@ export default {
     },
     data() {
         return {
-            messageQueue: [],
+            messagesQueue: [],
             messages: [],
             head: '',
             showMessage: false,
-            target: 'body'
+            target: 'body',
+            timeout: null
         }
     },
     methods: {
         addMessage(messages) {
-            this.messageQueue.push(messages);
+            this.messagesQueue.push(messages);
             if (!this.showMessage) {
                 this.nextMessage();
             } else {
@@ -42,19 +43,23 @@ export default {
             }
         },
         nextMessage() {
-            if (this.messageQueue.length > 0) {
-                const { head, messages, target } = this.messageQueue.shift();
+            if (this.messagesQueue.length > 0) {
+                clearTimeout(this.timeout);
+                const { head, messages, target } = this.messagesQueue.shift();
                 this.head = head || '';
                 this.messages = messages || '';
                 this.target = target || 'body';
                 this.showMessage = true;
+                this.timeout = setTimeout(() => {
+                    this.closeMessage();
+                }, 2000)
             }
         },
         closeMessage() {
             this.showMessage = false;
             setTimeout(() => {
                 this.nextMessage();
-            }, 150);
+            }, 200);
         }
     }
 }
@@ -68,7 +73,7 @@ export default {
 
 .popupWindow-enter-from,
 .popupWindow-leave-to {
-    opacity: 0;
+    opacity: 0.5;
     transform: translateY(-20px);
 }
 </style>

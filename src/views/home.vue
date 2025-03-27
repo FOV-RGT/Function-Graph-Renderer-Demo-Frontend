@@ -59,7 +59,7 @@
             <div class="renderComponent h-12/13 w-full relative text-transparent">
                 <div
                     class="logo flex item-center gap-4 text-5xl absolute left-[50%] transform -translate-x-[50%] select-none">
-                    <h1 class="flex items-center">LOGO v{{ version }}</h1>
+                    <h1 class="flex items-center">DONGMING v{{ version }}</h1>
                     <img src="/486.1-done.png" alt="" class="w-12 h-12" />
                 </div>
                 <div v-show="show.render2D" class="h-full w-full pl-20 pb-4 pr-12 pt-8">
@@ -312,6 +312,7 @@
                     <icon type="settings" class="text-base-content mb-1" />
                 </div>
             </button>
+            <toast ref="toast" />
         </div>
     </div>
 </template>
@@ -332,7 +333,8 @@ import popupWindow from '../components/popupWindow.vue';
 import adjustButtons from '../components/adjustButtons.vue';
 import adjustWindow from '../components/adjustWindow.vue';
 import menuButtons from '../components/menuButtons.vue';
-import {clamp} from '../assets/utils/componentUtils.js'; 
+import { clamp } from '../assets/utils/componentUtils.js';
+import toast from '../components/toast.vue'
 
 
 
@@ -348,7 +350,8 @@ export default {
         popupWindow,
         adjustButtons,
         adjustWindow,
-        menuButtons
+        menuButtons,
+        toast
     },
     data() {
         return {
@@ -394,7 +397,11 @@ export default {
                 try {
                     parse(formatInput);
                 } catch (error) {
-                    console.log('输入错误:', error);
+                    this.toast({
+                        head: '输入错误',
+                        messages: ['请检查您的输入'],
+                        target: 'body'
+                    })
                     return;
                 }
             }
@@ -405,7 +412,7 @@ export default {
                     this.$refs.ThreeDPlotCom.handleInput(newData[index], index);
                 }
             }
-        }, 400);
+        }, 750);
         this.debouncedUpdateSamplePoints = utils.debounce((samples, index) => {
             if (!this.show.render2D) return
             const validSamples = clamp(Number(this.nSamples), 500, 5000);
@@ -456,9 +463,19 @@ export default {
             this.initFormData();
             this.show.info = true;
             console.log('初始化用户信息成功');
+            this.toast({
+                head: `${this.greetingMessage}${this.userInfo.nickname || this.userInfo.username}`,
+                messages: ['您的数据已恢复'],
+                target: 'body'
+            })
         } else {
             console.log('初始化用户信息失败:', error);
             this.$store.commit('auth/cleanState', null);
+            this.toast({
+                head: 'DONGMING',
+                messages: ['hello,world!'],
+                target: 'body'
+            })
         }
         window.addEventListener('resize', this.throttledResize);
     },
@@ -466,9 +483,9 @@ export default {
         window.removeEventListener('resize', this.throttledResize);
     },
     computed: {
-        ...mapGetters(["functionData_2D", "functionData_3D", "is2D"]),
+        ...mapGetters(["functionData_2D", "functionData_3D", "is2D", "messagesData"]),
         ...mapGetters('auth', ['userInfo', 'displayName', 'isAuthenticated',
-            'chartType', 'closed', 'range', 'dash', 'grid', 'zoomFactor', 'moveFactor','globalSamples'
+            'chartType', 'closed', 'range', 'dash', 'grid', 'zoomFactor', 'moveFactor', 'globalSamples'
         ]),
         currentInputExample() {
             return this.show.render2D ? 'e.g. 8log(cos(sin(sqrt(x^3))))'
@@ -619,6 +636,15 @@ export default {
                 this.storeDataToVuex(newData);
             },
         },
+        messagesData: {
+            handler(newVal) {
+                this.toast({
+                    head: newVal.head,
+                    messages: newVal.messages,
+                    target: newVal.target
+                })
+            },
+        }
     },
     methods: {
         switchRenderer() {
@@ -713,6 +739,11 @@ export default {
                 this.show.loginModal = false;
                 this.initFormData();
                 this.firework();
+                this.toast({
+                    head: `${this.greetingMessage}${this.userInfo.nickname || this.userInfo.username}`,
+                    messages: ['您的数据已恢复'],
+                    target: 'body'
+                });
                 setTimeout(() => {
                     this.show.info = true;
                 }, 400);
@@ -786,7 +817,6 @@ export default {
             });
             //存储到Vuex (确保触发响应式更新)
             this.storeDataToVuex(data);
-            
         },
 
         async updateUserInfo() {
@@ -794,7 +824,16 @@ export default {
             const { success, error } = await service.updateUserInfo(this.formData);
             if (success) {
                 this.initFormData();
-                console.log('更新用户信息成功:', this.userInfo);
+                this.toast({
+                    head: '账户信息更新成功',
+                    messages: ['「你是否想过，此刻的名字并非永恒？',
+                    '若在暮色将尽时改写墨迹未干的诗行，',
+                    '或许会有星子坠入你的眼眸',
+                    '——某个古老的机关，总偏爱被晚风掀动的灵魂。」'],
+                    target: 'body',
+                    time: 20000,
+                    allowWrap: false
+                });
             } else {
                 console.log('更新用户信息失败:', error);
             }
@@ -949,8 +988,10 @@ export default {
         async uploadAvatar(res, file) {
             const { success, error } = await service.uploadAvatar(res, file);
             if (success) {
-                console.log('上传头像成功');
-                console.log('头像地址:', res.url);
+                this.toast({
+                    head: '上传头像成功',
+                    target: 'body'
+                });
                 const url = {
                     avatarUrl: res.url
                 }
@@ -1008,6 +1049,10 @@ export default {
                 spread: 120,
                 startVelocity: 45
             }, origin);
+        },
+
+        toast(message) {
+            this.$refs.toast.addMessage(message);
         }
     }
 };

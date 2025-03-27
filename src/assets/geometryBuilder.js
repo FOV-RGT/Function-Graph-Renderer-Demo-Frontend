@@ -8,7 +8,12 @@ export default class GeometryBuilder {
 
     createLine(points, color) {
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        return new THREE.Line(geometry, this.createBasicLineMaterial(color));
+        return new THREE.LineSegments(geometry, this.createBasicLineMaterial(color));
+    }
+
+    createLineFromBuffer(points, color) {
+        const geometry = new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(points, 3));
+        return new THREE.LineSegments(geometry, this.createBasicLineMaterial(color));
     }
 
     createSurface(points, color) {

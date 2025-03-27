@@ -3,6 +3,7 @@ import { parse } from "mathjs";
 import * as math from "mathjs";
 import GeometryBuilder from './geometryBuilder';
 import WorkerManager from './workerManager';
+import store from '../store/index'
 
 export default class FunctionRenderer {
     constructor(sceneManager) {
@@ -31,6 +32,12 @@ export default class FunctionRenderer {
         }
         else if (fn.startsWith("cube")) {
             uuid = await this.renderCube(input);
+        } else {
+            store.commit('toast', {
+                head: '函数解析错误',
+                messages: ['输入格式错误'],
+                target: 'body'
+            })
         }
         return uuid
     }
@@ -45,12 +52,18 @@ export default class FunctionRenderer {
                 const expr = parse(input.fn);
                 const variables = this.extractVariables(expr);
                 if (variables.length === 1) {
-                    return await this.renderOneDimensionalFunction(input, expr, variables[0], variableType);
+                    return await this.renderOneDimensionalFunction(input, variables[0], variableType);
                 } else {
                     return await this.renderTwoDimensionalFunction(input, variableType, startTime);
                 }
             } catch (error) {
-                console.error("渲染方程出错:", error);
+                const symbolMatch = error.message.match(/Syntax error in part "([^"]+)"/);
+                const errorMessage = `函数中包含未定义的变量 >>> ${symbolMatch[1]}`;
+                store.commit('toast', {
+                    head: '函数解析错误',
+                    messages: [errorMessage],
+                    target: 'body'
+                })
             }
         }
     }
@@ -82,40 +95,19 @@ export default class FunctionRenderer {
         return await this.sceneManager.addObject(line, true, input);
     }
 
-    async renderOneDimensionalFunction(input, expr, variable, variableType) {
-        const points = [];
-        for (let i = -200; i <= 200; i += 0.001) {
-            const scope = { [variable]: i };
-            let value;
-            try {
-                value = expr.evaluate(scope);
-            } catch (e) {
-                continue; // 跳过计算错误
-            }
-            let point;
-            switch (variableType) {
-                case "x":
-                    point = variable === "y" ?
-                        new THREE.Vector3(value, i, 0) :
-                        new THREE.Vector3(value, 0, i);
-                    break;
-                case "y":
-                    point = variable === "x" ?
-                        new THREE.Vector3(i, value, 0) :
-                        new THREE.Vector3(0, value, i);
-                    break;
-                case "z":
-                    point = variable === "x" ?
-                        new THREE.Vector3(i, 0, value) :
-                        new THREE.Vector3(0, i, value);
-                    break;
-            }
-            points.push(point);
-        }
-        if (points.length > 0) {
-            const line = this.geometryBuilder.createLine(points, input.color);
-            return await this.sceneManager.addObject(line, true, input);
-        }
+    async renderOneDimensionalFunction(input, variable, variableType) {
+        return new Promise((resolve, reject) => {
+            const onComplete = (points, color, input) => {
+                try {
+                    const line = this.geometryBuilder.createLineFromBuffer(points, color);
+                    const uuid = this.sceneManager.addObject(line, true, input);
+                    resolve(uuid); 
+                } catch (error) {
+                    reject(error);
+                }
+            };
+            this.workerManager.calculateLine(input, variable, variableType, onComplete, input.color);
+        })
     }
 
     async renderTwoDimensionalFunction(input, variableType, startTime) {

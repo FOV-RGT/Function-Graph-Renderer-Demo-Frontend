@@ -28,6 +28,7 @@ export default class SceneManager {
         // setTimeout(() => {
         //     this.coordinateSystem.exportToGLTF('axisSystem.glb');
         // }, 3000);
+        this.functionRenderer = null;
     }
 
     initRenderer() {
@@ -218,6 +219,7 @@ export default class SceneManager {
         // 清理资源
         this.controls.removeEventListener('change', this.updateLight);
         this.controls.dispose();
+        this.functionRenderer.workerManager.workerPool.closeAllWorkers();
         this.renderer.dispose();
     }
 

@@ -53,6 +53,7 @@ export default {
             const container = this.$refs.canvas3D;
             this.sceneManager = new SceneManager(container);
             this.functionRenderer = new FunctionRenderer(this.sceneManager);
+            this.sceneManager.functionRenderer = this.functionRenderer;
         },
 
         fuckResize() {

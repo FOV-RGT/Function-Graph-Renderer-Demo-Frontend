@@ -36,23 +36,19 @@ export default class workerPool {
         if (this.taskQueue.length === 0) return;
         const worker = this.getWorker();
         if(!worker) return;
-        console.log("获取worker", worker.id);
         const task = this.taskQueue.shift();
         this.runTask(worker, task);
     }
 
     submitTask(taskData, callback) {
         const task = { taskData, callback };
-        console.log("提交任务", taskData);
         this.taskQueue.push(task);
         this.handleQueue();
     }
 
     runTask(worker, task) {
         this.activeWorkers.set(worker.id, worker);
-        console.log(`Worker ${worker.id}开始任务`);
         const data = toRaw(task.taskData);
-        console.log("发送数据", data);
         worker.onmessage = (evt) => {
             task.callback(evt.data, data.chunkId);
             this.activeWorkers.delete(worker.id);
@@ -74,6 +70,5 @@ export default class workerPool {
         this.workers = [];
         this.activeWorkers.clear();
         this.taskQueue = [];
-        console.log("关闭所有worker");
     }
 }
