@@ -332,7 +332,6 @@ import popupWindow from '../components/popupWindow.vue';
 import adjustButtons from '../components/adjustButtons.vue';
 import adjustWindow from '../components/adjustWindow.vue';
 import menuButtons from '../components/menuButtons.vue';
-import {clamp} from '../assets/utils/componentUtils.js'; 
 
 
 
@@ -408,7 +407,7 @@ export default {
         }, 400);
         this.debouncedUpdateSamplePoints = utils.debounce((samples, index) => {
             if (!this.show.render2D) return
-            const validSamples = clamp(Number(this.nSamples), 500, 5000);
+            const validSamples = utils.clamp(Number(this.nSamples), 500, 5000);
             const data = [...toRaw(this.currentData)];
             data[index].nSamples = validSamples;
             this.storeData(data[index]);
@@ -762,7 +761,7 @@ export default {
         //单一函数采样点数更新
         updateFunctionSamplePoints(samples, index) {
             if (!this.show.render2D || !this.$refs.TwoDPlotCom) return;
-            const validSamples = clamp(Number(samples), 500, 5000);
+            const validSamples = utils.clamp(Number(samples), 500, 5000);
             this.$refs.TwoDPlotCom.updateSamplePoints(validSamples, index);
             //同步更新本地数据和Vuex数据
             const data = [...toRaw(this.currentData)];
@@ -775,7 +774,7 @@ export default {
         //全部函数采样点数更新（无敌蜜汁超绝长命名）
         updateAllFunctionSamplePoints(samples) {
             if (!this.show.render2D || !this.$refs.TwoDPlotCom) return;
-            const validSamples = clamp(Number(samples), 500, 5000);
+            const validSamples = utils.clamp(Number(samples), 500, 5000);
             this.$store.commit('auth/updateGlobalSamples', validSamples);
             //同步更新所有函数的采样点数据到本地和Vuex
             const data = toRaw(this.currentData).map(item => {
