@@ -1,50 +1,8 @@
 import workerPool from './workerPool';
 
 
-export default class WorkerManager {
-    constructor() {
-        this.workerCount = navigator.hardwareConcurrency || 4;  // 工作线程数量
-        this.workerPool = new workerPool(this.workerCount);
-    }
 
-    calculateSurface(input, target, callback, color) {
-        const step = 0.26;
-        const range = 400;
-        const chunkSize = range / this.workerCount;
-        const exprString = input.fn;
-        console.log(`开始计算表面：${exprString}`);
-        
-        const resultsCollector = new resultCollector(
-            this.workerCount,
-            (allPoints) => callback(allPoints, color, input)
-        );
-        // const totalPointsPerChunk =
-        //     Math.ceil(chunkSize / step + 1) *
-        //     Math.ceil(400 / step + 1) * 3;
-        for (let i = 0; i < this.workerCount; i++) {
-            const start = -200 + i * chunkSize;
-            const end = start + chunkSize;
-            const taskData = {
-                start,
-                end,
-                initStep: step,
-                exprString: typeof exprString === 'string' ? exprString : String(exprString),
-                target,
-                chunkId: i
-            };
-            this.workerPool.submitTask(taskData, (data, workerId) => {
-                const chunkPoints = new Float32Array(data);
-                resultCollector.addResult(i, chunkPoints);
-            })
-        }
-    }
-
-    close() {
-        this.workerPool.closeAllWorkers();
-    }
-}
-
-class resultCollector {
+class resultsCollector {
     constructor(totalChunks, callback) {
         this.results = new Map();
         this.totalChunks = totalChunks;
@@ -57,7 +15,7 @@ class resultCollector {
         if (this.totalPointsPerChunk === null) {
             this.totalPointsPerChunk = chunkPoints.length;
         }
-        console.log(`收到分块${++chunkId}/${this.totalChunks}的结果`);
+        console.log(`收到分块${chunkId+1}/${this.totalChunks}的结果`);
         if (this.results.size === this.totalChunks) {
             this.handleResults();
         }
@@ -73,3 +31,42 @@ class resultCollector {
         this.callback(allPoints);
     }
 }
+export default class WorkerManager {
+    constructor() {
+        this.workerCount = 10;  // 工作线程数量
+        this.workerPool = new workerPool(this.workerCount);
+    }
+
+    calculateSurface(input, target, callback, color) {
+        const step = 0.26;
+        const range = 400;
+        const chunkSize = range / this.workerCount;
+        const exprString = input.fn;
+        console.log(`开始计算表面：${exprString}`);
+        const collector = new resultsCollector(
+            this.workerCount,
+            (allPoints) => callback(allPoints, color, input)
+        );
+        for (let i = 0; i < this.workerCount; i++) {
+            const start = -200 + i * chunkSize;
+            const end = start + chunkSize;
+            const taskData = {
+                start,
+                end,
+                initStep: step,
+                exprString,
+                target,
+                chunkId: i
+            };
+            this.workerPool.submitTask(taskData, (data, chunkId) => {
+                const chunkPoints = new Float32Array(data);
+                collector.addResult(chunkId, chunkPoints);
+            })
+        }
+    }
+
+    close() {
+        this.workerPool.closeAllWorkers();
+    }
+}
+

@@ -71,7 +71,6 @@ export default {
 
         async handleArrayInput(inputs, index = 0) {
             for (const input of inputs) {
-                console.log("添加3D数据", input);
                 const uuid = await this.functionRenderer.renderFunction(input);
                 const payload = {
                     uuid,
