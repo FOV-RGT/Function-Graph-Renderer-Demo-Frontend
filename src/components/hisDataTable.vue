@@ -125,7 +125,7 @@ export default {
         }, 250)
     },
     mounted() {
-        if (this.localFnData.length > 0 || !this.isAuthenticated) {
+        if (!this.isAuthenticated) {
             this.initLocalDataMap();
         } else {
             this.getHisData();
@@ -199,10 +199,12 @@ export default {
                 await this.getHisData(page);
                 this.selection = this.totalSelection.get(page) || [];
             } else {
-                this.localPage = page;
+                this.loading.getData = true;
                 setTimeout(() => {
+                    this.localPage = page;
                     this.selection = this.totalSelection.get(page) || [];
-                }, 100);
+                    this.loading.getData = false;
+                }, 200);
             }
         },
         closeTable() {
