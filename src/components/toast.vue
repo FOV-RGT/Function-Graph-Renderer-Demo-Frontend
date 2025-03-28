@@ -1,21 +1,22 @@
 <template>
     <teleport :to=target>
         <transition name="toast">
-            <div v-show="showMessage" class="fixed bottom-[15%] right-2 z-50 max-w-[35%] max-h-[20%] min-w-42">
+            <div v-show="showMessage" class="fixed bottom-[15%] right-2 z-50 max-w-[30%] max-h-[20%] min-w-42">
                 <div class="bg-slate-900 shadow-2xl rounded-md border-slate-400/50 border-1
-                p-4 flex flex-row items-center justify-between gap-1">
-                    <div class="flex flex-col items-start max-w-5/6">
-                        <div class="font-black text-2xl text-[#d4bd81] whitespace-nowrap">{{ head }}</div>
-                        <div v-for="(item, index) in messages" :key="index" v-text="item"
-                            class="text-lg overflow-hidden max-w-full text-[#AEA181]"
+                p-4 items-center justify-between relative">
+                    <div class="flex flex-col items-start">
+                        <div class="flex items-center justify-between w-full gap-4">
+                            <h1 class="text-2xl text-[#d4bd81] whitespace-nowrap">{{ head }}</h1>
+                            <button class="btn btn-ghost btn-primary btn-sm w-8 ml-auto" @click="closeMessage">
+                                <icon type="close" />
+                            </button>
+                        </div>
+                        <p v-for="(item, index) in messages" :key="index" v-text="item"
+                            class="text-lg flex flex-nowrap mr-auto overflow-hidden max-w-full text-[#AEA181]"
                             :style="{'white-space': allowWrap ? 'pre-line' : 'nowrap',
                                 'word-break': allowWrap ? 'break-word' : 'normal'
-                            }"></div>
-                    </div>
-                    <div class="flex justify-end items-center">
-                        <button class="btn btn-ghost btn-primary btn-md" @click="closeMessage">
-                            <icon type="close" />
-                        </button>
+                            }">
+                        </p>
                     </div>
                 </div>
             </div>
@@ -34,7 +35,7 @@ export default {
     data() {
         return {
             messagesQueue: [],
-            messages: [],
+            messages: [''],
             head: '',
             showMessage: false,
             target: 'body',
@@ -56,7 +57,7 @@ export default {
                 clearTimeout(this.timeout);
                 const { head, messages, target, time, allowWrap } = this.messagesQueue.shift();
                 this.head = head || '';
-                this.messages = messages || [];
+                this.messages = messages || [''];
                 this.target = target || 'body';
                 this.allowWrap = allowWrap || true;
                 this.showMessage = true;
@@ -69,7 +70,7 @@ export default {
             this.showMessage = false;
             setTimeout(() => {
                 this.nextMessage();
-            }, 200);
+            }, 250);
         }
     }
 }

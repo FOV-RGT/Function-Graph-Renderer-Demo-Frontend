@@ -412,17 +412,6 @@ export default {
                 }
             }
         }, 750);
-        this.debouncedUpdateSamplePoints = utils.debounce((samples, index) => {
-            if (!this.show.render2D) return
-            const validSamples = utils.clamp(Number(this.nSamples), 500, 5000);
-            const data = [...toRaw(this.currentData)];
-            data[index].nSamples = validSamples;
-            this.storeData(data[index]);
-            this.storeDataToVuex(data);
-            if (this.currentData[index].visible) {
-                this.$refs.TwoDPlotCom.fuckRender(this.functionData_2D);
-            }
-        }, 400);
         this.throttledResize = utils.throttle(() => {
             setTimeout(() => {
                 if (this.show.render2D) {
