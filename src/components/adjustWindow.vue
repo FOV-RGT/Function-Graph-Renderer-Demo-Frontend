@@ -45,14 +45,14 @@
                         @keyup.enter="updateMoveFactor" />
                 </div>
             </div>
-            <div class="flex flex-row items-center justify-start">
+            <!-- <div class="flex flex-row items-center justify-start">
                 <p class="mr-4 text-2xl">绘制函数阴影</p>
                 <input type="checkbox" checked="checked" class="toggle toggle-primary" v-model="userConfig.closed"
                     @change="updateUserConfig" />
                 <div class="warningCircle tooltip tooltip-warning tooltip-right ml-5" data-tip="该选项极其消耗性能">
                     <icon type="warningCircle" class="self-center text-warning" />
                 </div>
-            </div>
+            </div> -->
             <div class="flex flex-row items-center justify-start">
                 <p class="mr-4 text-2xl">辅助虚线</p>
                 <input type="checkbox" checked="checked" class="toggle toggle-primary" v-model="userConfig.dash"
@@ -62,6 +62,13 @@
                 <p class="mr-4 text-2xl">辅助网格</p>
                 <input type="checkbox" checked="checked" class="toggle toggle-primary" v-model="userConfig.grid"
                     @change="updateUserConfig" />
+            </div>
+            <div class="flex flex-row items-center justify-start ">
+                <p class="mr-4 text-2xl">全局采样点数</p>
+                <input type="number" :value="userConfig.globalSamples" min="500" max="5000" step="1" placeholder="50-5000"
+                    class="input w-20 input-xs self-center" 
+                    @change="updateAllSamples($event.target.value, $event)"
+                    @keyup.enter="updateAllSamples($event.target.value, $event)" />
             </div>
         </div>
     </div>
@@ -82,25 +89,29 @@ export default {
         return {
             userConfig: {
                 chartType: 'linear',
-                closed: false,
+                // closed: false,
                 range: null,
                 dash: false,
                 grid: true,
                 zoomFactor: 0.5,
                 moveFactor: 0.2,
+                globalSamples: 2025// ，默认为空
             },
             minVal: '',
             maxVal: '',
         }
     },
+
     computed: {
         ...mapGetters('auth', ['remoteConfig', 'isAuthenticated']),
     },
+
     mounted() {
         this.userConfig = deepClone(this.remoteConfig);
         this.minVal = this.userConfig.range ? this.userConfig.range[0] : '';
         this.maxVal = this.userConfig.range ? this.userConfig.range[1] : '';
     },
+
     methods: {
         selfClose() {
             this.$emit('close');
@@ -130,6 +141,16 @@ export default {
             this.updateUserConfig();
         },
 
+        updateAllSamples(value, evt) {
+            const validSamples = clamp(value, 500, 5000);
+            const isValidNumber = /^\d+$/.test(value);
+            if (isValidNumber) {
+                this.userConfig.globalSamples = validSamples;
+                this.updateUserConfig();
+            }
+            evt.target.value = validSamples;
+        },
+
         async updateUserConfig() {
             this.$store.commit('auth/updateUserConfig', this.userConfig);
             if (!this.isAuthenticated) return;
@@ -145,11 +166,11 @@ export default {
 </script>
 
 <style scoped>
-.warningCircle .iconfont {
+/* .warningCircle .iconfont {
     font-size: 1.5em;
 }
 
 .warningCircle::before {
     font-size: large;
-}
+} */
 </style>

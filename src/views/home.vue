@@ -59,7 +59,7 @@
             <div class="renderComponent h-12/13 w-full relative text-transparent">
                 <div
                     class="logo flex item-center gap-4 text-5xl absolute left-[50%] transform -translate-x-[50%] select-none">
-                    <h1 class="flex items-center">LOGO v{{ version }}</h1>
+                    <h1 class="flex items-center">DONGMING v{{ version }}</h1>
                     <img src="/486.1-done.png" alt="" class="w-12 h-12" />
                 </div>
                 <div v-show="show.render2D" class="h-full w-full pl-20 pb-4 pr-12 pt-8">
@@ -200,7 +200,7 @@
             <transition name="table">
                 <adjustWindow v-if="show.adjustWindow" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
                 bg-base-100 rounded-box border border-base-content/10 overflow-auto w-lg h-auto z-80"
-                    @close="show.adjustWindow = false" />
+                    @close="show.adjustWindow = false" @update-all-samples="updateAllFunctionSamplePoints" />
             </transition>
             <transition name="bg">
                 <div v-if="show.avatarPreview" class="fixed inset-0 z-40 select-none"
@@ -275,6 +275,44 @@
                     <div class="fixed inset-0"></div>
                 </div>
             </transition>
+
+            <!-- 临时的右侧小侧边栏（可以考虑以此为原型完成图例以及单一函数的采样点数和图表类型更新） -->
+            <transition name="rightSlide">
+                <div v-if="show.rightSlide"
+                    class="rightSlide fixed top-1/3 right-0 bg-base-100 rounded-l-box shadow-lg border-l border-t border-b border-base-content/10 z-40 select-none">
+                    <div class="p-3 flex flex-col gap-3">
+                        <div class="flex justify-between items-center mb-2">
+                            <button class="btn btn-xs btn-circle" @click="show.rightSlide = false"> DONGMING</button>
+                        </div>
+                        <div class="max-h-[50vh] overflow-y-auto pr-1">
+                            <div v-for="(item, index) in currentData" :key="index"
+                                class="flex flex-col gap-2 py-2 border-b border-base-content/10 last:border-0">
+                                <!-- 函数基本信息 -->
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 rounded-full" :style="{ backgroundColor: item.color }"></div>
+                                    <div class="truncate max-w-[120px]" :title="item.fn">{{ item.fn }}</div>
+                                </div>
+                                <!-- 采样点设置 -->
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs">采样点:</span>
+                                    <input type="number" :value="item.nSamples" min="500" max="5000" step="1"
+                                        class="input input-xs w-20 text-center ml-auto"
+                                        @change="updateFunctionSamplePoints($event.target.value, index)" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+            <!-- 小侧边栏的唤出按钮 -->
+            <button
+                class="rightSlide-trigger fixed right-0 top-1/3 bg-base-100 rounded-l-box shadow-md border-l border-t border-b border-base-content/10 z-50 p-2 flex items-center justify-center cursor-pointer transform -translate-x-0 hover:brightness-105"
+                @click="show.rightSlide = !show.rightSlide">
+                <div class="flex flex-col items-center">
+                    <icon type="settings" class="text-base-content mb-1" />
+                </div>
+            </button>
+            <toast ref="toast" />
         </div>
     </div>
 </template>
@@ -295,6 +333,8 @@ import popupWindow from '../components/popupWindow.vue';
 import adjustButtons from '../components/adjustButtons.vue';
 import adjustWindow from '../components/adjustWindow.vue';
 import menuButtons from '../components/menuButtons.vue';
+import toast from '../components/toast.vue'
+
 
 
 
@@ -309,7 +349,8 @@ export default {
         popupWindow,
         adjustButtons,
         adjustWindow,
-        menuButtons
+        menuButtons,
+        toast
     },
     data() {
         return {
@@ -327,7 +368,8 @@ export default {
                 render2D: true,
                 adjustWindow: false,
                 menu: true,
-                avatarPreview: false
+                avatarPreview: false,
+                rightSlide: false, // 右侧侧边栏的显示/隐藏
             },
             account: "",
             password: "",
@@ -341,6 +383,7 @@ export default {
             local3DData: [],
         };
     },
+
     created() {
         // 输入防抖
         this.debouncedAddInput = utils.debounce((input, index) => {
@@ -353,7 +396,11 @@ export default {
                 try {
                     parse(formatInput);
                 } catch (error) {
-                    console.log('输入错误:', error);
+                    this.toast({
+                        head: '输入错误',
+                        messages: ['请检查您的输入'],
+                        target: 'body'
+                    })
                     return;
                 }
             }
@@ -364,18 +411,7 @@ export default {
                     this.$refs.ThreeDPlotCom.handleInput(newData[index], index);
                 }
             }
-        }, 400);
-        this.debouncedUpdateSamplePoints = utils.debounce((samples, index) => {
-            if (!this.show.render2D) return
-            const validSamples = utils.clamp(samples, 500, 5000);
-            const data = [...toRaw(this.currentData)];
-            data[index].nSamples = validSamples;
-            this.storeData(data[index]);
-            this.storeDataToVuex(data);
-            if (this.currentData[index].visible) {
-                this.$refs.TwoDPlotCom.fuckRender(this.functionData_2D);
-            }
-        }, 400);
+        }, 750);
         this.throttledResize = utils.throttle(() => {
             setTimeout(() => {
                 if (this.show.render2D) {
@@ -388,7 +424,7 @@ export default {
         this.throttleupdateColor = utils.throttle((color, index) => {
             const currentData = [...toRaw(this.currentData)];
             currentData[index].color = color;
-            this.storeData(currentData[index]);
+            this.throttleStoreData(currentData[index]);
             this.storeDataToVuex(currentData);
             if (this.currentData[index].visible) {
                 if (this.is2D) {
@@ -398,6 +434,15 @@ export default {
                 }
             }
         }, 25);
+        this.throttleStoreData = utils.throttle((data) => {
+            this.storeData(data);
+        }, 750);
+        this.throttleUploadUserData2D = utils.throttle((data) => {
+            this.uploadUserData(data, 2);
+        }, 750);
+        this.throttleUploadUserData3D = utils.throttle((data) => {
+            this.uploadUserData(data, 3);
+        }, 750);
     },
     async mounted() {
         const { success, error } = await service.initUserData();
@@ -406,9 +451,19 @@ export default {
             this.initFormData();
             this.show.info = true;
             console.log('初始化用户信息成功');
+            this.toast({
+                head: `${this.greetingMessage}${this.userInfo.nickname || this.userInfo.username}`,
+                messages: ['您的数据已恢复'],
+                target: 'body'
+            })
         } else {
             console.log('初始化用户信息失败:', error);
             this.$store.commit('auth/cleanState', null);
+            this.toast({
+                head: 'DONGMING',
+                messages: ['hello,world!'],
+                target: 'body'
+            })
         }
         window.addEventListener('resize', this.throttledResize);
     },
@@ -416,9 +471,9 @@ export default {
         window.removeEventListener('resize', this.throttledResize);
     },
     computed: {
-        ...mapGetters(["functionData_2D", "functionData_3D", "is2D"]),
+        ...mapGetters(["functionData_2D", "functionData_3D", "is2D", "messagesData"]),
         ...mapGetters('auth', ['userInfo', 'displayName', 'isAuthenticated',
-            'chartType', 'closed', 'range', 'dash', 'grid', 'zoomFactor', 'moveFactor'
+            'chartType', 'closed', 'range', 'dash', 'grid', 'zoomFactor', 'moveFactor', 'globalSamples'
         ]),
         currentInputExample() {
             return this.show.render2D ? 'e.g. 8log(cos(sin(sqrt(x^3))))'
@@ -476,12 +531,12 @@ export default {
     watch: {
         functionData_2D: {
             handler(newVal) {
-                this.uploadUserData(newVal, 2);
+                this.throttleUploadUserData2D(newVal);
             },
         },
         functionData_3D: {
             handler(newVal) {
-                this.uploadUserData(newVal, 3);
+                this.throttleUploadUserData3D(newVal);
             },
         },
         chartType: {
@@ -552,6 +607,32 @@ export default {
                 this.show.render2D = newVal;
             },
         },
+        globalSamples: {
+            handler(newVal) {
+                if (!this.show.render2D) return
+                const newData = toRaw(this.currentData).map(item => ({
+                    fn: item.fn,
+                    color: item.color,
+                    nSamples: newVal,
+                    visible: item.visible,
+                    dimension: item.dimension,
+                    graphType: item.graphType,
+                    closed: item.closed,
+                    range: item.range
+                }));
+                this.$refs.TwoDPlotCom.fuckRender(newData);
+                this.storeDataToVuex(newData);
+            },
+        },
+        messagesData: {
+            handler(newVal) {
+                this.toast({
+                    head: newVal.head,
+                    messages: newVal.messages,
+                    target: newVal.target
+                })
+            },
+        }
     },
     methods: {
         switchRenderer() {
@@ -582,12 +663,12 @@ export default {
                         fnData = {
                             fn: '',
                             color: utils.generateRandomHarmoniousColor(),
-                            nSamples: 2025, // 确保有默认采样点数
+                            nSamples: this.globalSamples || 2025,
                             visible: true,
                             dimension: 2,
                             graphType: 'interval', // 添加默认图表类型
                             closed: this.closed,
-                            range: this.range
+                            range: this.range,
                         };
                     } else {
                         fnData = {
@@ -646,6 +727,11 @@ export default {
                 this.show.loginModal = false;
                 this.initFormData();
                 this.firework();
+                this.toast({
+                    head: `${this.greetingMessage}${this.userInfo.nickname || this.userInfo.username}`,
+                    messages: ['您的数据已恢复'],
+                    target: 'body'
+                });
                 setTimeout(() => {
                     this.show.info = true;
                 }, 400);
@@ -692,12 +778,50 @@ export default {
             }
         },
 
+        //单一函数采样点数更新
+        updateFunctionSamplePoints(samples, index) {
+            if (!this.show.render2D || !this.$refs.TwoDPlotCom) return;
+            const validSamples = utils.clamp(Number(samples), 500, 5000);
+            this.$refs.TwoDPlotCom.updateSamplePoints(validSamples, index);
+            //同步更新本地数据和Vuex数据
+            const data = [...toRaw(this.currentData)];
+            if (data[index]) {
+                data[index].nSamples = validSamples;
+                this.storeDataToVuex(data);
+            }
+        },
+
+        //全部函数采样点数更新（无敌蜜汁超绝长命名）
+        updateAllFunctionSamplePoints(samples) {
+            if (!this.show.render2D || !this.$refs.TwoDPlotCom) return;
+            const validSamples = utils.clamp(Number(samples), 500, 5000);
+            this.$store.commit('auth/updateGlobalSamples', validSamples);
+            //同步更新所有函数的采样点数据到本地和Vuex
+            const data = toRaw(this.currentData).map(item => {
+                if (item) {
+                    return { ...item, nSamples: validSamples };
+                }
+                return item;
+            });
+            //存储到Vuex (确保触发响应式更新)
+            this.storeDataToVuex(data);
+        },
+
         async updateUserInfo() {
             this.loading.updateInfo = true;
             const { success, error } = await service.updateUserInfo(this.formData);
             if (success) {
                 this.initFormData();
-                console.log('更新用户信息成功:', this.userInfo);
+                this.toast({
+                    head: '账户信息更新成功',
+                    messages: ['「你是否想过，此刻的名字并非永恒？',
+                    '若在暮色将尽时改写墨迹未干的诗行，',
+                    '或许会有星子坠入你的眼眸',
+                    '——某个古老的机关，总偏爱被晚风掀动的灵魂。」'],
+                    target: 'body',
+                    time: 20000,
+                    allowWrap: false
+                });
             } else {
                 console.log('更新用户信息失败:', error);
             }
@@ -852,8 +976,10 @@ export default {
         async uploadAvatar(res, file) {
             const { success, error } = await service.uploadAvatar(res, file);
             if (success) {
-                console.log('上传头像成功');
-                console.log('头像地址:', res.url);
+                this.toast({
+                    head: '上传头像成功',
+                    target: 'body'
+                });
                 const url = {
                     avatarUrl: res.url
                 }
@@ -911,6 +1037,10 @@ export default {
                 spread: 120,
                 startVelocity: 45
             }, origin);
+        },
+
+        toast(message) {
+            this.$refs.toast.addMessage(message);
         }
     }
 };

@@ -43,6 +43,7 @@ export default {
     },
     mounted() {
         this.init();
+        // this.handleArrayInput(this.functionData_3D);
     },
     beforeUnmount() {
         this.sceneManager.dispose();
@@ -52,6 +53,7 @@ export default {
             const container = this.$refs.canvas3D;
             this.sceneManager = new SceneManager(container);
             this.functionRenderer = new FunctionRenderer(this.sceneManager);
+            this.sceneManager.functionRenderer = this.functionRenderer;
         },
 
         fuckResize() {
@@ -70,7 +72,6 @@ export default {
 
         async handleArrayInput(inputs, index = 0) {
             for (const input of inputs) {
-                console.log("添加3D数据", input);
                 const uuid = await this.functionRenderer.renderFunction(input);
                 const payload = {
                     uuid,

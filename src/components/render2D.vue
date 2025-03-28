@@ -4,6 +4,7 @@
 
 <script>
 import { chartInstance } from '../assets/utils/chartSetter';
+import {clamp} from '../assets/utils/componentUtils.js'; 
 
 export default {
     data() {
@@ -71,15 +72,14 @@ export default {
             this.chartInstance.resize(this.$refs.canvas2D);
         },
 
-        // 更新采样点数量
+        // 更新采样点数
         updateSamplePoints(samples, index) {
             if (!this.chartInstance) return;
             try {
-                if (typeof this.chartInstance.setSamplePoints === 'function') {
-                    this.chartInstance.setSamplePoints(samples, index);
-                }
+                const validSamples = clamp(Number(samples), 500, 5000);
+                this.chartInstance.setSamplePoints(validSamples, index);
             } catch (error) {
-                console.error("采样点更新失败");
+                console.error("采样点数更新失败");
             }
         },
 

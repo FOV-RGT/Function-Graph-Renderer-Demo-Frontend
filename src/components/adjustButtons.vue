@@ -4,7 +4,7 @@
             <input type="file" ref="GLTFFileInput" accept=".glb,.gltf" class="hidden"
                 @change="handleFileSelected" />
             <button class="btn btn-soft btn-info btn-xl text-xl h-full" @click="triggerFileSelect">
-                上传GLTF|GLB模型
+                上传GLB模型
             </button>
         </div>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 163 176" class="icon1 h-5/7">
@@ -83,6 +83,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+
 
 
 export default {

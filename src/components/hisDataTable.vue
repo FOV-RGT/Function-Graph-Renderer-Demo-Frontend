@@ -60,7 +60,7 @@
                     <icon type="doubleLeft" />
                 </button>
                 <label class="join-item input">
-                    <input v-show="!loading.getData" type="text" class="join rounded-none w-12 text-center"
+                    <input v-show="!loading.getData" type="number" class="join rounded-none w-12 text-center"
                         :value="currentPagination.currentPage"
                         @input="debouncedUpdatePage($event.target.value, $event)">
                     <span v-show="loading.getData" class="loading loading-spinner loading-lg"></span>
@@ -125,7 +125,7 @@ export default {
         }, 250)
     },
     mounted() {
-        if (this.localFnData.length > 0 || !this.isAuthenticated) {
+        if (!this.isAuthenticated) {
             this.initLocalDataMap();
         } else {
             this.getHisData();
@@ -199,10 +199,12 @@ export default {
                 await this.getHisData(page);
                 this.selection = this.totalSelection.get(page) || [];
             } else {
-                this.localPage = page;
+                this.loading.getData = true;
                 setTimeout(() => {
+                    this.localPage = page;
                     this.selection = this.totalSelection.get(page) || [];
-                }, 100);
+                    this.loading.getData = false;
+                }, 200);
             }
         },
         closeTable() {
@@ -260,7 +262,7 @@ export default {
         async getHisData(page) {
             if (this.loading.getData) return;
             this.loading.getData = true;
-            const { success, data, error } = await getChangeData(page);
+            const { success, data, error } = await getChangeData(page, this.is2D ? 2 : 3);
             if (success) {
                 this.fnData = data.fnData;
                 this.pagination = data.pagination;

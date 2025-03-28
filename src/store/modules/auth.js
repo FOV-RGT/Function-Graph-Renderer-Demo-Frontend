@@ -23,6 +23,7 @@ export default {
             grid: true,
             zoomFactor: 0.5,
             moveFactor: 0.2,
+            globalSamples: 2025
         }
     },
     
@@ -37,7 +38,7 @@ export default {
             avatarUrl: state.avatarUrl || '爱门.jpg'
         }),
         // 获取显示名称（优先使用昵称）
-        displayName: state => state.nickname || state.username || null,
+        displayName: state => state.nickname || state.username || "千早爱音世界第一可爱",
         chartType: state => state.userConfig.chartType,
         closed: state => state.userConfig.closed,
         range: state => state.userConfig.range,
@@ -45,6 +46,7 @@ export default {
         grid: state => state.userConfig.grid,
         zoomFactor: state => state.userConfig.zoomFactor,
         moveFactor: state => state.userConfig.moveFactor,
+        globalSamples : state => state.userConfig.globalSamples,
         remoteConfig: state => Object.freeze({
             chartType: state.userConfig.chartType,
             closed: state.userConfig.closed,
@@ -52,7 +54,8 @@ export default {
             dash: state.userConfig.dash,
             grid: state.userConfig.grid,
             zoomFactor: state.userConfig.zoomFactor,
-            moveFactor: state.userConfig.moveFactor
+            moveFactor: state.userConfig.moveFactor,
+            globalSamples: state.userConfig.globalSamples
         })
     },
     
@@ -106,10 +109,14 @@ export default {
         setUserAvatarUrl(state, avatarUrl) {
             state.avatarUrl = avatarUrl;
             localStorage.setItem('avatarUrl', avatarUrl);
+        },
+        
+        updateGlobalSamples(state, samples) {
+            console.log('Vuex中globalSamples更新:', samples);
+            state.userConfig.globalSamples = samples;
         }
     },
     
     actions: {
-        
     }
 };

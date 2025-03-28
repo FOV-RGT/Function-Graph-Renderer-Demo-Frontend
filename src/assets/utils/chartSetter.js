@@ -161,10 +161,10 @@ export class chartInstance {
     }
 
     setSamplePoints(nSamples, index) {
-        // 更新采样点数 (支持单个函数和全部函数)
+        // 更新采样点数
         if (index !== undefined && this.config.data[index]) {
             this.config.data[index].nSamples = nSamples;
-        } else if (index === undefined) { //为编写一次性更改全部函数的功能做准备
+        } else if (index === undefined) { 
             this.config.data.forEach((item) => item && (item.nSamples = nSamples));
         }
         // 重新渲染图表

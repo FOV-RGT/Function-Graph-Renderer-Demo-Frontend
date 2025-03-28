@@ -1,3 +1,5 @@
+<!-- 已弃用 -->
+
 <template>
     <div style="width: 100%;height: 100%;" ref="canvas3D"></div>
 </template>

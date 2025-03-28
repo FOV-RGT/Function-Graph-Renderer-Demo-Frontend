@@ -138,9 +138,9 @@ export async function register(credentials) {
     }
 }
 
-export async function getChangeData(currentPage, pageSize) {
+export async function getChangeData(currentPage, dimension) {
     try {
-        const res = await fnApi.getChangeData(currentPage, pageSize);
+        const res = await fnApi.getChangeData(currentPage, dimension);
         let fnData = res.mathdatas || [];
         if (res.mathdatas?.length > 2) fnData.sort((a, b) => b.id - a.id);
         const pagination = res.pagination || {
