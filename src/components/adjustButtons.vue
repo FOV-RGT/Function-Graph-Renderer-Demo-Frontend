@@ -1,8 +1,7 @@
 <template>
     <div class="overflow-hidden h-full flex flex-row justify-end items-center gap-8 select-none pl-2">
         <div v-if="!is2D" class="h-2/3">
-            <input type="file" ref="GLTFFileInput" accept=".glb,.gltf" class="hidden"
-                @change="handleFileSelected" />
+            <input type="file" ref="GLTFFileInput" accept=".glb" class="hidden" @change="handleFileSelected" />
             <button class="btn btn-soft btn-info btn-xl text-xl h-full" @click="triggerFileSelect">
                 上传GLB模型
             </button>
@@ -78,6 +77,16 @@
                 </g>
             </g>
         </svg>
+        <teleport to='body'>
+            <div v-if="showProgress" class="fixed inset-0 z-40 select-none w-screen h-screen">
+                <div class="fixed inset-0 z-40 select-none">
+                    <div class="absolute inset-0 bg-black/50"></div>
+                </div>
+                <!-- <div class="radial-progress text-[#d4bd81] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50"
+                    :style="{'--value': GLTFLoadProgress}" role="progressbar" :aria-valuenow=GLTFLoadProgress v-text="GLTFLoadProgress + '%'"></div> -->
+                <progress class="progress progress-warning w-56 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50" :value="GLTFLoadProgress" max="100"></progress>
+            </div>
+        </teleport>
     </div>
 </template>
 
@@ -90,11 +99,36 @@ export default {
     data() {
         return {
             viewTimeOut: null,
-            viewInterval: null
+            viewInterval: null,
         }
     },
     computed: {
-        ...mapGetters(['is2D']),
+        ...mapGetters(['is2D', 'GLTFLoadProgress', 'GLTFLoadStatus']),
+        showProgress() {
+            return this.GLTFLoadStatus === 'loading';
+        }
+    },
+    watch: {
+        GLTFLoadStatus(newVal) {
+            if (newVal === 'success') {
+                const message = {
+                    head: '模型加载完成',
+                    target: 'body',
+                    time: 2000,
+                    allowWrap: true
+                }
+                this.$emit('addMessage', message);
+            } else if (newVal === 'error') {
+                const message = {
+                    head: '模型加载失败',
+                    messages: ['请检查文件格式或网络连接'],
+                    target: 'body',
+                    time: 2000,
+                    allowWrap: true
+                }
+                this.$emit('addMessage', message);
+            }
+        }
     },
     methods: {
         startSetView(evt) {
@@ -126,20 +160,20 @@ export default {
         },
 
         handleFileSelected(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        // 验证文件类型
-        const validTypes = ['.glb', '.gltf'];
-        const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
-        if (!validTypes.includes(fileExtension)) {
-            alert('请选择.glb或.gltf格式的文件');
-            return;
+            const file = event.target.files[0];
+            if (!file) return;
+            // 验证文件类型
+            const validTypes = ['.glb'];
+            const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+            if (!validTypes.includes(fileExtension)) {
+                alert('请选择.glb');
+                return;
+            }
+            // 调用SceneManager的setGLTF方法
+            this.$store.commit('uploadGLTF', file);
+            // 重置文件输入框，允许重复选择相同文件
+            event.target.value = '';
         }
-        // 调用SceneManager的setGLTF方法
-        this.$store.commit('uploadGLTF', file);
-        // 重置文件输入框，允许重复选择相同文件
-        event.target.value = '';
-    }
     }
 }
 </script>

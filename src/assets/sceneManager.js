@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import CoordinateSystem from './coordinateSystem.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import store from '../store/index.js'
 
 export default class SceneManager {
     constructor(container) {
@@ -223,7 +224,7 @@ export default class SceneManager {
         this.renderer.dispose();
     }
 
-    addObject(object, isFunctionObject, input) {
+    addObject(object, isFunctionObject, input = { visible: true }) {
         object.userData = object.userData || {};
         if (isFunctionObject) {
             object.userData.isFunctionObject = isFunctionObject;
@@ -426,14 +427,12 @@ export default class SceneManager {
 
     loadGLTFModel(file) {
         const fileURL = URL.createObjectURL(file);
-        // 显示加载提示
-        console.log(`正在加载模型: ${file.name}...`);
         const loader = new GLTFLoader();
+        store.commit('syncGLTFLoadProgress', 0);
+        store.commit('syncGLTFLoadStatus', 'loading');
         loader.load(
             fileURL,
             (gltf) => {
-                // 处理加载成功
-                console.log('模型加载成功:', file.name);
                 // 清理URL
                 URL.revokeObjectURL(fileURL);
                 // 设置模型参数
@@ -459,16 +458,16 @@ export default class SceneManager {
                 // 添加到场景并标记为自定义模型
                 model.userData.isCustomModel = true;
                 this.addObject(model, false);
-                console.log('模型已添加到场景');
+                store.commit('syncGLTFLoadStatus', 'success');
             },
             // 进度回调
             (xhr) => {
                 const percentComplete = xhr.loaded / xhr.total * 100;
-                console.log(`模型加载进度: ${Math.round(percentComplete)}%`);
+                store.commit('syncGLTFLoadProgress', percentComplete);
             },
             // 错误回调
-            (error) => {
-                console.error('加载模型时出错:', error);
+            () => {
+                store.commit('syncGLTFLoadStatus', 'error');
                 URL.revokeObjectURL(fileURL);
             }
         );

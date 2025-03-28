@@ -9,6 +9,7 @@ export default defineConfig({
     tailwindcss()
   ],
   server: {
+    port: 5713,
     proxy: {
       '/api': {
         // target: 'https://api.kz2006.top/',

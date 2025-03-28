@@ -69,7 +69,7 @@
                     <ThreeDPlotCom ref="ThreeDPlotCom" />
                 </div>
                 <div class="chart-leftTop select-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 437" class="cursor-pointer"
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 437" class="cursor-pointer button"
                         @click="show.menu = true">
                         <g>
                             <polygon class="cls-2"
@@ -86,7 +86,7 @@
                 </div>
             </div>
             <div class="h-1/13 w-5/6 pr-10 absolute right-0 flex flex-row justify-end overflow-hidden">
-                <adjustButtons @setView="setView" />
+                <adjustButtons @setView="setView" @addMessage="toast"/>
             </div>
             <transition name="bg">
                 <div v-if="show.table" class="fixed inset-0 z-40 select-none" @mousedown="show.table = false">
@@ -206,9 +206,9 @@
                 <div v-if="show.avatarPreview" class="fixed inset-0 z-40 select-none"
                     @mousedown="show.avatarPreview = false">
                     <div class="fixed inset-0 bg-black/35"></div>
-                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-1000 select-none"
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 select-none"
                         @mousedown.stop>
-                        <img :src="userInfo.avatarUrl" class="max-h-[80vh] max-w-[80vw] rounded-lg shadow-lg"
+                        <img :src="userInfo.avatarUrl" class="max-h-[50dvh] max-w-[50dvw] rounded-lg shadow-lg"
                             alt="用户头像" />
                     </div>
                 </div>
@@ -225,7 +225,13 @@
                                     <div class="flex items-center gap-5 grow">
                                         <ColorPicker format="rgb" shape="circle" :debounce="0" lang="ZH-cn"
                                             popupPosition="left" v-model:pureColor="item.color"
-                                            @update:pureColor="throttleupdateColor($event, displayData.startIndex + index)" />
+                                            @update:pureColor="throttleupdateColor($event, displayData.startIndex + index)">
+                                            <template #extra>
+                                                <button class="btn btn-block btn-success text-xl">
+                                                    关闭
+                                                </button>
+                                            </template>
+                                        </ColorPicker>
                                         <input type="text" spellcheck="false"
                                             class="w-full h-10 liInput border-0 outline-none" :value="item.fn"
                                             :placeholder="currentInputExample"
@@ -275,7 +281,6 @@
                     <div class="fixed inset-0"></div>
                 </div>
             </transition>
-
             <!-- 临时的右侧小侧边栏（可以考虑以此为原型完成图例以及单一函数的采样点数和图表类型更新） -->
             <transition name="rightSlide">
                 <div v-if="show.rightSlide"
@@ -370,6 +375,7 @@ export default {
                 menu: true,
                 avatarPreview: false,
                 rightSlide: false, // 右侧侧边栏的显示/隐藏
+                colorPicker: true
             },
             account: "",
             password: "",
@@ -815,9 +821,9 @@ export default {
                 this.toast({
                     head: '账户信息更新成功',
                     messages: ['「你是否想过，此刻的名字并非永恒？',
-                    '若在暮色将尽时改写墨迹未干的诗行，',
-                    '或许会有星子坠入你的眼眸',
-                    '——某个古老的机关，总偏爱被晚风掀动的灵魂。」'],
+                        '若在暮色将尽时改写墨迹未干的诗行，',
+                        '或许会有星子坠入你的眼眸',
+                        '——某个古老的机关，总偏爱被晚风掀动的灵魂。」'],
                     target: 'body',
                     time: 20000,
                     allowWrap: false

@@ -11,7 +11,9 @@ const store = createStore({
         needUpload: true,
         GLTFfile: null,
         globalSamples: 2025,
-        messagesData: {}
+        messagesData: {},
+        GLTFLoadProgress: 0,
+        GLTFLoadStatus: 'success',
     },
     getters: {
         is2D: state => state.is2D,
@@ -21,7 +23,9 @@ const store = createStore({
         GLTFfile: state => state.GLTFfile,
         Objectuuid: state => state.functionData_3D.map(item => item.uuid),
         globalSamples: state => state.globalSamples,
-        messagesData: state => state.messagesData
+        messagesData: state => state.messagesData,
+        GLTFLoadProgress: state => state.GLTFLoadProgress,
+        GLTFLoadStatus: state => state.GLTFLoadStatus,
     },
     mutations: {
         switchRender(state) {
@@ -50,6 +54,12 @@ const store = createStore({
         },
         toast(state, data) {
             state.messagesData = data;
+        },
+        syncGLTFLoadProgress(state, progress) {
+            state.GLTFLoadProgress = progress;
+        },
+        syncGLTFLoadStatus(state, status) {
+            state.GLTFLoadStatus = status;
         }
     },
     actions: {
