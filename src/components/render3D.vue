@@ -17,6 +17,7 @@ export default {
     },
     computed: {
         ...mapGetters(['is2D', 'GLTFfile', 'Objectuuid']),
+        ...mapGetters('auth', ['lockCameraFocus']),
     },
     watch: {
         is2D: {
@@ -88,7 +89,7 @@ export default {
         },
 
         setView(evt, zoomStep, moveStep) {
-            this.sceneManager.setView(evt, zoomStep, moveStep);
+            this.sceneManager.setView(evt, zoomStep, moveStep, this.lockCameraFocus);
         },
 
         setObjectColor(color, index) {

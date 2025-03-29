@@ -327,7 +327,7 @@ export default class SceneManager {
         return object;
     }
 
-    setView(evt, zoomStep, moveStep) {
+    setView(evt, zoomStep, moveStep, isLock) {
         switch (evt) {
             case 'zoomIn':
                 this.zoomCamera(true, zoomStep);
@@ -336,16 +336,16 @@ export default class SceneManager {
                 this.zoomCamera(false, zoomStep);
                 break;
             case 'moveLeft':
-                this.panCamera('left', moveStep);
+                this.panCamera('left', moveStep, isLock);
                 break;
             case 'moveRight':
-                this.panCamera('right', moveStep);
+                this.panCamera('right', moveStep, isLock);
                 break;
             case 'moveUp':
-                this.panCamera('up', moveStep);
+                this.panCamera('up', moveStep, isLock);
                 break;
             case 'moveDown':
-                this.panCamera('down', moveStep);
+                this.panCamera('down', moveStep, isLock);
                 break;
             case 'reset':
                 this.resetCamera();
@@ -375,7 +375,7 @@ export default class SceneManager {
     }
 
     // 平移相机
-    panCamera(direction, panFactor = 0.1) {
+    panCamera(direction, panFactor = 0.1, isLock) {
         const panDistance = 10 * panFactor;
         // 创建世界坐标系中的移动向量
         const panOffset = new THREE.Vector3();
@@ -405,7 +405,9 @@ export default class SceneManager {
         }
         // 同时移动相机位置和目标点
         this.camera.position.add(panOffset);
-        this.controls.target.add(panOffset);
+        if (!isLock) {
+            this.controls.target.add(panOffset);
+        }
         // 更新控制器
         this.controls.update();
     }
