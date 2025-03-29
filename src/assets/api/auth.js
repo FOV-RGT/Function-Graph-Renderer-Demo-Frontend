@@ -1,4 +1,3 @@
-import { uploadAvatar } from '../services/userService';
 import api from './index';
 import axios from 'axios';
 

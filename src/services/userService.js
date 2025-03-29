@@ -1,5 +1,5 @@
-import authApi from '../api/auth';
-import fnApi from '../api/function';
+import authApi from '../assets/api/auth';
+import fnApi from '../assets/api/function';
 import store from '../store';
 import { sortData, generateRandomHarmoniousColor } from '../assets/utils/componentUtils';
 
