@@ -63,7 +63,7 @@ export default {
                 this.showMessage = true;
                 this.timeout = setTimeout(() => {
                     this.closeMessage();
-                }, time || 5000)
+                }, time || 3000)
             }
         },
         closeMessage() {

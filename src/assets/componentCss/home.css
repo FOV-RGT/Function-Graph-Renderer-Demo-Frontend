@@ -338,3 +338,18 @@
     width: auto;
     max-height: 100vh;
 }
+
+.chart-leftTop .button {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+.chart-leftTop .button:hover {
+    transform: scale(1.02);
+}
+
+.chart-leftTop .button:active {
+    transform: scale(0.98);
+}

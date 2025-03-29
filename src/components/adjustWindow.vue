@@ -21,54 +21,59 @@
                             v-model="userConfig.chartType" @change="updateUserConfig" />
                     </label>
                 </div>
+                <p class="ml-auto text-[#AEA181]">*仅限2D</p>
             </div>
             <div class="flex flex-row item-center justify-start gap-2">
                 <p class="mr-4 text-2xl">渲染范围</p>
                 <input type="number" class="input w-20 input-xs self-center" v-model.number="minVal"
                     @change="setRenderRange" @keyup.enter="setRenderRange" />
                 <p class="flex text-center justify-center items-center text-xl mb-1 text-base-content/70">
-                    < x <</p>
+                    < x < </p>
                         <input type="number" class="input w-20 input-xs self-center" v-model.number="maxVal"
                             @change="setRenderRange" @keyup.enter="setRenderRange" />
+                        <p class="ml-auto text-[#AEA181]">*仅限2D</p>
             </div>
             <div class="flex flex-row items-center justify-start space-x-4">
-                <div class="zoomFactorControl flex items-center justify-center">
+                <div class="flex items-center justify-center">
                     <label class="text-2xl mr-1">缩放步长：</label>
                     <input type="number" v-model.number="userConfig.zoomFactor" min="0.01" max="1.00" step="0.01"
                         class="input input-xs w-16 text-center" @change="updateZoomFactor"
                         @keyup.enter="updateZoomFactor" />
                 </div>
-                <div class="moveStepControl flex items-center">
+                <div class="flex items-center">
                     <label class="text-2xl mr-1">移动步长：</label>
                     <input type="number" v-model.number="userConfig.moveFactor" min="0.01" max="1.00" step="0.01"
                         class="input input-xs w-16 text-center" @change="updateMoveFactor"
                         @keyup.enter="updateMoveFactor" />
                 </div>
+                <p class="ml-auto text-[#AEA181]">*通用</p>
             </div>
-            <!-- <div class="flex flex-row items-center justify-start">
-                <p class="mr-4 text-2xl">绘制函数阴影</p>
-                <input type="checkbox" checked="checked" class="toggle toggle-primary" v-model="userConfig.closed"
-                    @change="updateUserConfig" />
-                <div class="warningCircle tooltip tooltip-warning tooltip-right ml-5" data-tip="该选项极其消耗性能">
-                    <icon type="warningCircle" class="self-center text-warning" />
+            <div class="flex flex-row items-center justify-start space-x-4">
+                <div class="flex items-center justify-center">
+                    <p class="mr-4 text-2xl">辅助虚线</p>
+                    <input type="checkbox" checked="checked" class="toggle toggle-primary" v-model="userConfig.dash"
+                        @change="updateUserConfig" />
                 </div>
-            </div> -->
-            <div class="flex flex-row items-center justify-start">
-                <p class="mr-4 text-2xl">辅助虚线</p>
-                <input type="checkbox" checked="checked" class="toggle toggle-primary" v-model="userConfig.dash"
-                    @change="updateUserConfig" />
+                <div class="flex items-center justify-center">
+                    <p class="mr-4 text-2xl">辅助网格</p>
+                    <input type="checkbox" checked="checked" class="toggle toggle-primary" v-model="userConfig.grid"
+                        @change="updateUserConfig" />
+                </div>
+                <p class="ml-auto text-[#AEA181]">*仅限2D</p>
             </div>
             <div class="flex flex-row items-center justify-start">
-                <p class="mr-4 text-2xl">辅助网格</p>
-                <input type="checkbox" checked="checked" class="toggle toggle-primary" v-model="userConfig.grid"
-                    @change="updateUserConfig" />
-            </div>
-            <div class="flex flex-row items-center justify-start ">
-                <p class="mr-4 text-2xl">全局采样点数</p>
-                <input type="number" :value="userConfig.globalSamples" min="500" max="5000" step="1" placeholder="50-5000"
-                    class="input w-20 input-xs self-center" 
+                <p class="mr-4 text-2xl">采样点数</p>
+                <input type="number" :value="userConfig.globalSamples" min="500" max="5000" step="1"
+                    placeholder="50-5000" class="input w-20 input-xs self-center"
                     @change="updateAllSamples($event.target.value, $event)"
                     @keyup.enter="updateAllSamples($event.target.value, $event)" />
+                <p class="ml-auto text-[#AEA181]">*仅限2D</p>
+            </div>
+            <div class="flex flex-row items-center justify-start">
+                <p class="mr-4 text-2xl">锁定摄像机聚焦点</p>
+                <input type="checkbox" checked="checked" class="toggle toggle-primary"
+                    v-model="userConfig.lockCameraFocus" @change="updateUserConfig" />
+                <p class="ml-auto text-[#AEA181]">*仅限3D</p>
             </div>
         </div>
     </div>
@@ -89,13 +94,13 @@ export default {
         return {
             userConfig: {
                 chartType: 'linear',
-                // closed: false,
                 range: null,
                 dash: false,
                 grid: true,
                 zoomFactor: 0.5,
                 moveFactor: 0.2,
-                globalSamples: 2025// ，默认为空
+                globalSamples: 2025,
+                lockCameraFocus: false,
             },
             minVal: '',
             maxVal: '',
@@ -156,7 +161,7 @@ export default {
             if (!this.isAuthenticated) return;
             const { success, error } = await uploadUserConfig(this.userConfig);
             if (success) {
-                console.log('设置已保存');
+                // console.log('设置已保存');
             } else {
                 console.log(error);
             }
@@ -165,12 +170,4 @@ export default {
 }
 </script>
 
-<style scoped>
-/* .warningCircle .iconfont {
-    font-size: 1.5em;
-}
-
-.warningCircle::before {
-    font-size: large;
-} */
-</style>
+<style scoped></style>

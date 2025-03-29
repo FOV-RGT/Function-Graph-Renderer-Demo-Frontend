@@ -10,11 +10,9 @@ export default class CoordinateSystem {
     }
 
     createAxes() {
-        // 更现代的颜色配置
         const xAxisColor = 0xff3b30;
         const yAxisColor = 0x007aff;
         const zAxisColor = 0x34c759;
-        // 更现代的材质配置 - X轴
         const positiveXAxisMaterial = new THREE.LineBasicMaterial({
             color: xAxisColor,
             linewidth: 2,
@@ -110,36 +108,35 @@ export default class CoordinateSystem {
                 this.createTickMark(
                     new THREE.Vector3(i, 0, 0),
                     new THREE.Vector3(i, isMajorTick ? -0.3 : -0.1, 0),
-                    0xff0000
+                    0xff3b30
                 );
                 this.createTickMark(
                     new THREE.Vector3(0, i, 0),
                     new THREE.Vector3(isMajorTick ? -0.3 : -0.1, i, 0),
-                    0x0000ff
+                    0x007aff
                 );
                 this.createTickMark(
                     new THREE.Vector3(0, 0, i),
                     new THREE.Vector3(0, isMajorTick ? -0.3 : -0.1, i),
-                    0x00ff00
+                    0x34c759
                 );
                 // 只在主要刻度点添加标签
                 if (isMajorTick) {
                     // X轴标记
-                    this.createAxisLabel(new THREE.Vector3(i, -0.6, 0), i, 0xff0000);
+                    this.createAxisLabel(new THREE.Vector3(i, -0.6, 0), i, 0xff3b30);
                     // Y轴标记
-                    this.createAxisLabel(new THREE.Vector3(-0.8, i, 0), i, 0x0000ff);
+                    this.createAxisLabel(new THREE.Vector3(-0.8, i, 0), i, 0x007aff);
                     // Z轴标记
-                    this.createAxisLabel(new THREE.Vector3(0, -0.6, i), i, 0x00ff00);
+                    this.createAxisLabel(new THREE.Vector3(0, -0.6, i), i, 0x34c759);
                 }
             }
         }
-        this.createAxisLabel(new THREE.Vector3(200, 5, 0), "X", 0xff0000, 2048);
-        this.createAxisLabel(new THREE.Vector3(5, 200, 0), "Y", 0x0000ff, 2048);
-        this.createAxisLabel(new THREE.Vector3(0, 5, 200), "Z", 0x00ff00, 2048);
+        this.createAxisLabel(new THREE.Vector3(200, 5, 0), "X", 0xff3b30, 2048);
+        this.createAxisLabel(new THREE.Vector3(5, 200, 0), "Y", 0x007aff, 2048);
+        this.createAxisLabel(new THREE.Vector3(0, 5, 200), "Z", 0x34c759, 2048);
     }
 
     createAxisLabel(position, text, color, canvasSize = 128) {
-        // 增加画布分辨率以提高清晰度
         const pixelRatio = window.devicePixelRatio || 2;
         const canvas = document.createElement('canvas');
         canvas.width = canvasSize * pixelRatio;
@@ -169,7 +166,6 @@ export default class CoordinateSystem {
             alphaTest: 0.1,
             transparent: true,
         });
-        // 创建精灵并设置位置
         const sprite = new THREE.Sprite(spriteMaterial);
         sprite.position.copy(position);
         const scaleFactor = canvasSize / 128;

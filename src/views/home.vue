@@ -60,7 +60,6 @@
                 <div
                     class="logo flex item-center gap-4 text-5xl absolute left-[50%] transform -translate-x-[50%] select-none">
                     <h1 class="flex items-center">DONGMING v{{ version }}</h1>
-                    <img src="/486.1-done.png" alt="" class="w-12 h-12" />
                 </div>
                 <div v-show="show.render2D" class="h-full w-full pl-20 pb-4 pr-12 pt-8">
                     <TwoDPlotCom ref="TwoDPlotCom" />
@@ -69,7 +68,7 @@
                     <ThreeDPlotCom ref="ThreeDPlotCom" />
                 </div>
                 <div class="chart-leftTop select-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 437" class="cursor-pointer"
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 437" class="cursor-pointer button"
                         @click="show.menu = true">
                         <g>
                             <polygon class="cls-2"
@@ -86,7 +85,7 @@
                 </div>
             </div>
             <div class="h-1/13 w-5/6 pr-10 absolute right-0 flex flex-row justify-end overflow-hidden">
-                <adjustButtons @setView="setView" />
+                <adjustButtons @setView="setView" @addMessage="toast"/>
             </div>
             <transition name="bg">
                 <div v-if="show.table" class="fixed inset-0 z-40 select-none" @mousedown="show.table = false">
@@ -188,9 +187,8 @@
             <transition name="table">
                 <register ref="register" v-show="show.registerModal" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] bg-base-100 rounded-box
                     border border-base-content/10 overflow-auto h-auto z-80" @switchModal="switchModal"
-                    @login="userLogin" />
+                    @login="userLogin" @message="toast"/>
             </transition>
-            <popupWindow ref="popupWindow" />
             <transition name="bg">
                 <div v-if="show.adjustWindow" class="fixed inset-0 z-40 select-none"
                     @mousedown="show.adjustWindow = false">
@@ -206,9 +204,9 @@
                 <div v-if="show.avatarPreview" class="fixed inset-0 z-40 select-none"
                     @mousedown="show.avatarPreview = false">
                     <div class="fixed inset-0 bg-black/35"></div>
-                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-1000 select-none"
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 select-none"
                         @mousedown.stop>
-                        <img :src="userInfo.avatarUrl" class="max-h-[80vh] max-w-[80vw] rounded-lg shadow-lg"
+                        <img :src="userInfo.avatarUrl" class="max-h-[50dvh] max-w-[50dvw] rounded-lg shadow-lg"
                             alt="用户头像" />
                     </div>
                 </div>
@@ -225,7 +223,13 @@
                                     <div class="flex items-center gap-5 grow">
                                         <ColorPicker format="rgb" shape="circle" :debounce="0" lang="ZH-cn"
                                             popupPosition="left" v-model:pureColor="item.color"
-                                            @update:pureColor="throttleupdateColor($event, displayData.startIndex + index)" />
+                                            @update:pureColor="throttleupdateColor($event, displayData.startIndex + index)">
+                                            <template #extra>
+                                                <button class="btn btn-block btn-success text-xl">
+                                                    关闭
+                                                </button>
+                                            </template>
+                                        </ColorPicker>
                                         <input type="text" spellcheck="false"
                                             class="w-full h-10 liInput border-0 outline-none" :value="item.fn"
                                             :placeholder="currentInputExample"
@@ -275,7 +279,6 @@
                     <div class="fixed inset-0"></div>
                 </div>
             </transition>
-
             <!-- 临时的右侧小侧边栏（可以考虑以此为原型完成图例以及单一函数的采样点数和图表类型更新） -->
             <transition name="rightSlide">
                 <div v-if="show.rightSlide"
@@ -329,7 +332,6 @@ import { parse } from 'mathjs';
 import * as service from '../services/userService';
 import hisDataTable from '../components/hisDataTable.vue';
 import register from '../components/register.vue';
-import popupWindow from '../components/popupWindow.vue';
 import adjustButtons from '../components/adjustButtons.vue';
 import adjustWindow from '../components/adjustWindow.vue';
 import menuButtons from '../components/menuButtons.vue';
@@ -346,7 +348,6 @@ export default {
         icon,
         hisDataTable,
         register,
-        popupWindow,
         adjustButtons,
         adjustWindow,
         menuButtons,
@@ -370,6 +371,7 @@ export default {
                 menu: true,
                 avatarPreview: false,
                 rightSlide: false, // 右侧侧边栏的显示/隐藏
+                colorPicker: true
             },
             account: "",
             password: "",
@@ -397,7 +399,7 @@ export default {
                     parse(formatInput);
                 } catch (error) {
                     this.toast({
-                        head: '输入错误',
+                        head: '函数解析错误',
                         messages: ['请检查您的输入'],
                         target: 'body'
                     })
@@ -445,24 +447,23 @@ export default {
         }, 750);
     },
     async mounted() {
-        const { success, error } = await service.initUserData();
+        const { success } = await service.initUserData();
         if (success) {
             this.fuckRender();
             this.initFormData();
             this.show.info = true;
-            console.log('初始化用户信息成功');
             this.toast({
                 head: `${this.greetingMessage}${this.userInfo.nickname || this.userInfo.username}`,
                 messages: ['您的数据已恢复'],
                 target: 'body'
             })
         } else {
-            console.log('初始化用户信息失败:', error);
             this.$store.commit('auth/cleanState', null);
             this.toast({
                 head: 'DONGMING',
-                messages: ['hello,world!'],
-                target: 'body'
+                messages: ['Hello,world!'],
+                target: 'body',
+                time: 5000
             })
         }
         window.addEventListener('resize', this.throttledResize);
@@ -480,7 +481,6 @@ export default {
                 : 'e.g. y=x^2-z^2'
         },
         currentData() {
-            console.log("💩");
             return this.show.render2D ? this.functionData_2D : this.functionData_3D;
         },
         currentPagination() {
@@ -588,20 +588,6 @@ export default {
                 this.$refs.TwoDPlotCom.switchGrid(newVal);
             },
         },
-        zoomFactor: {
-            handler(newVal) {
-                if (this.show.render2D) {
-                    this.$refs.TwoDPlotCom.updateZoomFactor(newVal);
-                }
-            },
-        },
-        moveFactor: {
-            handler(newVal) {
-                if (this.show.render2D) {
-                    this.$refs.TwoDPlotCom.updateMoveFactor(newVal);
-                }
-            },
-        },
         is2D: {
             handler(newVal) {
                 this.show.render2D = newVal;
@@ -643,9 +629,9 @@ export default {
         //将缩放步长和移动步长传递给2D图标实例
         setView(evt) {
             if (this.show.render2D) {
-                this.$refs.TwoDPlotCom.setView(evt, this.zoomStep, this.moveStep);
+                this.$refs.TwoDPlotCom.setView(evt, this.zoomFactor, this.moveFactor);
             } else {
-                this.$refs.ThreeDPlotCom.setView(evt, this.zoomStep, this.moveStep);
+                this.$refs.ThreeDPlotCom.setView(evt, this.zoomFactor, this.moveFactor);
             }
         },
 
@@ -708,10 +694,11 @@ export default {
 
         async userLogin(data, callback) {
             this.loading.login = true;
-            console.log('登录数据:', data);
+            // console.log('登录数据:', data);
             const needNewData = this.localFnData.length === 0 && this.currentData.length === 0;
             const { success, messages } = await service.login(data, needNewData);
             if (success) {
+                this.firework();
                 if (needNewData) {
                     this.fuckRender();
                 }
@@ -726,7 +713,6 @@ export default {
                 }
                 this.show.loginModal = false;
                 this.initFormData();
-                this.firework();
                 this.toast({
                     head: `${this.greetingMessage}${this.userInfo.nickname || this.userInfo.username}`,
                     messages: ['您的数据已恢复'],
@@ -739,9 +725,10 @@ export default {
                 const data = {
                     head: '登录失败：',
                     messages,
-                    target: 'body'
+                    target: 'body',
+                    time: 4000
                 }
-                this.$refs.popupWindow.addMessage(data);
+                this.toast(data);
             }
             if (typeof callback === 'function') {
                 callback(success);
@@ -760,22 +747,8 @@ export default {
                 this.$store.commit('auth/cleanState');
                 this.formData = {};
                 this.show.info = false;
-                console.log(this.userInfo);
+                // console.log(this.userInfo);
             }, 400);
-        },
-
-        // 更新缩放因子(zoomfactor)
-        updateZoomFactor(zoomFactor) {
-            if (this.show.render2D) {
-                this.$refs.TwoDPlotCom.updateZoomFactor(zoomFactor);
-            }
-        },
-
-        // 更新移动步长(movefactor)
-        updateMoveFactor(moveFactor) {
-            if (this.show.render2D) {
-                this.$refs.TwoDPlotCom.updateMoveFactor(moveFactor);
-            }
         },
 
         //单一函数采样点数更新
@@ -815,15 +788,21 @@ export default {
                 this.toast({
                     head: '账户信息更新成功',
                     messages: ['「你是否想过，此刻的名字并非永恒？',
-                    '若在暮色将尽时改写墨迹未干的诗行，',
-                    '或许会有星子坠入你的眼眸',
-                    '——某个古老的机关，总偏爱被晚风掀动的灵魂。」'],
+                        '若在暮色将尽时改写墨迹未干的诗行，',
+                        '或许会有星子坠入你的眼眸',
+                        '——某个古老的机关，总偏爱被晚风掀动的灵魂。」'],
                     target: 'body',
                     time: 20000,
                     allowWrap: false
                 });
             } else {
-                console.log('更新用户信息失败:', error);
+                this.toast({
+                    head: '账户信息更新失败',
+                    messages: error,
+                    target: 'body',
+                    time: 4000
+                })
+                // console.log('更新用户信息失败:', error);
             }
             this.loading.updateInfo = false;
         },
@@ -866,10 +845,10 @@ export default {
         async delectData(data, callback) {
             const { success, error } = await service.delectFunctionData(data);
             if (success) {
-                console.log('删除数据成功');
+                // console.log('删除数据成功');
                 callback();
             } else {
-                console.log('删除数据失败:', error);
+                // console.log('删除数据失败:', error);
             }
         },
 
@@ -877,11 +856,11 @@ export default {
             if (!this.isAuthenticated || data.length === 0) return;
             const { success, skip, error } = await service.uploadFunctionData(data, dimension);
             if (success) {
-                console.log('上传数据成功');
+                // console.log('上传数据成功');
             } else if (skip) {
-                console.log('跳过本次更新');
+                // console.log('跳过本次更新');
             } else {
-                console.log('上传数据失败:', error);
+                // console.log('上传数据失败:', error);
             }
         },
 
@@ -904,9 +883,9 @@ export default {
         async uploadChangeData(data) {
             const { success, error } = await service.uploadChangeData(data);
             if (success) {
-                console.log('上传变动数据成功');
+                // console.log('上传变动数据成功');
             } else {
-                console.log('上传变动数据失败:', error);
+                // console.log('上传变动数据失败:', error);
             }
         },
 
@@ -936,7 +915,7 @@ export default {
             const file = event.target.files[0];
             if (!file) return;
             if (!file.type.startsWith('image/')) {
-                this.$refs.popupWindow.addMessage({
+                this.toast({
                     head: '上传失败',
                     messages: ['请选择图片文件'],
                     target: 'body'
@@ -944,7 +923,7 @@ export default {
                 return;
             }
             if (file.size > 5 * 1024 * 1024) {
-                this.$refs.popupWindow.addMessage({
+                this.toast({
                     head: '上传失败',
                     messages: ['文件大小不能超过5MB'],
                     target: 'body'
@@ -956,7 +935,7 @@ export default {
 
         async getAvatarUrl() {
             if (!this.selectedAvatarFile) {
-                this.$refs.popupWindow.addMessage({
+                this.toast({
                     head: '上传失败',
                     messages: ['请先选择要上传的图片文件'],
                     target: 'body'
@@ -964,12 +943,17 @@ export default {
                 return;
             }
             const { success, res, error } = await service.getAvatarUrl();
-            console.log('获取头像上传信息:', res);
+            // console.log('获取头像上传信息:', res);
             if (success) {
                 const file = this.selectedAvatarFile;
                 this.uploadAvatar(res, file);
             } else {
-                console.log('获取头像上传信息失败：', error);
+                this.toast({
+                    head: '获取头像上传信息失败',
+                    messages: error,
+                    target: 'body'
+                })
+                // console.log('获取头像上传信息失败：', error);
             }
         },
 
@@ -985,7 +969,11 @@ export default {
                 }
                 await service.uploadAvatarUrl(url);
             } else {
-                console.log('上传头像失败:', error);
+                this.toast({
+                    head: '上传头像失败',
+                    messages: error,
+                    target: 'body'
+                })
             }
         },
 

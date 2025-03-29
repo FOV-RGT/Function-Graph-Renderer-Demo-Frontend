@@ -3,7 +3,7 @@
 export default {
     // 指定命名空间，避免与其他模块的状态冲突
     namespaced: true,
-    
+
     // 状态定义
     state: {
         token: localStorage.getItem('token') || null,   // 认证令牌，优先从本地存储获取
@@ -23,10 +23,11 @@ export default {
             grid: true,
             zoomFactor: 0.5,
             moveFactor: 0.2,
-            globalSamples: 2025
+            globalSamples: 2025,
+            lockCameraFocus: false
         }
     },
-    
+
     getters: {
         // 获取用户是否已认证
         isAuthenticated: state => state.isAuthenticated,
@@ -37,7 +38,6 @@ export default {
             username: state.username || '',
             avatarUrl: state.avatarUrl || '爱门.jpg'
         }),
-        // 获取显示名称（优先使用昵称）
         displayName: state => state.nickname || state.username || "千早爱音世界第一可爱",
         chartType: state => state.userConfig.chartType,
         closed: state => state.userConfig.closed,
@@ -47,6 +47,7 @@ export default {
         zoomFactor: state => state.userConfig.zoomFactor,
         moveFactor: state => state.userConfig.moveFactor,
         globalSamples : state => state.userConfig.globalSamples,
+        lockCameraFocus: state => state.userConfig.lockCameraFocus,
         remoteConfig: state => Object.freeze({
             chartType: state.userConfig.chartType,
             closed: state.userConfig.closed,
@@ -55,10 +56,11 @@ export default {
             grid: state.userConfig.grid,
             zoomFactor: state.userConfig.zoomFactor,
             moveFactor: state.userConfig.moveFactor,
-            globalSamples: state.userConfig.globalSamples
+            globalSamples: state.userConfig.globalSamples,
+            lockCameraFocus: state.userConfig.lockCameraFocus
         })
     },
-    
+
     // 修改状态的方法
     mutations: {
         setUser(state, data) {
@@ -75,7 +77,7 @@ export default {
             localStorage.setItem('username', username);
             localStorage.setItem('avatarUrl', avatarUrl);
         },
-        
+
         setToken(state, token) {
             state.token = token;
             state.isAuthenticated = !!token;
@@ -87,7 +89,7 @@ export default {
                 localStorage.removeItem('token');
             }
         },
-        
+
         cleanState(state) {
             state.nickname = null;
             state.token = null;
@@ -110,9 +112,8 @@ export default {
             state.avatarUrl = avatarUrl;
             localStorage.setItem('avatarUrl', avatarUrl);
         },
-        
+
         updateGlobalSamples(state, samples) {
-            console.log('Vuex中globalSamples更新:', samples);
             state.userConfig.globalSamples = samples;
         }
     },

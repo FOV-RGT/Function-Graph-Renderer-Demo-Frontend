@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import CoordinateSystem from './coordinateSystem.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import store from '../store/index.js'
 
 export default class SceneManager {
     constructor(container) {
@@ -210,7 +211,7 @@ export default class SceneManager {
     }
 
     delectObject(uuid) {
-        console.log("删除对象uuid:", uuid);
+        // console.log("删除对象uuid:", uuid);
         const object = this.scene.getObjectByProperty('uuid', uuid);
         this.scene.remove(object);
     }
@@ -223,11 +224,11 @@ export default class SceneManager {
         this.renderer.dispose();
     }
 
-    addObject(object, isFunctionObject, input) {
+    addObject(object, isFunctionObject, input = { visible: true }) {
         object.userData = object.userData || {};
         if (isFunctionObject) {
             object.userData.isFunctionObject = isFunctionObject;
-            console.log("添加函数对象:", object);
+            // console.log("添加函数对象:", object);
         }
         this.scene.add(object);
         if (!input.visible) {
@@ -326,7 +327,7 @@ export default class SceneManager {
         return object;
     }
 
-    setView(evt, zoomStep, moveStep) {
+    setView(evt, zoomStep, moveStep, isLock) {
         switch (evt) {
             case 'zoomIn':
                 this.zoomCamera(true, zoomStep);
@@ -335,16 +336,16 @@ export default class SceneManager {
                 this.zoomCamera(false, zoomStep);
                 break;
             case 'moveLeft':
-                this.panCamera('left', moveStep);
+                this.panCamera('left', moveStep, isLock);
                 break;
             case 'moveRight':
-                this.panCamera('right', moveStep);
+                this.panCamera('right', moveStep, isLock);
                 break;
             case 'moveUp':
-                this.panCamera('up', moveStep);
+                this.panCamera('up', moveStep, isLock);
                 break;
             case 'moveDown':
-                this.panCamera('down', moveStep);
+                this.panCamera('down', moveStep, isLock);
                 break;
             case 'reset':
                 this.resetCamera();
@@ -374,7 +375,7 @@ export default class SceneManager {
     }
 
     // 平移相机
-    panCamera(direction, panFactor = 0.1) {
+    panCamera(direction, panFactor = 0.1, isLock) {
         const panDistance = 10 * panFactor;
         // 创建世界坐标系中的移动向量
         const panOffset = new THREE.Vector3();
@@ -404,7 +405,9 @@ export default class SceneManager {
         }
         // 同时移动相机位置和目标点
         this.camera.position.add(panOffset);
-        this.controls.target.add(panOffset);
+        if (!isLock) {
+            this.controls.target.add(panOffset);
+        }
         // 更新控制器
         this.controls.update();
     }
@@ -426,14 +429,12 @@ export default class SceneManager {
 
     loadGLTFModel(file) {
         const fileURL = URL.createObjectURL(file);
-        // 显示加载提示
-        console.log(`正在加载模型: ${file.name}...`);
         const loader = new GLTFLoader();
+        store.commit('syncGLTFLoadProgress', 0);
+        store.commit('syncGLTFLoadStatus', 'loading');
         loader.load(
             fileURL,
             (gltf) => {
-                // 处理加载成功
-                console.log('模型加载成功:', file.name);
                 // 清理URL
                 URL.revokeObjectURL(fileURL);
                 // 设置模型参数
@@ -459,16 +460,16 @@ export default class SceneManager {
                 // 添加到场景并标记为自定义模型
                 model.userData.isCustomModel = true;
                 this.addObject(model, false);
-                console.log('模型已添加到场景');
+                store.commit('syncGLTFLoadStatus', 'success');
             },
             // 进度回调
             (xhr) => {
                 const percentComplete = xhr.loaded / xhr.total * 100;
-                console.log(`模型加载进度: ${Math.round(percentComplete)}%`);
+                store.commit('syncGLTFLoadProgress', percentComplete);
             },
             // 错误回调
-            (error) => {
-                console.error('加载模型时出错:', error);
+            () => {
+                store.commit('syncGLTFLoadStatus', 'error');
                 URL.revokeObjectURL(fileURL);
             }
         );
@@ -488,7 +489,7 @@ export default class SceneManager {
         model.scale.multiplyScalar(scaleFactor);
         // 居中模型
         model.position.sub(center.multiplyScalar(scaleFactor));
-        console.log(`模型已缩放: ${scaleFactor.toFixed(3)}倍`);
+        // console.log(`模型已缩放: ${scaleFactor.toFixed(3)}倍`);
     }
 
     setObjectColor(color, uuid) {
