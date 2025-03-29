@@ -1,6 +1,6 @@
 <template>
     <div class="overflow-auto">
-        <table class="table table-zebra table-md">
+        <table v-if="displayData.length > 0" class="table table-zebra table-md">
             <thead>
                 <tr class="text-xl">
                     <th>
@@ -48,6 +48,9 @@
                 </tr>
             </tbody>
         </table>
+        <div v-else class="flex items-center justify-center h-86 text-4xl select-none">
+            <h1>暂无任何历史记录</h1>
+        </div>
         <div class="flex justify-between m-6">
             <div class="join">
                 <button class="btn join-item text-xl" @click="renderFn">渲染</button>

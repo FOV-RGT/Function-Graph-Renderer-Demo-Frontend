@@ -2,7 +2,7 @@
 </script>
 
 <template>
-    <div id="app" class="rootscrollgutter">
+    <div id="app">
         <router-view />
     </div>
 </template>
