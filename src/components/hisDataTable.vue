@@ -266,9 +266,9 @@ export default {
             if (success) {
                 this.fnData = data.fnData;
                 this.pagination = data.pagination;
-                console.log('获取历史数据成功:', data);
+                // console.log('获取历史数据成功:', data);
             } else {
-                console.log('获取历史数据失败:', error);
+                // console.log('获取历史数据失败:', error);
             }
             this.loading.getData = false;
         }

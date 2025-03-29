@@ -9,8 +9,6 @@ export class chartInstance {
     constructor(target) {
         this.target = target;
         this.config = markRaw(chartConfig.defaultConfig(target)); // 初始化图表配置
-        this.zoomFactor = 0.5; // 默认缩放因子
-        this.moveFactor = 0.2; // 默认移动因子
         this.type = 'linear'; // 默认坐标轴类型
         this.instance = markRaw(functionPlot(this.config)); // 初始化图表实例
     }
@@ -85,14 +83,13 @@ export class chartInstance {
         // console.log("图表配置已更新:", this.config);
     }
 
-    zoomView(evt) {
+    zoomView(evt, step) {
         const currentConfig = this.config;
         const xDomain = currentConfig.xAxis.domain;
         const yDomain = currentConfig.yAxis.domain;
         // 使用实例的缩放因子
-        const trueZoomStep = this.zoomFactor;
         const zoomFactor =
-            evt === "zoomIn" ? 1 + trueZoomStep : 1 / (1 + trueZoomStep);
+            evt === "zoomIn" ? 1 + step : 1 / (1 + step);
         const center = [
             (xDomain[0] + xDomain[1]) / 2,
             (yDomain[0] + yDomain[1]) / 2,
@@ -114,12 +111,11 @@ export class chartInstance {
         // console.log("图表配置已更新:", this.config);
     }
 
-    moveView(evt) {
+    moveView(evt, step) {
         const currentConfig = this.config;
         const xDomain = currentConfig.xAxis.domain;
         const yDomain = currentConfig.yAxis.domain;
         // 使用传入的移动步长
-        const step = this.moveFactor;
         const xRange = Math.abs(xDomain[1] - xDomain[0]);
         const yRange = Math.abs(yDomain[1] - yDomain[0]);
         const xStep = xRange * step * 0.5;
@@ -169,22 +165,6 @@ export class chartInstance {
         this.config.id = '';
         this.destroyInstance();
         this.instance = functionPlot(this.config);
-    }
-
-    // 设置缩放因子
-    setZoomFactor(factor) {
-        // 验证缩放因子范围
-        if (factor < 0.01) factor = 0.01;
-        if (factor > 1) factor = 1.0;
-        this.zoomFactor = factor;
-    }
-
-    //设置移动因子
-    setMoveFactor(factor) {
-        // 验证移动因子范围
-        if (factor < 0.01) factor = 0.01;
-        if (factor > 1) factor = 1.0;
-        this.moveFactor = factor;
     }
 
     switchChartType(type) {

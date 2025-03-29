@@ -447,7 +447,7 @@ export default {
         }, 750);
     },
     async mounted() {
-        const { success, error } = await service.initUserData();
+        const { success } = await service.initUserData();
         if (success) {
             this.fuckRender();
             this.initFormData();
@@ -461,8 +461,9 @@ export default {
             this.$store.commit('auth/cleanState', null);
             this.toast({
                 head: 'DONGMING',
-                messages: ['hello,world!'],
-                target: 'body'
+                messages: ['Hello,world!'],
+                target: 'body',
+                time: 5000
             })
         }
         window.addEventListener('resize', this.throttledResize);
@@ -587,20 +588,6 @@ export default {
                 this.$refs.TwoDPlotCom.switchGrid(newVal);
             },
         },
-        zoomFactor: {
-            handler(newVal) {
-                if (this.show.render2D) {
-                    this.$refs.TwoDPlotCom.updateZoomFactor(newVal);
-                }
-            },
-        },
-        moveFactor: {
-            handler(newVal) {
-                if (this.show.render2D) {
-                    this.$refs.TwoDPlotCom.updateMoveFactor(newVal);
-                }
-            },
-        },
         is2D: {
             handler(newVal) {
                 this.show.render2D = newVal;
@@ -642,9 +629,9 @@ export default {
         //将缩放步长和移动步长传递给2D图标实例
         setView(evt) {
             if (this.show.render2D) {
-                this.$refs.TwoDPlotCom.setView(evt, this.zoomStep, this.moveStep);
+                this.$refs.TwoDPlotCom.setView(evt, this.zoomFactor, this.moveFactor);
             } else {
-                this.$refs.ThreeDPlotCom.setView(evt, this.zoomStep, this.moveStep);
+                this.$refs.ThreeDPlotCom.setView(evt, this.zoomFactor, this.moveFactor);
             }
         },
 
@@ -711,6 +698,7 @@ export default {
             const needNewData = this.localFnData.length === 0 && this.currentData.length === 0;
             const { success, messages } = await service.login(data, needNewData);
             if (success) {
+                this.firework();
                 if (needNewData) {
                     this.fuckRender();
                 }
@@ -725,7 +713,6 @@ export default {
                 }
                 this.show.loginModal = false;
                 this.initFormData();
-                this.firework();
                 this.toast({
                     head: `${this.greetingMessage}${this.userInfo.nickname || this.userInfo.username}`,
                     messages: ['您的数据已恢复'],
@@ -762,20 +749,6 @@ export default {
                 this.show.info = false;
                 // console.log(this.userInfo);
             }, 400);
-        },
-
-        // 更新缩放因子(zoomfactor)
-        updateZoomFactor(zoomFactor) {
-            if (this.show.render2D) {
-                this.$refs.TwoDPlotCom.updateZoomFactor(zoomFactor);
-            }
-        },
-
-        // 更新移动步长(movefactor)
-        updateMoveFactor(moveFactor) {
-            if (this.show.render2D) {
-                this.$refs.TwoDPlotCom.updateMoveFactor(moveFactor);
-            }
         },
 
         //单一函数采样点数更新

@@ -45,14 +45,6 @@
                         @keyup.enter="updateMoveFactor" />
                 </div>
             </div>
-            <!-- <div class="flex flex-row items-center justify-start">
-                <p class="mr-4 text-2xl">绘制函数阴影</p>
-                <input type="checkbox" checked="checked" class="toggle toggle-primary" v-model="userConfig.closed"
-                    @change="updateUserConfig" />
-                <div class="warningCircle tooltip tooltip-warning tooltip-right ml-5" data-tip="该选项极其消耗性能">
-                    <icon type="warningCircle" class="self-center text-warning" />
-                </div>
-            </div> -->
             <div class="flex flex-row items-center justify-start">
                 <p class="mr-4 text-2xl">辅助虚线</p>
                 <input type="checkbox" checked="checked" class="toggle toggle-primary" v-model="userConfig.dash"
@@ -63,7 +55,7 @@
                 <input type="checkbox" checked="checked" class="toggle toggle-primary" v-model="userConfig.grid"
                     @change="updateUserConfig" />
             </div>
-            <div class="flex flex-row items-center justify-start ">
+            <div class="flex flex-row items-center justify-start">
                 <p class="mr-4 text-2xl">全局采样点数</p>
                 <input type="number" :value="userConfig.globalSamples" min="500" max="5000" step="1" placeholder="50-5000"
                     class="input w-20 input-xs self-center" 
@@ -89,7 +81,6 @@ export default {
         return {
             userConfig: {
                 chartType: 'linear',
-                // closed: false,
                 range: null,
                 dash: false,
                 grid: true,
@@ -156,7 +147,7 @@ export default {
             if (!this.isAuthenticated) return;
             const { success, error } = await uploadUserConfig(this.userConfig);
             if (success) {
-                console.log('设置已保存');
+                // console.log('设置已保存');
             } else {
                 console.log(error);
             }
@@ -165,12 +156,4 @@ export default {
 }
 </script>
 
-<style scoped>
-/* .warningCircle .iconfont {
-    font-size: 1.5em;
-}
-
-.warningCircle::before {
-    font-size: large;
-} */
-</style>
+<style scoped></style>

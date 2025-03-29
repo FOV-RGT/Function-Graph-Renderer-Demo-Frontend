@@ -54,16 +54,6 @@ export default {
             }
         },
 
-        // 更新图表实例的缩放因子
-        updateZoomFactor(zoomStep) {
-            this.chartInstance.setZoomFactor(zoomStep);
-        },
-
-        //更新图表实例的移动因子
-        updateMoveFactor(moveStep) {
-            this.chartInstance.setMoveFactor(moveStep);
-        },
-
         fuckRender(data) {
             this.chartInstance.setFunction(data);
         },
