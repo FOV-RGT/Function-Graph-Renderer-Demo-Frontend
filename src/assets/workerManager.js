@@ -24,7 +24,7 @@ export default class WorkerManager {
                 dimension: 3,
                 start,
                 end,
-                initStep: step,
+                step,
                 exprString,
                 target,
                 chunkId: i
@@ -52,7 +52,7 @@ export default class WorkerManager {
                 dimension: 2,
                 start,
                 end,
-                initStep: step,
+                step,
                 exprString,
                 target,
                 chunkId: i,

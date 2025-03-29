@@ -60,7 +60,6 @@
                 <div
                     class="logo flex item-center gap-4 text-5xl absolute left-[50%] transform -translate-x-[50%] select-none">
                     <h1 class="flex items-center">DONGMING v{{ version }}</h1>
-                    <img src="/486.1-done.png" alt="" class="w-12 h-12" />
                 </div>
                 <div v-show="show.render2D" class="h-full w-full pl-20 pb-4 pr-12 pt-8">
                     <TwoDPlotCom ref="TwoDPlotCom" />
@@ -188,9 +187,8 @@
             <transition name="table">
                 <register ref="register" v-show="show.registerModal" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] bg-base-100 rounded-box
                     border border-base-content/10 overflow-auto h-auto z-80" @switchModal="switchModal"
-                    @login="userLogin" />
+                    @login="userLogin" @message="toast"/>
             </transition>
-            <popupWindow ref="popupWindow" />
             <transition name="bg">
                 <div v-if="show.adjustWindow" class="fixed inset-0 z-40 select-none"
                     @mousedown="show.adjustWindow = false">
@@ -334,7 +332,6 @@ import { parse } from 'mathjs';
 import * as service from '../services/userService';
 import hisDataTable from '../components/hisDataTable.vue';
 import register from '../components/register.vue';
-import popupWindow from '../components/popupWindow.vue';
 import adjustButtons from '../components/adjustButtons.vue';
 import adjustWindow from '../components/adjustWindow.vue';
 import menuButtons from '../components/menuButtons.vue';
@@ -351,7 +348,6 @@ export default {
         icon,
         hisDataTable,
         register,
-        popupWindow,
         adjustButtons,
         adjustWindow,
         menuButtons,
@@ -403,7 +399,7 @@ export default {
                     parse(formatInput);
                 } catch (error) {
                     this.toast({
-                        head: '输入错误',
+                        head: '函数解析错误',
                         messages: ['请检查您的输入'],
                         target: 'body'
                     })
@@ -456,14 +452,12 @@ export default {
             this.fuckRender();
             this.initFormData();
             this.show.info = true;
-            console.log('初始化用户信息成功');
             this.toast({
                 head: `${this.greetingMessage}${this.userInfo.nickname || this.userInfo.username}`,
                 messages: ['您的数据已恢复'],
                 target: 'body'
             })
         } else {
-            console.log('初始化用户信息失败:', error);
             this.$store.commit('auth/cleanState', null);
             this.toast({
                 head: 'DONGMING',
@@ -486,7 +480,6 @@ export default {
                 : 'e.g. y=x^2-z^2'
         },
         currentData() {
-            console.log("💩");
             return this.show.render2D ? this.functionData_2D : this.functionData_3D;
         },
         currentPagination() {
@@ -714,7 +707,7 @@ export default {
 
         async userLogin(data, callback) {
             this.loading.login = true;
-            console.log('登录数据:', data);
+            // console.log('登录数据:', data);
             const needNewData = this.localFnData.length === 0 && this.currentData.length === 0;
             const { success, messages } = await service.login(data, needNewData);
             if (success) {
@@ -745,9 +738,10 @@ export default {
                 const data = {
                     head: '登录失败：',
                     messages,
-                    target: 'body'
+                    target: 'body',
+                    time: 4000
                 }
-                this.$refs.popupWindow.addMessage(data);
+                this.toast(data);
             }
             if (typeof callback === 'function') {
                 callback(success);
@@ -766,7 +760,7 @@ export default {
                 this.$store.commit('auth/cleanState');
                 this.formData = {};
                 this.show.info = false;
-                console.log(this.userInfo);
+                // console.log(this.userInfo);
             }, 400);
         },
 
@@ -829,7 +823,13 @@ export default {
                     allowWrap: false
                 });
             } else {
-                console.log('更新用户信息失败:', error);
+                this.toast({
+                    head: '账户信息更新失败',
+                    messages: error,
+                    target: 'body',
+                    time: 4000
+                })
+                // console.log('更新用户信息失败:', error);
             }
             this.loading.updateInfo = false;
         },
@@ -872,10 +872,10 @@ export default {
         async delectData(data, callback) {
             const { success, error } = await service.delectFunctionData(data);
             if (success) {
-                console.log('删除数据成功');
+                // console.log('删除数据成功');
                 callback();
             } else {
-                console.log('删除数据失败:', error);
+                // console.log('删除数据失败:', error);
             }
         },
 
@@ -883,11 +883,11 @@ export default {
             if (!this.isAuthenticated || data.length === 0) return;
             const { success, skip, error } = await service.uploadFunctionData(data, dimension);
             if (success) {
-                console.log('上传数据成功');
+                // console.log('上传数据成功');
             } else if (skip) {
-                console.log('跳过本次更新');
+                // console.log('跳过本次更新');
             } else {
-                console.log('上传数据失败:', error);
+                // console.log('上传数据失败:', error);
             }
         },
 
@@ -910,9 +910,9 @@ export default {
         async uploadChangeData(data) {
             const { success, error } = await service.uploadChangeData(data);
             if (success) {
-                console.log('上传变动数据成功');
+                // console.log('上传变动数据成功');
             } else {
-                console.log('上传变动数据失败:', error);
+                // console.log('上传变动数据失败:', error);
             }
         },
 
@@ -942,7 +942,7 @@ export default {
             const file = event.target.files[0];
             if (!file) return;
             if (!file.type.startsWith('image/')) {
-                this.$refs.popupWindow.addMessage({
+                this.toast({
                     head: '上传失败',
                     messages: ['请选择图片文件'],
                     target: 'body'
@@ -950,7 +950,7 @@ export default {
                 return;
             }
             if (file.size > 5 * 1024 * 1024) {
-                this.$refs.popupWindow.addMessage({
+                this.toast({
                     head: '上传失败',
                     messages: ['文件大小不能超过5MB'],
                     target: 'body'
@@ -962,7 +962,7 @@ export default {
 
         async getAvatarUrl() {
             if (!this.selectedAvatarFile) {
-                this.$refs.popupWindow.addMessage({
+                this.toast({
                     head: '上传失败',
                     messages: ['请先选择要上传的图片文件'],
                     target: 'body'
@@ -970,12 +970,17 @@ export default {
                 return;
             }
             const { success, res, error } = await service.getAvatarUrl();
-            console.log('获取头像上传信息:', res);
+            // console.log('获取头像上传信息:', res);
             if (success) {
                 const file = this.selectedAvatarFile;
                 this.uploadAvatar(res, file);
             } else {
-                console.log('获取头像上传信息失败：', error);
+                this.toast({
+                    head: '获取头像上传信息失败',
+                    messages: error,
+                    target: 'body'
+                })
+                // console.log('获取头像上传信息失败：', error);
             }
         },
 
@@ -991,7 +996,11 @@ export default {
                 }
                 await service.uploadAvatarUrl(url);
             } else {
-                console.log('上传头像失败:', error);
+                this.toast({
+                    head: '上传头像失败',
+                    messages: error,
+                    target: 'body'
+                })
             }
         },
 

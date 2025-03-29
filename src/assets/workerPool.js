@@ -1,4 +1,6 @@
 import { toRaw } from 'vue';
+import { debounce } from './utils/componentUtils.js'
+import store from '../store/index.js'
 
 
 
@@ -9,6 +11,12 @@ export default class workerPool {
         this.taskQueue = [];
         this.activeWorkers = new Map();
         this.init();
+        this.handleError = debounce(() => {
+            store.commit('toast', {
+                head: '函数解析错误',
+                messages: ['请检查您的输入'],
+            })
+        }, 500);
     }
 
     init() {
@@ -19,7 +27,7 @@ export default class workerPool {
             worker.id = i;
             this.workers.push(worker);
         }
-        console.log(`初始化workerPool完成，大小：${this.size}`);
+        // console.log(`初始化workerPool完成，大小：${this.size}`);
     }
 
     getWorker() {
@@ -35,7 +43,7 @@ export default class workerPool {
     handleQueue() {
         if (this.taskQueue.length === 0) return;
         const worker = this.getWorker();
-        if(!worker) return;
+        if (!worker) return;
         const task = this.taskQueue.shift();
         this.runTask(worker, task);
     }
@@ -54,12 +62,11 @@ export default class workerPool {
             this.activeWorkers.delete(worker.id);
             this.releaseWorker(worker);
         };
-        worker.onerror = (evt) => {
-            console.error(`Worker ${worker.id}出错`, evt);
+        worker.onerror = () => {
+            this.handleError();
             this.activeWorkers.delete(worker.id);
             this.releaseWorker(worker);
         };
-        
         worker.postMessage(data);
     }
 

@@ -114,7 +114,7 @@ export default {
                 const message = {
                     head: '模型加载完成',
                     target: 'body',
-                    time: 2000,
+                    time: 4000,
                     allowWrap: true
                 }
                 this.$emit('addMessage', message);
@@ -123,7 +123,7 @@ export default {
                     head: '模型加载失败',
                     messages: ['请检查文件格式或网络连接'],
                     target: 'body',
-                    time: 2000,
+                    time: 4000,
                     allowWrap: true
                 }
                 this.$emit('addMessage', message);

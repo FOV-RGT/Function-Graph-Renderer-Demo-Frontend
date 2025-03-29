@@ -12,9 +12,7 @@ export class chartInstance {
         this.zoomFactor = 0.5; // 默认缩放因子
         this.moveFactor = 0.2; // 默认移动因子
         this.type = 'linear'; // 默认坐标轴类型
-        console.log("实例挂载:初始化配置完成");
         this.instance = markRaw(functionPlot(this.config)); // 初始化图表实例
-        console.log("图表实例成功挂载");
     }
 
     //该函数暂时用不到，计划用于未来的工作区模板导入
@@ -22,7 +20,7 @@ export class chartInstance {
         const updatedData = [];
         const rawData = toRaw(store.state.functionData_2D);
         const newFunctionData = [...rawData];
-        console.log("原始数据:", newFunctionData);
+        // console.log("原始数据:", newFunctionData);
         for (let i = 0; i < inputs.length; i++) {
             const color = i === 0 && newFunctionData[index] && !!newFunctionData[index].color ? newFunctionData[index].color : generateRandomHarmoniousColor();
             updatedData.push({
@@ -35,9 +33,9 @@ export class chartInstance {
                 closed: false, // 是否闭合
             });
         }
-        console.log("将要插入数据:", updatedData);
+        // console.log("将要插入数据:", updatedData);
         newFunctionData.splice(index, num, ...updatedData);
-        console.log("新数据已生成:", newFunctionData);
+        // console.log("新数据已生成:", newFunctionData);
         const payload = {
             data: newFunctionData,
             is2D: true,
@@ -84,7 +82,7 @@ export class chartInstance {
         this.destroyInstance();
         this.instance = functionPlot(currentConfig);
         this.config = currentConfig;
-        console.log("图表配置已更新:", this.config);
+        // console.log("图表配置已更新:", this.config);
     }
 
     zoomView(evt) {
@@ -113,7 +111,7 @@ export class chartInstance {
         this.destroyInstance();
         this.instance = functionPlot(currentConfig);
         this.config = currentConfig;
-        console.log("图表配置已更新:", this.config);
+        // console.log("图表配置已更新:", this.config);
     }
 
     moveView(evt) {
@@ -157,7 +155,7 @@ export class chartInstance {
         this.destroyInstance();
         this.instance = functionPlot(currentConfig);
         this.config = currentConfig;
-        console.log("图表配置已更新:", this.config);
+        // console.log("图表配置已更新:", this.config);
     }
 
     setSamplePoints(nSamples, index) {
@@ -217,7 +215,7 @@ export class chartInstance {
         }
         this.instance = functionPlot(config);
         this.config = config;
-        console.log("图表配置已更新:", this.config);
+        // console.log("图表配置已更新:", this.config);
     }
 
     switchGrid(grid) {
@@ -225,7 +223,7 @@ export class chartInstance {
         config.grid = grid;
         this.instance = functionPlot(config);
         this.config = config;
-        console.log("图表配置已更新:", this.config);
+        // console.log("图表配置已更新:", this.config);
     }
 
     switchChartType(type) {
@@ -243,7 +241,7 @@ export class chartInstance {
         this.destroyInstance();
         this.instance = functionPlot(config);
         this.config = config;
-        console.log("图表配置已更新:", this.config);
+        // console.log("图表配置已更新:", this.config);
     }
 
     switchDash(dash) {
@@ -257,7 +255,7 @@ export class chartInstance {
         }
         this.instance = functionPlot(config);
         this.config = config;
-        console.log("图表配置已更新:", this.config);
+        // console.log("图表配置已更新:", this.config);
     }
 
     switchGrid(grid) {
@@ -265,6 +263,6 @@ export class chartInstance {
         config.grid = grid;
         this.instance = functionPlot(config);
         this.config = config;
-        console.log("图表配置已更新:", this.config);
+        // console.log("图表配置已更新:", this.config);
     }
 }

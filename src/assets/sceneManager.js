@@ -211,7 +211,7 @@ export default class SceneManager {
     }
 
     delectObject(uuid) {
-        console.log("删除对象uuid:", uuid);
+        // console.log("删除对象uuid:", uuid);
         const object = this.scene.getObjectByProperty('uuid', uuid);
         this.scene.remove(object);
     }
@@ -228,7 +228,7 @@ export default class SceneManager {
         object.userData = object.userData || {};
         if (isFunctionObject) {
             object.userData.isFunctionObject = isFunctionObject;
-            console.log("添加函数对象:", object);
+            // console.log("添加函数对象:", object);
         }
         this.scene.add(object);
         if (!input.visible) {
@@ -487,7 +487,7 @@ export default class SceneManager {
         model.scale.multiplyScalar(scaleFactor);
         // 居中模型
         model.position.sub(center.multiplyScalar(scaleFactor));
-        console.log(`模型已缩放: ${scaleFactor.toFixed(3)}倍`);
+        // console.log(`模型已缩放: ${scaleFactor.toFixed(3)}倍`);
     }
 
     setObjectColor(color, uuid) {

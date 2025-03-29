@@ -2,9 +2,7 @@ import { parse } from "mathjs";
 
 self.onmessage = function (event) {
     try {
-        const { dimension, start, end, initStep, exprString, target, variable } = event.data;
-        let step = initStep;
-        const startTime = performance.now();
+        const { dimension, start, end, step, exprString, target, variable } = event.data;
         // 将输入解析为表达式树
         const expr = parse(exprString).compile();
         // 计算被分配到的总坐标数
@@ -121,8 +119,6 @@ self.onmessage = function (event) {
                 }
             }
         }
-        console.log("计算完成，总点数", offset % 3);
-
         if (offset % 3 !== 0) {
             // 裁剪掉不完整的点
             const validLength = Math.floor(offset / 3) * 3;
@@ -132,8 +128,6 @@ self.onmessage = function (event) {
             // 如果点数正确，则直接发送
             self.postMessage(points.buffer, [points.buffer]);
         }
-        const elapsedTime = performance.now() - startTime;
-        console.log("计算完成，耗时", elapsedTime, "毫秒");
     } catch (error) {
         self.postMessage({
             error: true,

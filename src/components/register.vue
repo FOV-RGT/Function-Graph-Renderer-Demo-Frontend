@@ -77,21 +77,18 @@
                 <icon type="frownFill" class="text-error" />
             </div>
         </div>
-        <popupWindow ref="popupWindow" />
     </div>
 </template>
 
 <script>
 import icon from './icon.vue';
 import { register } from '../services/userService';
-import popupWindow from './popupWindow.vue';
 import { fire } from '../assets/utils/componentUtils' 
 
 
 export default {
     components: {
         icon,
-        popupWindow
     },
     data() {
         return {
@@ -166,7 +163,6 @@ export default {
             };
             const { success, messages } = await register(registerData);
             if (success) {
-                console.log('注册成功');
                 this.loading.registerSuccess = true;
                 this.login(registerData);
                 this.firework();
@@ -175,9 +171,10 @@ export default {
                 const data = {
                     head: '注册失败：',
                     messages,
-                    target: 'body'
+                    target: 'body',
+                    time: 4000
                 }
-                this.$refs.popupWindow.addMessage(data);
+                this.$emit('message', data);
             }
             this.loading.tryRegister = false;
         },

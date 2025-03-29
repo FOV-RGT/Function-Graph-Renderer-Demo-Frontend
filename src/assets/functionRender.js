@@ -14,17 +14,16 @@ export default class FunctionRenderer {
 
     async renderFunction(input) {
         const fn = input.fn;
-        const startTime = performance.now();
         let uuid;
         // 处理显式函数 x=f(y,z), y=f(x,z), z=f(x,y)
         if (fn.startsWith("x=")) {
-            uuid = await this.renderExplicitFunction(input, "x", startTime);
+            uuid = await this.renderExplicitFunction(input, "x");
         }
         else if (fn.startsWith("y=")) {
-            uuid = await this.renderExplicitFunction(input, "y", startTime);
+            uuid = await this.renderExplicitFunction(input, "y");
         }
         else if (fn.startsWith("z=")) {
-            uuid = await this.renderExplicitFunction(input, "z", startTime);
+            uuid = await this.renderExplicitFunction(input, "z");
         }
         // 处理几何体
         else if (fn.startsWith("sphere")) {
@@ -35,14 +34,14 @@ export default class FunctionRenderer {
         } else {
             store.commit('toast', {
                 head: '函数解析错误',
-                messages: ['输入格式错误'],
+                messages: ['请检查您的输入'],
                 target: 'body'
             })
         }
         return uuid
     }
 
-    async renderExplicitFunction(input, variableType, startTime) {
+    async renderExplicitFunction(input, variableType) {
         // 检查是否为常数
         const allNumbers = /^\d+(\.\d+)?$/.test(input.fn.slice(2));
         if (allNumbers) {
@@ -54,7 +53,7 @@ export default class FunctionRenderer {
                 if (variables.length === 1) {
                     return await this.renderOneDimensionalFunction(input, variables[0], variableType);
                 } else {
-                    return await this.renderTwoDimensionalFunction(input, variableType, startTime);
+                    return await this.renderTwoDimensionalFunction(input, variableType);
                 }
             } catch (error) {
                 const symbolMatch = error.message.match(/Syntax error in part "([^"]+)"/);
@@ -110,14 +109,12 @@ export default class FunctionRenderer {
         })
     }
 
-    async renderTwoDimensionalFunction(input, variableType, startTime) {
+    async renderTwoDimensionalFunction(input, variableType) {
         return new Promise((resolve, reject) => {
             const onComplete = (points, color, input) => {
                 try {
                     const surface = this.geometryBuilder.createSurface(points, color);
                     const uuid = this.sceneManager.addObject(surface, true, input);
-                    const elapsedTime = performance.now() - startTime;
-                    console.log("生成完成，耗时", elapsedTime / 1000, "秒");
                     resolve(uuid);
                 } catch (error) {
                     reject(error);
