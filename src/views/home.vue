@@ -222,13 +222,8 @@
                                 <div class="flex flex-1 justify-between items-center gap-2">
                                     <div class="flex items-center gap-5 grow">
                                         <ColorPicker format="rgb" shape="circle" :debounce="0" lang="ZH-cn"
-                                            popupPosition="left" v-model:pureColor="item.color"
+                                            popupPosition="left" v-model:pureColor="item.color" blurClose="true"
                                             @update:pureColor="throttleupdateColor($event, displayData.startIndex + index)">
-                                            <template #extra>
-                                                <button class="btn btn-block btn-success text-xl">
-                                                    关闭
-                                                </button>
-                                            </template>
                                         </ColorPicker>
                                         <input type="text" spellcheck="false"
                                             class="w-full h-10 liInput border-0 outline-none" :value="item.fn"
