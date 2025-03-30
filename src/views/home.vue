@@ -59,7 +59,7 @@
             <div class="renderComponent h-12/13 w-full relative text-transparent">
                 <div
                     class="logo flex item-center gap-4 text-5xl absolute left-[50%] transform -translate-x-[50%] select-none">
-                    <h1 class="flex items-center">DONGMING v{{ version }}</h1>
+                    <h1 class="flex items-center">DONGMING洞明 v{{ version }}</h1>
                 </div>
                 <div v-show="show.render2D" class="h-full w-full pl-20 pb-4 pr-12 pt-8">
                     <TwoDPlotCom ref="TwoDPlotCom" />
@@ -460,7 +460,7 @@ export default {
         } else {
             this.$store.commit('auth/cleanState', null);
             this.toast({
-                head: 'DONGMING',
+                head: 'DONGMING洞明',
                 messages: ['Hello,world!'],
                 target: 'body',
                 time: 5000

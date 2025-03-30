@@ -82,8 +82,6 @@
                 <div class="fixed inset-0 z-40 select-none">
                     <div class="absolute inset-0 bg-black/50"></div>
                 </div>
-                <!-- <div class="radial-progress text-[#d4bd81] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50"
-                    :style="{'--value': GLTFLoadProgress}" role="progressbar" :aria-valuenow=GLTFLoadProgress v-text="GLTFLoadProgress + '%'"></div> -->
                 <progress class="progress progress-warning w-56 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50" :value="GLTFLoadProgress" max="100"></progress>
             </div>
         </teleport>
