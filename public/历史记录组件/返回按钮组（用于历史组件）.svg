@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_返回按钮组" data-name="返回按钮组" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1159.91 736.57">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #aea181;
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4 {
+        stroke-width: 0px;
+      }
+
+      .cls-3 {
+        fill: none;
+      }
+
+      .cls-4 {
+        fill: #fff;
+      }
+    </style>
+  </defs>
+  <rect id="_边框" data-name="边框" class="cls-3" x="1.5" y=".25" width="1158.16" height="734.76"/>
+  <polyline id="_白底" data-name="白底" class="cls-4" points="1152.39 7.07 1152.35 54.96 991.31 68.81 936.19 8.51"/>
+  <polygon id="_黑底" data-name="黑底" class="cls-2" points="1147.1 12.2 1019.16 12.2 1000.24 63.54 1143.44 49.62 1147.1 12.2"/>
+  <g id="_返回按钮" data-name="返回按钮">
+    <polygon id="_黑底-2" data-name="黑底" class="cls-2" points="950.29 12.2 995.25 62.82 1013.71 12.2 950.29 12.2"/>
+    <g id="_返回箭头" data-name="返回箭头">
+      <polygon class="cls-1" points="976.32 32.64 976.32 32.64 988.65 42.23 988.65 37.42 980.9 32.64 980.91 32.64 988.65 27.77 988.65 22.92 976.32 32.64"/>
+      <polygon class="cls-1" points="984.98 32.64 984.97 32.64 997.31 42.23 997.31 37.42 989.56 32.64 989.56 32.64 997.31 27.77 997.31 22.92 984.98 32.64"/>
+    </g>
+  </g>
+</svg>

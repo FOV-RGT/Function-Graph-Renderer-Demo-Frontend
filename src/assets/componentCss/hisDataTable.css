@@ -1,0 +1,132 @@
+.main {
+
+    .cls-1,
+    .cls-2,
+    .cls-3,
+    .cls-4,
+    .cls-5,
+    .cls-6,
+    .cls-7 {
+        stroke-width: 0px;
+    }
+
+    .cls-1,
+    .cls-8 {
+        fill: #aea181;
+    }
+
+    .cls-9 {
+        stroke: #000;
+    }
+
+    .cls-9,
+    .cls-10,
+    .cls-8,
+    .cls-11 {
+        stroke-miterlimit: 10;
+    }
+
+    .cls-3 {
+        fill: #2d496c;
+    }
+
+    .cls-10,
+    .cls-8,
+    .cls-11 {
+        stroke: #fff;
+    }
+
+    .cls-10,
+    .cls-7 {
+        fill: #3a6b76;
+    }
+
+    .cls-4,
+    .cls-11 {
+        fill: none;
+    }
+
+    .cls-5 {
+        fill: #2b4769;
+    }
+
+    .cls-6 {
+        fill: #fff;
+    }
+
+    .cls-8 {
+        stroke-width: 3px;
+    }
+
+    .cls-11 {
+        stroke-width: 4px;
+    }
+
+    .cls-666 {
+        fill: #aea181;
+        stroke: #aea181;
+        stroke-width: 2px;
+        stroke-miterlimit: 10;
+    }
+
+}
+
+.button {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+.button:hover {
+    transform: scale(1.015);
+}
+
+.button:active {
+    transform: scale(0.99);
+}
+
+.button2 {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+.button2:hover {
+    transform: scale(1.05);
+}
+
+.button2:active {
+    transform: scale(0.995);
+}
+
+.fnList * {
+    pointer-events: auto;
+}
+
+.fnList li:nth-child(1) {
+    width: 130%;
+    transform: translate(2.5%, 75%) rotate(6deg);
+}
+
+.fnList li:nth-child(2) {
+    width: 120%;
+    transform: translate(5%, 90%) rotate(3deg);
+}
+
+.fnList li:nth-child(3) {
+    width: 110%;
+    transform: translate(5%, 70%) rotate(1deg);
+}
+
+.fnList li:nth-child(4) {
+    transform: translate(5%, 50%) rotate(-2deg);
+}
+
+.listCheckBox {
+    .cls-1 {
+        fill: #aea181;
+        stroke-width: 0px;
+    }
+}

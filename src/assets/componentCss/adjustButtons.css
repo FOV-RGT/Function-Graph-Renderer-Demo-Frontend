@@ -40,6 +40,80 @@
     }
 }
 
+.import {
+    .cls-1 {
+        fill: #f5c23b;
+    }
+
+    .cls-1,
+    .cls-2,
+    .cls-3 {
+        stroke: #231815;
+        stroke-miterlimit: 10;
+    }
+
+    .cls-4 {
+        fill: #cead3b;
+    }
+
+    .cls-4,
+    .cls-5,
+    .cls-6,
+    .cls-7,
+    .cls-8,
+    .cls-9,
+    .cls-10,
+    .cls-11,
+    .cls-12,
+    .cls-13 {
+        stroke-width: 0px;
+    }
+
+    .cls-5 {
+        fill: #a05723;
+    }
+
+    .cls-6 {
+        fill: #2950a2;
+    }
+
+    .cls-2 {
+        fill: #e1a113;
+    }
+
+    .cls-7 {
+        fill: #1190bd;
+    }
+
+    .cls-8 {
+        fill: #ad4c23;
+    }
+
+    .cls-9 {
+        fill: #edd95f;
+    }
+
+    .cls-10 {
+        fill: #ae7d1f;
+    }
+
+    .cls-11 {
+        fill: #1b6487;
+    }
+
+    .cls-12 {
+        fill: #acc5c6;
+    }
+
+    .cls-3 {
+        fill: #ebc623;
+    }
+
+    .cls-13 {
+        fill: #76c9dc;
+    }
+}
+
 .button {
     cursor: pointer;
     transition: all 0.2s ease;

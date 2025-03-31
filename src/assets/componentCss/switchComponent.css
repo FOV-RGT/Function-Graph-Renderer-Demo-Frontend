@@ -1,0 +1,77 @@
+.component {
+    .cls-1 {
+        fill: #aa6331;
+    }
+
+    .cls-1,
+    .cls-2,
+    .cls-3,
+    .cls-4,
+    .cls-5,
+    .cls-6,
+    .cls-7 {
+        stroke-width: 0px;
+    }
+
+    .cls-2 {
+        fill: #2f7280;
+    }
+
+    .cls-8,
+    .cls-9,
+    .cls-10,
+    .cls-11 {
+        fill: none;
+        stroke-miterlimit: 10;
+    }
+
+    .cls-8,
+    .cls-10,
+    .cls-11 {
+        stroke: #000;
+    }
+
+    .cls-3 {
+        fill: #aea181;
+    }
+
+    .cls-5 {
+        fill: #2d496c;
+    }
+
+    .cls-9 {
+        stroke: #fff;
+        stroke-width: 2px;
+    }
+
+    .cls-10 {
+        stroke-width: 3px;
+    }
+
+    .cls-6 {
+        fill: #5fe6ff;
+    }
+
+    .cls-7 {
+        fill: #fff;
+    }
+
+    .cls-11 {
+        stroke-width: .5px;
+    }
+}
+
+.button {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+.button:hover {
+    transform: scale(1.015);
+}
+
+.button:active {
+    transform: scale(0.99);
+}

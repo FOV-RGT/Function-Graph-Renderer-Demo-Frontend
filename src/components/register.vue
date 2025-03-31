@@ -83,7 +83,6 @@
 <script>
 import icon from './icon.vue';
 import { register } from '../services/userService';
-import { fire } from '../assets/utils/componentUtils' 
 
 
 export default {
@@ -165,7 +164,6 @@ export default {
             if (success) {
                 this.loading.registerSuccess = true;
                 this.login(registerData);
-                this.firework();
             } else {
                 this.loading.registerSuccess = false;
                 const data = {
@@ -212,30 +210,6 @@ export default {
                 loginSuccess: false,
             };
         },
-        firework() {
-            fire(0.25, {
-                spread: 66,
-                startVelocity: 75,
-                scalar: 0.8
-            });
-            fire(0.2, {
-                spread: 60
-            });
-            fire(0.35, {
-                spread: 100,
-                decay: 0.91
-            });
-            fire(0.3, {
-                spread: 130,
-                startVelocity: 66,
-                decay: 0.92,
-                scalar: 1.2
-            });
-            fire(0.4, {
-                spread: 120,
-                startVelocity: 45
-            });
-        }
     }
 }
 </script>

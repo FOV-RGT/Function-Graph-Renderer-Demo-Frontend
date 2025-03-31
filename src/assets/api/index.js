@@ -1,9 +1,14 @@
 import axios from 'axios';
 import store from '../../store/index';
 
+
+
+const baseURL = import.meta.env.PROD 
+  ? import.meta.env.VITE_API_BASE_URL 
+  : '/api';
+
 const api = axios.create({
-    baseURL: '/api',
-    // baseURL: 'http://localhost:5005',
+    baseURL,          // 基础URL
     timeout: 10000,                   // 请求超时时间：10秒
     headers: {
         'Content-Type': 'application/json' // 默认请求头设置

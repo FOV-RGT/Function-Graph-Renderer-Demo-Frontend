@@ -1,0 +1,82 @@
+.main {
+
+    .cls-1,
+    .cls-2,
+    .cls-3,
+    .cls-4 {
+        stroke-width: 0px;
+    }
+
+    .cls-2 {
+        fill: #2d496c;
+    }
+
+    .cls-5 {
+        fill: #aa6331;
+        stroke: #aa6331;
+        stroke-miterlimit: 10;
+    }
+
+    .cls-3 {
+        fill: #fff;
+    }
+
+    .cls-4 {
+        fill: #00355f;
+    }
+
+}
+
+.group input[type="number"]::-webkit-outer-spin-button,
+.group input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.group input[type="number"] {
+    appearance: none;
+    -moz-appearance: textfield;
+}
+
+.group div {
+    pointer-events: auto;
+}
+
+.group div:nth-child(1) {
+    top: 38%;
+    left: 20%;
+}
+
+.group div:nth-child(2) {
+    top: 23%;
+    right: 18%;
+}
+
+.group div:nth-child(3) {
+    bottom: 6%;
+    left: 5%;
+}
+
+.group div:nth-child(4) {
+    top: 45%;
+    right: 18%;
+}
+
+.group div:nth-child(5) {
+    bottom: 13%;
+    left: 16%;
+}
+
+.group div:nth-child(6) {
+    bottom: 28.5%;
+    right: 21%;
+}
+
+.group div:nth-child(7) {
+    bottom: 14.5%;
+    right: 28%;
+}
+
+.group div:nth-child(8) {
+    top: 58%;
+    left: 13%;
+}
