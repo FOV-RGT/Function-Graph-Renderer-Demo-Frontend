@@ -68,10 +68,10 @@
                 class="fixed inset-0 z-0 object-contain left-0 top-5 w-screen h-screen rotate-1 select-none" />
             <div class="renderComponent h-12/13 w-full relative text-transparent">
                 <div
-                    class="logo flex item-center gap-4 text-5xl absolute left-[50%] transform -translate-x-[50%] select-none">
-                    <h1 class="flex items-center">DONGMING洞明 v{{ version }}</h1>
+                    class="logo flex gap-4 absolute left-1/2 transform -translate-x-[50%] -translate-y-[12%] select-none">
+                    <h1>DongMing洞明 v{{ version }}</h1>
                 </div>
-                <div v-show="show.render2D" class="h-full w-full pl-20 pb-4 pr-12 pt-8">
+                <div v-show="show.render2D" class="h-full w-full pl-20 pb-4 pr-12 pt-10">
                     <TwoDPlotCom ref="TwoDPlotCom" />
                 </div>
                 <div v-show="!show.render2D" class="h-full w-full">
@@ -464,7 +464,7 @@ export default {
         } else {
             this.$store.commit('auth/cleanState', null);
             this.toast({
-                head: 'DONGMING洞明',
+                head: 'DongMing洞明',
                 messages: ['Hello,world!'],
                 target: 'body',
                 time: 5000
@@ -642,7 +642,9 @@ export default {
 
         fuckRender(data_2D = this.functionData_2D, data_3D = this.functionData_3D) {
             this.$refs.TwoDPlotCom.fuckRender(data_2D);
-            // this.$refs.ThreeDPlotCom.handleArrayInput(data_3D);
+            setTimeout(() => {
+                this.$refs.ThreeDPlotCom.handleArrayInput(data_3D);
+            }, 100);
         },
 
         fuckList(evt, index) {
