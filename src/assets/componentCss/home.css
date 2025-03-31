@@ -228,7 +228,7 @@
 }
 
 .fnList2 {
-    background-image: url('/函数表达式输入框组件/输入函数组件（终极版）.png');
+    background-image: url('/函数表达式输入框组件/输入函数组件.png');
     background-size: 100% 100.3%;
     background-position: center;
     background-repeat: no-repeat;
@@ -352,4 +352,20 @@
 
 .chart-leftTop .button:active {
     transform: scale(0.98);
+}
+
+.hisData-enter-active {
+    transform-origin: 100% 0%;
+    transition: opacity 0.25s ease, transform 0.25s ease-out;
+}
+
+.hisData-leave-active {
+    transform-origin: 100% 0%;
+    transition: opacity 0.25s ease, transform 0.25s ease-in;
+}
+
+.hisData-enter-from,
+.hisData-leave-to {
+    opacity: 0;
+    transform: translateX(50%) scale(0.9) rotate(42deg);
 }

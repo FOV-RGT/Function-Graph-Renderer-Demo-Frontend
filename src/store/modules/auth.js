@@ -36,7 +36,7 @@ export default {
             nickname: state.nickname || '',
             email: state.email || '',
             username: state.username || '',
-            avatarUrl: state.avatarUrl || '爱门.jpg'
+            avatarUrl: state.avatarUrl || '/默认头像/默认头像.png'
         }),
         displayName: state => state.nickname || state.username || "千早爱音世界第一可爱",
         chartType: state => state.userConfig.chartType,

@@ -28,8 +28,12 @@ const store = createStore({
         GLTFLoadStatus: state => state.GLTFLoadStatus,
     },
     mutations: {
-        switchRender(state) {
-            state.is2D = !state.is2D;
+        switchRender(state, evt) {
+            if (evt === '2D') {
+                state.is2D = true;
+            } else {
+                state.is2D = false;
+            }
         },
         syncData(state, payload) {
             if (payload.is2D) {

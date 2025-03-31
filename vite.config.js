@@ -1,23 +1,24 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [
-    vue(),
-    tailwindcss()
-  ],
-  server: {
-    port: 5713,
-    proxy: {
-      '/api': {
-        // target: 'https://api.kz2006.top/',
-        target: 'http://localhost:5005',
-        changeOrigin: true,
-        secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '')
-      }
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd());
+  return {
+    plugins: [
+      vue(),
+      tailwindcss()
+    ],
+    server: {
+      port: 5555,
+      proxy: mode === 'development' ? {
+        '/api': {
+          target: env.VITE_API_BASE_URL,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, '')
+        }
+      } : undefined
     }
   }
 })

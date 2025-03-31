@@ -3,10 +3,91 @@
   themes: coffee --default, dark --coffee, prefersdark, cupcake;
 }
 
-@font-face {
-  font-family: 'deYiHei';
-  src: url('/deYiHei.woff2') format('woff2');
-  font-style: normal;
+/* 响应式布局的基础设置 */
+:root {
+  /* 基础字体大小变量 */
+  --base-font-size: 8px;
+  /* 视口宽度响应式调整 (vw方式) */
+  --responsive-font-size: calc(var(--base-font-size) + min(0.1vw, 4px));
+  /* 应用计算后的字体大小，但设置上下限 */
+  font-size: clamp(8px, var(--responsive-font-size), 16px);
+}
+
+/* 小型移动设备 - 375px以下 */
+@media screen and (max-width: 375px) {
+  :root {
+    --base-font-size: 8px;
+  }
+}
+
+/* 标准移动设备 - 375px-576px */
+@media screen and (min-width: 376px) and (max-width: 576px) {
+  :root {
+    --base-font-size: 9px;
+  }
+}
+
+/* 大型移动设备/小型平板 - 577px-768px */
+@media screen and (min-width: 577px) and (max-width: 768px) {
+  :root {
+    --base-font-size: 10px;
+  }
+}
+
+/* 平板设备 - 769px-992px */
+@media screen and (min-width: 769px) and (max-width: 992px) {
+  :root {
+    --base-font-size: 11px;
+  }
+}
+
+/* 小型笔记本 - 993px-1200px */
+@media screen and (min-width: 993px) and (max-width: 1200px) {
+  :root {
+    --base-font-size: 12px;
+  }
+}
+
+/* 桌面显示器 - 1201px-1440px */
+@media screen and (min-width: 1201px) and (max-width: 1440px) {
+  :root {
+    --base-font-size: 13px;
+  }
+}
+
+/* 大型显示器 - 1441px及以上 */
+@media screen and (min-width: 1441px) {
+  :root {
+    --base-font-size: 14px;
+  }
+}
+
+@media screen and (min-width: 2000px) {
+  :root {
+    --base-font-size: 16px;
+  }
+}
+
+/* 横屏模式特殊处理 */
+@media (orientation: landscape) and (max-height: 500px) {
+  :root {
+    font-size: 10px;
+  }
+}
+
+/* 高分辨率屏幕 */
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
+  :root {
+    --base-font-size: 15px;
+  }
+}
+
+/* 深色模式调整 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --base-font-size: 17px;
+  }
 }
 
 @font-face {
@@ -43,4 +124,3 @@ body {
   height: 100dvh;
   background-color: #2D496C;
 }
-

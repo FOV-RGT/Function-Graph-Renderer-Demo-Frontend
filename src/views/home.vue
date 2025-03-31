@@ -44,12 +44,22 @@
                     </svg>
                 </div>
                 <menuButtons class="mt-auto mb-auto ml-5" @list="show.list = true"
-                    @adjustWindow="show.adjustWindow = true" @switchRenderer="switchRenderer" @table="show.table = true"
-                    @loginModal="show.loginModal = true" />
+                    @adjustWindow="show.adjustWindow = true" @switchRenderer="show.switchComponent = true"
+                    @table="show.table = true" @loginModal="show.loginModal = true" />
             </div>
         </transition>
         <transition name="bg">
             <div v-if="show.menu && !leftPin" class="fixed inset-0 z-1 select-none" @mousedown="show.menu = false">
+                <div class="absolute inset-0 bg-black/35"></div>
+            </div>
+        </transition>
+        <transition name="table">
+            <switchComponent v-if="show.switchComponent" @switch="switchRenderer"
+                class="fixed top-1/2 left-1/2 w-1/3 z-50 -translate-x-1/2 -translate-y-1/2" />
+        </transition>
+        <transition name="bg">
+            <div v-if="show.switchComponent" class="fixed inset-0 z-40 select-none"
+                @mousedown="show.switchComponent = false">
                 <div class="absolute inset-0 bg-black/35"></div>
             </div>
         </transition>
@@ -58,10 +68,10 @@
                 class="fixed inset-0 z-0 object-contain left-0 top-5 w-screen h-screen rotate-1 select-none" />
             <div class="renderComponent h-12/13 w-full relative text-transparent">
                 <div
-                    class="logo flex item-center gap-4 text-5xl absolute left-[50%] transform -translate-x-[50%] select-none">
-                    <h1 class="flex items-center">DONGMING v{{ version }}</h1>
+                    class="logo flex gap-4 absolute left-1/2 transform -translate-x-[50%] -translate-y-[12%] select-none">
+                    <h1>DongMing洞明 v{{ version }}</h1>
                 </div>
-                <div v-show="show.render2D" class="h-full w-full pl-20 pb-4 pr-12 pt-8">
+                <div v-show="show.render2D" class="h-full w-full pl-20 pb-4 pr-12 pt-10">
                     <TwoDPlotCom ref="TwoDPlotCom" />
                 </div>
                 <div v-show="!show.render2D" class="h-full w-full">
@@ -85,17 +95,15 @@
                 </div>
             </div>
             <div class="h-1/13 w-5/6 pr-10 absolute right-0 flex flex-row justify-end overflow-hidden">
-                <adjustButtons @setView="setView" @addMessage="toast"/>
+                <adjustButtons @setView="setView" @addMessage="toast" />
             </div>
             <transition name="bg">
                 <div v-if="show.table" class="fixed inset-0 z-40 select-none" @mousedown="show.table = false">
                     <div class="absolute inset-0 bg-black/35"></div>
                 </div>
             </transition>
-            <transition name="table">
-                <hisDataTable v-if="show.table" :localFnData="localFnData"
-                    class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
-                    bg-base-100 rounded-box border border-base-content/10 overflow-auto lg:w-4xl md:w-xl sm:w-md h-auto z-80" @renderFn="renderFn" @delectData="delectData"
+            <transition name="hisData">
+                <hisDataTable v-if="show.table" :localFnData="localFnData" @renderFn="renderFn" @delectData="delectData"
                     @closeTable="show.table = false" @deleteLocalData="deleteLocalData" />
             </transition>
             <transition name="bg">
@@ -187,7 +195,7 @@
             <transition name="table">
                 <register ref="register" v-show="show.registerModal" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] bg-base-100 rounded-box
                     border border-base-content/10 overflow-auto h-auto z-80" @switchModal="switchModal"
-                    @login="userLogin" @message="toast"/>
+                    @login="userLogin" @message="toast" />
             </transition>
             <transition name="bg">
                 <div v-if="show.adjustWindow" class="fixed inset-0 z-40 select-none"
@@ -196,9 +204,7 @@
                 </div>
             </transition>
             <transition name="table">
-                <adjustWindow v-if="show.adjustWindow" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%]
-                bg-base-100 rounded-box border border-base-content/10 overflow-auto w-lg h-auto z-80"
-                    @close="show.adjustWindow = false" @update-all-samples="updateAllFunctionSamplePoints" />
+                <adjustWindow v-if="show.adjustWindow" @close="show.adjustWindow = false" @update-all-samples="updateAllFunctionSamplePoints" />
             </transition>
             <transition name="bg">
                 <div v-if="show.avatarPreview" class="fixed inset-0 z-40 select-none"
@@ -222,13 +228,8 @@
                                 <div class="flex flex-1 justify-between items-center gap-2">
                                     <div class="flex items-center gap-5 grow">
                                         <ColorPicker format="rgb" shape="circle" :debounce="0" lang="ZH-cn"
-                                            popupPosition="left" v-model:pureColor="item.color"
+                                            popupPosition="left" v-model:pureColor="item.color" :blurClose="true"
                                             @update:pureColor="throttleupdateColor($event, displayData.startIndex + index)">
-                                            <template #extra>
-                                                <button class="btn btn-block btn-success text-xl">
-                                                    关闭
-                                                </button>
-                                            </template>
                                         </ColorPicker>
                                         <input type="text" spellcheck="false"
                                             class="w-full h-10 liInput border-0 outline-none" :value="item.fn"
@@ -236,12 +237,12 @@
                                             @input="debouncedAddInput($event.target.value, displayData.startIndex + index)">
                                     </div>
                                     <div class="liRight flex items-center gap-4">
-                                        <img v-if="item.visible" src="/函数表达式输入框组件/隐藏图标（未隐藏状态）.png" alt=""
+                                        <img v-if="item.visible" src="/函数表达式输入框组件/隐藏图标（未隐藏状态）.svg" alt=""
                                             class="cursor-pointer"
                                             @click="fuckList('visible', displayData.startIndex + index)" />
-                                        <img v-else src="/函数表达式输入框组件/隐藏图标（隐藏状态）.png" alt="" class="cursor-pointer"
+                                        <img v-else src="/函数表达式输入框组件/隐藏图标（隐藏状态）.svg" alt="" class="cursor-pointer"
                                             @click="fuckList('visible', displayData.startIndex + index)">
-                                        <img src="/函数表达式输入框组件/垃圾桶.png" alt="" class="cursor-pointer"
+                                        <img src="/函数表达式输入框组件/垃圾桶.svg" alt="" class="cursor-pointer"
                                             @click="fuckList('minus', displayData.startIndex + index)" />
                                     </div>
                                 </div>
@@ -249,7 +250,7 @@
                             <li v-if="displayData.fnData.length < 5" class=" flex w-full items-center shrink-0">
                                 <div class="flex w-full justify-center items-center shrink-0">
                                     <div class="flex flex-1 justify-center items-center gap-5">
-                                        <img src="/加号/加号.png" alt="" class="cursor-pointer w-1/15"
+                                        <img src="/加号/加号.svg" alt="" class="cursor-pointer w-1/15"
                                             @click="fuckList('plus', displayData.startIndex + displayData.endIndex + 1)">
                                     </div>
                                 </div>
@@ -257,7 +258,7 @@
                         </ul>
                         <div
                             class="absolute bottom-5/22 left-1/5 w-1/8 h-1/15 flex justify-between items-center min-w-13 text-xl">
-                            <img src="/翻页箭头/箭头（金）.png" alt=""
+                            <img src="/翻页箭头/翻页箭头（金）.svg" alt=""
                                 :class="['-rotate-90 w-5 h-5', canGoPrevious ? 'cursor-pointer' : 'cursor-not-allowed opacity-50']"
                                 @click="changePage('-')" />
                             <div class="flex items-center">
@@ -267,7 +268,7 @@
                                 <p>/</p>
                             </div>
                             <p>{{ this.displayPageCount }}</p>
-                            <img src="/翻页箭头/箭头（金）.png" alt=""
+                            <img src="/翻页箭头/翻页箭头（金）.svg" alt=""
                                 :class="['rotate-90 w-5 h-5', canGoNext ? 'cursor-pointer' : 'cursor-not-allowed opacity-50']"
                                 @click="changePage('+')" />
                         </div>
@@ -336,6 +337,7 @@ import adjustButtons from '../components/adjustButtons.vue';
 import adjustWindow from '../components/adjustWindow.vue';
 import menuButtons from '../components/menuButtons.vue';
 import toast from '../components/toast.vue'
+import switchComponent from '../components/switchComponent.vue';
 
 
 
@@ -351,7 +353,8 @@ export default {
         adjustButtons,
         adjustWindow,
         menuButtons,
-        toast
+        toast,
+        switchComponent
     },
     data() {
         return {
@@ -371,7 +374,8 @@ export default {
                 menu: true,
                 avatarPreview: false,
                 rightSlide: false, // 右侧侧边栏的显示/隐藏
-                colorPicker: true
+                colorPicker: true,
+                switchComponent: false,
             },
             account: "",
             password: "",
@@ -460,7 +464,7 @@ export default {
         } else {
             this.$store.commit('auth/cleanState', null);
             this.toast({
-                head: 'DONGMING',
+                head: 'DongMing洞明',
                 messages: ['Hello,world!'],
                 target: 'body',
                 time: 5000
@@ -621,9 +625,10 @@ export default {
         }
     },
     methods: {
-        switchRenderer() {
+        switchRenderer(evt) {
             this.throttledResize();
-            this.$store.commit('switchRender');
+            this.$store.commit('switchRender', evt);
+            this.show.switchComponent = false;
         },
 
         //将缩放步长和移动步长传递给2D图标实例
@@ -637,7 +642,9 @@ export default {
 
         fuckRender(data_2D = this.functionData_2D, data_3D = this.functionData_3D) {
             this.$refs.TwoDPlotCom.fuckRender(data_2D);
-            this.$refs.ThreeDPlotCom.handleArrayInput(data_3D);
+            setTimeout(() => {
+                this.$refs.ThreeDPlotCom.handleArrayInput(data_3D);
+            }, 100);
         },
 
         fuckList(evt, index) {
@@ -992,6 +999,10 @@ export default {
         },
 
         inputChangePage(input, event) {
+            if (input === '') {
+                event.target.value = this.currentPagination.currentPage;
+                return;
+            }
             const isValidNumber = /^\d+$/.test(input);
             const page = parseInt(input);
             if (isValidNumber && page > 0 && page <= this.currentPagination.totalPage) {
