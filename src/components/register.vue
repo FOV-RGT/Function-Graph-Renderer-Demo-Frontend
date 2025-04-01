@@ -12,7 +12,7 @@
                         @click="loading.registerSuccess = !loading.registerSuccess">666666
                         </button>
                         <button type="button" class="btn btn-warning"
-                        @click="fireWorks">555555
+                        @click="firework">555555
                         </button> -->
                         <button type="button" class="register-btn btn btn-soft btn-info btn-md w-[10em]
                             flex items-center justify-evenly p-0" @click="switchModal">
@@ -163,6 +163,7 @@ export default {
             const { success, messages } = await register(registerData);
             if (success) {
                 this.loading.registerSuccess = true;
+                this.firework();
                 this.login(registerData);
             } else {
                 this.loading.registerSuccess = false;
@@ -209,6 +210,31 @@ export default {
                 tryLogin: false,
                 loginSuccess: false,
             };
+        },
+        firework() {
+            const origin = { y: 0.75, x: 0.5 };
+            fire(0.25, {
+                spread: 66,
+                startVelocity: 75,
+                scalar: 0.8
+            }, origin);
+            fire(0.2, {
+                spread: 60
+            }, origin);
+            fire(0.35, {
+                spread: 100,
+                decay: 0.91
+            }, origin);
+            fire(0.3, {
+                spread: 130,
+                startVelocity: 66,
+                decay: 0.92,
+                scalar: 1.2
+            }, origin);
+            fire(0.4, {
+                spread: 120,
+                startVelocity: 45
+            }, origin);
         },
     }
 }
