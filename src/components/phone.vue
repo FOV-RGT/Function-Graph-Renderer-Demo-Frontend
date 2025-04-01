@@ -481,13 +481,13 @@
                 <img :src="this.userInfo.avatarUrl" alt="用户头像" @click="handleAvatarClick" v-if="isAuthenticated"
                     class="absolute top-[10%] left-[42%] w-[18%] rounded-full select-none cursor-pointer pointer-events-auto">
                 <h1 v-if="show.main && isAuthenticated" class="absolute text-3xl top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2
-                w-7/10 h-1/8 flex flex-wrap items-center justify-center text-zinc-400" v-text="userInfo.signature"></h1>
+                w-7/10 h-auto max-h-1/6 flex flex-wrap items-center justify-center text-zinc-300/90 break-words text-center pointer-events-auto overflow-wrap-anywhere">{{ userInfo.signature }}</h1>
                 <div v-if="show.info" class="absolute top-[55%] left-1/2
-                    transform -translate-x-1/2 -translate-y-1/2 w-full h-1/2 text-gray-200 text-2xl ">
+                    transform -translate-x-1/2 -translate-y-1/2 w-full h-1/2 text-gray-200 text-2xl">
                     <p v-text="formData.account" class="absolute top-[6.5%] left-[33%] w-[60%] h-[12%] pointer-events-auto flex items-center"/>
-                    <input type="text" v-model="formData.nickname"
+                    <input type="text" v-model="formData.nickname" minlength="0" maxlength="18" title="昵称长度最小两位，最大十八位"
                         class="absolute top-[28.5%] left-[33%] w-[60%] h-[12%] outline-none pointer-events-auto">
-                    <input type="text" v-model="formData.signature"
+                    <input type="text" v-model="formData.signature" minlength="0" maxlength="28" title="签名长度不能超过28位"
                         class="absolute top-[48.4%] left-[32.6%] w-[60%] h-[12%] outline-none pointer-events-auto">
                     <input type="text" v-model="formData.email"
                         class="absolute top-[69.6%] left-[32.8%] w-[60%] h-[12%] outline-none pointer-events-auto">
@@ -754,9 +754,6 @@ export default {
                 password: this.loginData.password
             }
             const callback = () => {
-                this.show.login = true;
-                this.show.register = false;
-                this.show.main = true;
                 this.initFormData();
                 this.registerData = {
                     account: '',
