@@ -162,7 +162,7 @@
 }
 
 .main-left {
-    background-image: url('/侧边栏背景/侧边栏背景（已剪切）.png');
+    background-image: url('/侧边栏背景/侧边栏背景（无线条）.png');
     background-size: 100% 100.3%;
     background-position: center;
     background-repeat: no-repeat;
@@ -368,4 +368,89 @@
 .hisData-leave-to {
     opacity: 0;
     transform: translateX(50%) scale(0.9) rotate(42deg);
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+.rightSlide-enter-active,
+.rightSlide-leave-active {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.rightSlide-enter-from,
+.rightSlide-leave-to {
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.input[type="number"]:focus {
+    outline: none;
+    border-color: transparent;
+    box-shadow: none;
+}
+
+.sidebar-wrapper {
+    bottom: 10px;
+    right: 12px;
+}
+
+.sidebar-container {
+    min-width: clamp(150px, 15vw, 250px);
+    width: clamp(180px, 15vw, 250px);
+    max-height: clamp(300px, 70vh, 600px);
+}
+
+.cat-top-image {
+    background-image: url('/图例组件/顶部猫猫.png'); 
+    background-size: contain; 
+    background-position: center; 
+    background-repeat: no-repeat; 
+    padding-top: clamp(50px, 35%, 100px);
+    transform: translate(clamp(3rem, 6vw, 6rem), clamp(3rem, 29vh, 16rem));
+}
+
+.scroll-container {
+    width: clamp(10rem, 20vw, 21rem); 
+    transform: translate(clamp(3rem, 6vw, 6rem), clamp(3rem, 29vh, 16rem));
+    max-height: clamp(150px, 35vh, 300px);
+}
+
+.entity-image-container {
+    width: clamp(10rem, 20vw, 21rem); 
+    aspect-ratio: 180/160; 
+    background-image: url('/图例组件/本体.svg'); 
+    background-size: 100% 100%; 
+    background-repeat: no-repeat;
+}
+
+.toggle-button {
+    bottom: -8px; 
+    right: -6px; 
+    width: clamp(20px, 5vw, 35px); 
+    height: clamp(20px, 5vw, 35px);
+}
+
+.item-row-odd {
+    height: clamp(1rem, 6vh, 3rem);
+    width: clamp(1rem, 18vh, 10rem);
+    background-image: url('/图例组件/单数层显示框.png'); 
+    background-size: 100% 100%; 
+    background-repeat: no-repeat;
+}
+
+.item-row-even {
+    height: clamp(1rem, 6vh, 3rem);
+    width: clamp(1rem, 18vh, 10rem); 
+    background-image: url('/图例组件/双数层显示框.png'); 
+    background-size: 100% 100%; 
+    background-repeat: no-repeat;
+}
+
+.hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
