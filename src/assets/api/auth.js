@@ -95,19 +95,40 @@ const authApi = {
             return await api.get('/users/me');
         } catch (error) {
             console.log("获取用户信息错误：", error.status);
+            const messages = error.response.data.errors;
             switch (error.status) {
                 case 401:
                 case 404: {
-                    throw ('未授权');
+                    const head = '未授权';
+                    const data = {
+                        head,
+                        messages
+                    };
+                    throw (data);
                 }
                 case 400: {
-                    throw ('请求错误');
+                    const head = '请求错误';
+                    const data = {
+                        head,
+                        messages
+                    };
+                    throw (data);
                 }
                 case 500: {
-                    throw ('服务器错误');
+                    const head = '服务器错误';
+                    const data = {
+                        head,
+                        messages
+                    };
+                    throw (data);
                 }
                 default: {
-                    throw (`未知错误: ${error.response.status}`);
+                    const head = '未知错误';
+                    const data = {
+                        head,
+                        messages: error.response.status
+                    };
+                    throw (data);
                 }
             }
         }
@@ -117,19 +138,40 @@ const authApi = {
             return await api.put('/users/account', data);
         } catch (error) {
             console.log("更新用户信息错误：", error.status);
+            const messages = error.response.data.errors;
             switch (error.status) {
                 case 401:
                 case 404: {
-                    throw ('未授权');
+                    const head = '未授权';
+                    const data = {
+                        head,
+                        messages
+                    };
+                    throw (data);
                 }
                 case 400: {
-                    throw ('请求错误');
+                    const head = '请求错误';
+                    const data = {
+                        head,
+                        messages
+                    };
+                    throw (data);
                 }
                 case 500: {
-                    throw ('服务器错误');
+                    const head = '服务器错误';
+                    const data = {
+                        head,
+                        messages
+                    };
+                    throw (data);
                 }
                 default: {
-                    throw (`未知错误: ${error.response.status}`);
+                    const head = '未知错误';
+                    const data = {
+                        head,
+                        messages: error.response.status
+                    };
+                    throw (data);
                 }
             }
         }

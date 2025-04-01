@@ -1,0 +1,319 @@
+.main {
+    .cls-1 {
+        fill: #6e7576;
+    }
+
+    .cls-1,
+    .cls-2,
+    .cls-3,
+    .cls-4 {
+        stroke-width: 0px;
+    }
+
+    .cls-5 {
+        stroke-width: 5px;
+    }
+
+    .cls-5,
+    .cls-6 {
+        fill: none;
+        stroke: #000;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .cls-3 {
+        fill: #2d496c;
+    }
+
+    .cls-6 {
+        stroke-width: .5px;
+    }
+
+    .cls-4 {
+        fill: #fff;
+    }
+
+}
+
+.button {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+.button:hover {
+    transform: scale(1.015);
+}
+
+.button:active {
+    transform: scale(0.99);
+}
+
+.main-info {
+    .cls-1 {
+        fill: #6e7576;
+    }
+
+    .cls-1,
+    .cls-2,
+    .cls-3,
+    .cls-4,
+    .cls-5 {
+        stroke-width: 0px;
+    }
+
+    .cls-2 {
+        fill: #aea181;
+    }
+
+    .cls-6 {
+        stroke: #fff;
+        stroke-miterlimit: 10;
+    }
+
+    .cls-6,
+    .cls-7,
+    .cls-8 {
+        fill: none;
+    }
+
+    .cls-7 {
+        stroke-width: 5px;
+    }
+
+    .cls-3 {
+        fill: #000;
+    }
+
+    .cls-7,
+    .cls-8 {
+        stroke: #000;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .cls-4 {
+        fill: #2d496c;
+    }
+
+    .cls-8 {
+        stroke-width: .5px;
+    }
+
+    .cls-5 {
+        fill: #fff;
+    }
+}
+
+.info {
+    .cls-1 {
+        fill: #6e7576;
+    }
+
+    .cls-1,
+    .cls-2,
+    .cls-3,
+    .cls-4,
+    .cls-5 {
+        stroke-width: 0px;
+    }
+
+    .cls-2 {
+        fill: #aea181;
+    }
+
+    .cls-6 {
+        stroke: #fff;
+        stroke-miterlimit: 10;
+    }
+
+    .cls-6,
+    .cls-7,
+    .cls-8 {
+        fill: none;
+    }
+
+    .cls-7 {
+        stroke-width: 5px;
+    }
+
+    .cls-7,
+    .cls-8 {
+        stroke: #000;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .cls-4 {
+        fill: #2d496c;
+    }
+
+    .cls-8 {
+        stroke-width: .5px;
+    }
+
+    .cls-5 {
+        fill: #fff;
+    }
+}
+
+.main-float img {
+    transform-origin: center;
+}
+
+.scaleText {
+    transform-origin: center;
+    transform-box: fill-box;
+    transform: scale(1.5);
+}
+
+.login {
+
+    .cls-1,
+    .cls-2,
+    .cls-3,
+    .cls-4,
+    .cls-5,
+    .cls-6,
+    .cls-7 {
+        stroke-width: 0px;
+    }
+
+    .cls-4 {
+        fill: #000;
+    }
+
+    .cls-1,
+    .cls-8 {
+        fill: #6e7576;
+    }
+
+    .cls-2 {
+        fill: #2d5c6c;
+    }
+
+    .cls-3 {
+        fill: #aea181;
+    }
+
+    .cls-9 {
+        stroke: #fff;
+    }
+
+    .cls-9,
+    .cls-10,
+    .cls-11 {
+        fill: none;
+    }
+
+    .cls-9,
+    .cls-8 {
+        stroke-miterlimit: 10;
+    }
+
+    .cls-10 {
+        stroke-width: 5px;
+    }
+
+    .cls-10,
+    .cls-11 {
+        stroke: #000;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .cls-8 {
+        stroke: #6e7576;
+        stroke-width: 4px;
+    }
+
+    .cls-5 {
+        fill: #2d496c;
+    }
+
+    .cls-11 {
+        stroke-width: .5px;
+    }
+
+    .cls-6 {
+        fill: #fff;
+    }
+
+    .cls-7 {
+        fill: #00405f;
+    }
+}
+
+.toRegister {
+    pointer-events: auto;
+    cursor: pointer;
+    transform-origin: center;
+    transform-box: fill-box;
+    transform: scale(1.5) translateX(20%);
+}
+
+.register {
+    .cls-1 {
+        fill: #6e7576;
+    }
+
+    .cls-1,
+    .cls-2,
+    .cls-3,
+    .cls-4,
+    .cls-5 {
+        stroke-width: 0px;
+    }
+
+    .cls-2 {
+        fill: #aea181;
+    }
+
+    .cls-6 {
+        stroke: #fff;
+        stroke-miterlimit: 10;
+    }
+
+    .cls-6,
+    .cls-7,
+    .cls-8 {
+        fill: none;
+    }
+
+    .cls-7 {
+        stroke-width: 5px;
+    }
+
+    .cls-7,
+    .cls-8 {
+        stroke: #000;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .cls-4 {
+        fill: #2d496c;
+    }
+
+    .cls-8 {
+        stroke-width: .5px;
+    }
+
+    .cls-5 {
+        fill: #fff;
+    }
+
+    .cls-3 {
+        fill: #000;
+    }
+}
+
+.toLogin {
+    pointer-events: auto;
+    cursor: pointer;
+    transform-origin: center;
+    transform-box: fill-box;
+    transform: scale(1.5) translate(25%,-10%);
+}

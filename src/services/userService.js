@@ -192,7 +192,6 @@ export async function uploadChangeData(data) {
 export async function getAvatarUrl() {
     try {
         const res = await authApi.getAvatarUrl();
-        console.log(res);
         return {
             success: true,
             res

@@ -356,16 +356,32 @@
 
 .hisData-enter-active {
     transform-origin: 100% 0%;
-    transition: opacity 0.25s ease, transform 0.25s ease-out;
+    transition: opacity 0.25s ease-out, transform 0.25s ease-out;
 }
 
 .hisData-leave-active {
     transform-origin: 100% 0%;
-    transition: opacity 0.25s ease, transform 0.25s ease-in;
+    transition: opacity 0.25s ease-in, transform 0.25s ease-in;
 }
 
 .hisData-enter-from,
 .hisData-leave-to {
     opacity: 0;
-    transform: translateX(50%) scale(0.9) rotate(42deg);
+    transform: translateX(50%) scale(0.75) rotate(42deg);
+}
+
+.phone-enter-active {
+    transform-origin: 0% 100%;
+    transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+}
+
+.phone-leave-active {
+    transform-origin: 0% 100%;
+    transition: opacity 0.25s ease-in, transform 0.25s ease-in;
+}
+
+.phone-enter-from,
+.phone-leave-to {
+    opacity: 0;
+    transform: translate(50%,20%) scale(0.75) rotate(42deg);
 }
