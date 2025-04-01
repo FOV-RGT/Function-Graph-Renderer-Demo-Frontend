@@ -1,5 +1,5 @@
 <template>
-    <div class="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-1/3 z-[100] pointer-events-none">
+    <div class="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-1/3 z-[80] pointer-events-none">
         <div class="relative w-full pointer-events-none">
             <svg v-if="show.main && isAuthenticated" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 796.71 717.42"
                 class="main w-full">
@@ -479,11 +479,12 @@
             </svg>
             <div class="absolute main-float w-[65%] h-full top-[54.5%] left-[57%] transform -translate-x-1/2 -translate-y-1/2 rotate-7 select-none">
                 <img :src="this.userInfo.avatarUrl" alt="用户头像" @click="handleAvatarClick" v-if="isAuthenticated"
-                    class="absolute top-20 left-58 w-25 h-25 rounded-full select-none cursor-pointer pointer-events-auto">
+                    class="absolute top-[10%] left-[42%] w-[18%] rounded-full select-none cursor-pointer pointer-events-auto">
+                <h1 v-if="show.main && isAuthenticated" class="absolute text-3xl top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2
+                w-7/10 h-1/8 flex flex-wrap items-center justify-center text-zinc-400" v-text="userInfo.signature"></h1>
                 <div v-if="show.info" class="absolute top-[55%] left-1/2
-                    transform -translate-x-1/2 -translate-y-1/2 w-full h-1/2 text-gray-200 text-4xl">
-                    <input type="text" disabled :value="formData.account"
-                        class="absolute top-[6.5%] left-[33%] w-[60%] h-[12%] outline-none pointer-events-auto cursor-not-allowed">
+                    transform -translate-x-1/2 -translate-y-1/2 w-full h-1/2 text-gray-200 text-2xl ">
+                    <p v-text="formData.account" class="absolute top-[6.5%] left-[33%] w-[60%] h-[12%] pointer-events-auto flex items-center"/>
                     <input type="text" v-model="formData.nickname"
                         class="absolute top-[28.5%] left-[33%] w-[60%] h-[12%] outline-none pointer-events-auto">
                     <input type="text" v-model="formData.signature"
@@ -493,7 +494,7 @@
                 </div>
                 <div v-if="show.login && !isAuthenticated">
                     <form @submit.prevent="login" class="absolute top-[55%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-[40%]
-                        text-gray-200 text-4xl">
+                        text-gray-200 text-2xl">
                         <input type="text" v-model="loginData.account" autocomplete="username" required
                             class="absolute top-[25.5%] left-[34%] w-[60%] h-[15%] transform rotate-2 outline-none pointer-events-auto">
                         <input type="password" v-model="loginData.password" autocomplete="current-password" required
@@ -502,7 +503,7 @@
                 </div>
                 <div v-if="show.register && !isAuthenticated">
                     <form @submit.prevent="register"
-                        class="absolute w-full h-[65%] top-[15%] rotate-1 text-gray-200 text-4xl">
+                        class="absolute w-full h-[65%] top-[15%] rotate-1 text-gray-200 text-2xl">
                         <input type="text" required
                             class="validator w-[60%] h-[7.5%] pointer-events-auto absolute top-[3%] left-[34.5%] rotate-1 outline-none"
                             placeholder="Account" minlength="2" maxlength="45" title="账号长度至少两位"
@@ -562,7 +563,13 @@ export default {
                 updateInfo: false,
                 tryRegister: false
             },
-            formData: {},
+            formData: {
+                account: '',
+                nickname: '',
+                signature: '',
+                email: '',
+                avatarUrl: ''
+            },
             loginData: {
                 account: '',
                 password: ''
@@ -624,6 +631,7 @@ export default {
             this.formData = {
                 account: this.userInfo.username,
                 nickname: this.userInfo.nickname,
+                signature: this.userInfo.signature,
                 email: this.userInfo.email,
                 avatarUrl: this.userInfo.avatarUrl
             }

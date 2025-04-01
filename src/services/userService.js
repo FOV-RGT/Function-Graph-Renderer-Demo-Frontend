@@ -52,6 +52,8 @@ export async function updateUserInfo(info) {
     try {
         await authApi.updateUserInfo(info);
         const authRes = await authApi.getUserInfo();
+        console.log('authRes', authRes);
+        
         store.commit('auth/setUser', authRes.imformation);
         return {
             success: true

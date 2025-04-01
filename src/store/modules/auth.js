@@ -36,7 +36,8 @@ export default {
             nickname: state.nickname || '',
             email: state.email || '',
             username: state.username || '',
-            avatarUrl: state.avatarUrl || '/默认头像/默认头像.png'
+            avatarUrl: state.avatarUrl || '/默认头像/默认头像.png',
+            signature: state.signature || '千早爱音世界第一可爱',
         }),
         displayName: state => state.nickname || state.username || "千早爱音世界第一可爱",
         chartType: state => state.userConfig.chartType,
@@ -68,14 +69,17 @@ export default {
             const email = data.email || '';
             const username = data.username || '';
             const avatarUrl = data.avatarUrl || '';
+            const signature = data.signature || '';
             state.nickname = nickname;
             state.email = email;
             state.username = username;
             state.avatarUrl = avatarUrl;
+            state.signature = signature;
             localStorage.setItem('nickname', nickname);
             localStorage.setItem('email', email);
             localStorage.setItem('username', username);
             localStorage.setItem('avatarUrl', avatarUrl);
+            localStorage.setItem('signature', signature);
         },
 
         setToken(state, token) {
