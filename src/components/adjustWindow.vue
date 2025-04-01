@@ -1,6 +1,6 @@
 <template>
     <div
-        class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 w-1/2 h-1/2 select-none pointer-events-none">
+        class="fixed top-1/2 right-[40%] transform translate-x-1/2 -translate-y-2/3 z-50 w-[60%] h-[60%] select-none pointer-events-none">
         <div class="relative w-full">
             <svg id="_设置组件" data-name="设置组件" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1113.61 652.2"
                 class="main w-full">
@@ -51,13 +51,13 @@
                 <div class="absolute flex flex-col items-center justify-center h-1/10 w-1/11">
                     <h1 class="text-2xl text-white">移动步长</h1>
                     <input type="number" v-model.number="userConfig.moveFactor" min="0.01" max="1.00" step="0.01"
-                        class="text-center text-black outline-none border-2 border-[#C8C8C8] rounded-md bg-[#C8C8C8] w-9/10"
+                        class="text-center text-black outline-none border-2 border-[#C8C8C8] rounded-md bg-[#C8C8C8] h-1/3 w-9/10"
                         @change="updateMoveFactor" @keyup.enter="updateMoveFactor" />
                 </div>
                 <div class="absolute flex flex-col items-center justify-center h-1/10 w-1/11">
                     <h1 class="text-2xl text-white">缩放步长</h1>
                     <input type="number" v-model.number="userConfig.zoomFactor" min="0.01" max="1.00" step="0.01"
-                        class="text-center text-black outline-none border-2 border-[#C8C8C8] rounded-md bg-[#C8C8C8] w-9/10"
+                        class="text-center text-black outline-none border-2 border-[#C8C8C8] rounded-md bg-[#C8C8C8] h-1/3 w-9/10"
                         @change="updateZoomFactor" @keyup.enter="updateZoomFactor" />
                 </div>
                 <div class="absolute flex flex-col items-center justify-center h-1/11 w-1/11">
@@ -70,7 +70,7 @@
                     <h1 class="text-2xl text-white">全局采样点数</h1>
                     <input type="number" :value="userConfig.globalSamples" min="500" max="5000" step="1"
                         placeholder="50-5000"
-                        class="text-center text-black outline-none border-2 border-[#C8C8C8] rounded-md bg-[#C8C8C8] w-9/10"
+                        class="text-center text-black outline-none border-2 border-[#C8C8C8] rounded-md bg-[#C8C8C8] h-1/3 w-9/10"
                         @change="updateAllSamples($event.target.value, $event)"
                         @keyup.enter="updateAllSamples($event.target.value, $event)" />
                 </div>
@@ -83,7 +83,7 @@
                 <div class="absolute flex flex-col items-center justify-center h-1/10 w-1/8">
                     <h1 class="text-2xl text-white">全局渲染范围</h1>
                     <div
-                        class="flex flex-row items-center justify-center gap-1 border-2 border-[#C8C8C8] rounded-md bg-[#C8C8C8] w-9/10">
+                        class="flex flex-row items-center justify-center gap-1 border-2 border-[#C8C8C8] rounded-md bg-[#C8C8C8] h-1/3 w-9/10">
                         <input type="number" class="text-center text-black outline-none w-1/3" v-model.number="minVal"
                             @change="setRenderRange" @keyup.enter="setRenderRange" />
                         <p class="flex text-center justify-center items-center text-xl text-black" v-text="'<x<'"></p>
@@ -91,7 +91,7 @@
                             @change="setRenderRange" @keyup.enter="setRenderRange" />
                     </div>
                 </div>
-                <div class="absolute flex flex-col items-center justify-center h-1/13 w-1/10">
+                <div class="absolute flex flex-col items-center justify-center h-1/15 w-1/10">
                     <h1 class="text-2xl text-white">坐标轴类型</h1>
                     <select class="select text-black bg-[#C8C8C8] focus:outline-none focus:border-[#C8C8C8] w-9/10"
                         v-model="userConfig.chartType" @change="updateUserConfig">
