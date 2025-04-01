@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
       tailwindcss()
     ],
     server: {
-      port: 5555,
+      port: 5713,
       proxy: mode === 'development' ? {
         '/api': {
           target: env.VITE_API_BASE_URL,

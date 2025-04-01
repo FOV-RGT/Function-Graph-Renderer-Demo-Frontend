@@ -85,9 +85,12 @@
     opacity: 0;
 }
 
-.table-enter-active,
+.table-enter-active {
+    transition: opacity 0.2s ease-out, transform 0.25s cubic-bezier(0.34, 1.8, 0.64, 1);
+}
+
 .table-leave-active {
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition: all 0.2s ease-in
 }
 
 .table-enter-from,
@@ -145,13 +148,16 @@
     font-size: 1.5em;
 }
 
-.menu-enter-active,
+.menu-enter-active {
+    transition: all 0.2s ease-out;
+}
 .menu-leave-active {
-    transition: transform 0.2s ease;
+    transition: all 0.2s ease-in;
 }
 
 .menu-enter-from,
 .menu-leave-to {
+    opacity: 0.5;
     transform: translateX(-100%);
 }
 
@@ -162,7 +168,7 @@
 }
 
 .main-left {
-    background-image: url('/侧边栏背景/侧边栏背景（已剪切）.png');
+    background-image: url('/侧边栏背景/侧边栏背景（无线条）.png');
     background-size: 100% 100.3%;
     background-position: center;
     background-repeat: no-repeat;
@@ -356,16 +362,142 @@
 
 .hisData-enter-active {
     transform-origin: 100% 0%;
-    transition: opacity 0.25s ease, transform 0.25s ease-out;
+    transition: opacity 0.25s ease-out, transform 0.25s ease-out;
 }
 
 .hisData-leave-active {
     transform-origin: 100% 0%;
-    transition: opacity 0.25s ease, transform 0.25s ease-in;
+    transition: opacity 0.25s ease-in, transform 0.25s ease-in;
 }
 
 .hisData-enter-from,
 .hisData-leave-to {
     opacity: 0;
+    transform: translateX(50%) scale(0.75) rotate(42deg);
+}
+
+.phone-enter-active {
+    transform-origin: 0% 100%;
+    transition: opacity 0.25s ease-out, transform 0.3s cubic-bezier(0.34, 1.35, 0.64, 1);
+}
+
+.phone-leave-active {
+    transform-origin: 0% 100%;
+    transition: opacity 0.25s ease-in, transform 0.25s ease-in;
+}
+
+.phone-enter-from,
+.phone-leave-to {
+    opacity: 0;
+    transform: translate(50%,20%) scale(0.75) rotate(42deg);
     transform: translateX(50%) scale(0.9) rotate(42deg);
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+.rightSlide-enter-active,
+.rightSlide-leave-active {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.rightSlide-enter-from,
+.rightSlide-leave-to {
+    opacity: 0;
+    transform: translateXY(30px);
+}
+
+.input[type="number"]:focus {
+    outline: none;
+    border-color: transparent;
+    box-shadow: none;
+}
+
+.sidebar-wrapper {
+    bottom: 10px;
+    right: 12px;
+}
+
+.sidebar-container {
+    min-width: clamp(150px, 15vw, 250px);
+    width: clamp(180px, 15vw, 250px);
+    max-height: clamp(300px, 70vh, 600px);
+}
+
+.cat-top-image {
+    background-image: url('/图例组件/顶部猫猫.png'); 
+    background-size: contain; 
+    background-position: center; 
+    background-repeat: no-repeat; 
+    padding-top: clamp(50px, 35%, 100px);
+    transform: translate(clamp(3rem, 6vw, 6rem), clamp(3rem, 29vh, 16rem));
+}
+
+.scroll-container {
+    width: clamp(10rem, 20vw, 21rem); 
+    transform: translate(clamp(3rem, 6vw, 6rem), clamp(3rem, 29vh, 16rem));
+    max-height: clamp(150px, 35vh, 300px);
+}
+
+.entity-image-container {
+    width: clamp(10rem, 20vw, 21rem); 
+    aspect-ratio: 180/160; 
+    background-image: url('/图例组件/本体.svg'); 
+    background-size: 100% 100%; 
+    background-repeat: no-repeat;
+}
+
+.toggle-button {
+    bottom: -8px; 
+    right: -6px; 
+    width: clamp(20px, 5vw, 35px); 
+    height: clamp(20px, 5vw, 35px);
+}
+
+.item-row-odd {
+    height: clamp(1rem, 6vh, 3rem);
+    width: clamp(1rem, 18vh, 10rem);
+    background-image: url('/图例组件/单数层显示框.png'); 
+    background-size: 100% 100%; 
+    background-repeat: no-repeat;
+}
+
+.item-row-even {
+    height: clamp(1rem, 6vh, 3rem);
+    width: clamp(1rem, 18vh, 10rem); 
+    background-image: url('/图例组件/双数层显示框.png'); 
+    background-size: 100% 100%; 
+    background-repeat: no-repeat;
+}
+
+.hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+
+.avatarPreview-leave-active {
+    transition: all 0.2s ease;
+}
+
+.avatarPreview-enter-active {
+    transition: all 0.3s cubic-bezier(0.34, 1.8, 0.64, 1);
+}
+
+.avatarPreview-enter-from,
+.avatarPreview-leave-to {
+    opacity: 0;
+    transform: scale(0.6);
+}
+.slideOpen-enter-active,
+.slideOpen-leave-active {
+    transition: opacity 0.2s ease;
+}
+
+.slideOpen-enter-from,
+.slideOpen-leave-to {
+    opacity: 0;
 }

@@ -45,7 +45,7 @@
                 </div>
                 <menuButtons class="mt-auto mb-auto ml-5" @list="show.list = true"
                     @adjustWindow="show.adjustWindow = true" @switchRenderer="show.switchComponent = true"
-                    @table="show.table = true" @loginModal="show.loginModal = true" />
+                    @table="show.table = true" @phone="show.phone = true" />
             </div>
         </transition>
         <transition name="bg">
@@ -77,6 +77,65 @@
                 <div v-show="!show.render2D" class="h-full w-full">
                     <ThreeDPlotCom ref="ThreeDPlotCom" />
                 </div>
+                <!--图例侧边栏部分 -->
+                <div class="absolute z-40 select-none sidebar-wrapper">
+                    <transition name="rightSlide">
+                        <div v-if="show.rightSlide" class="rightSlide relative">
+                            <div class="p-0 flex flex-col relative sidebar-container">
+                                <div class="sticky w-full z-20 -ml-10 -mb-2 cat-top-image"></div>
+                                <div class="relative z-10 flex flex-col overflow-hidden scroll-container">
+                                    <div class="overflow-y-auto hide-scrollbar w-full max-h-[40vh]">
+                                        <div class="flex flex-col-reverse w-full">
+                                            <div v-for="(item, index) in currentData" :key="index"
+                                                class="flex flex-col w-full">
+                                                <div
+                                                    class="flex items-center px-3 w-full mb-[-8px] text-white item-row-odd">
+                                                    <div class="w-3.5 h-3.5 rounded-full"
+                                                        :style="{ backgroundColor: item.color }">
+                                                    </div>
+                                                    <div class="truncate max-w-[70%] ml-1.5 text-white text-sm md:text-base"
+                                                        :title="item.fn">
+                                                        {{ item.fn || " " }}
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    class="flex items-center px-2 w-full mb-[-8px] text-white item-row-even">
+                                                    <span class="text-xs text-white whitespace-nowrap">采样点:</span>
+                                                    <input type="number" :value="item.nSamples" min="500" max="5000"
+                                                        step="1"
+                                                        class="input input-xs w-[70%] text-center -ml-4 text-white bg-transparent border-0 focus:outline-none"
+                                                        :style="{ WebkitAppearance: 'none', MozAppearance: 'textfield' }"
+                                                        @change="updateFunctionSamplePoints($event.target.value, index)" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center relative z-1 ml-2 -mb-2 entity-image-container">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 160"
+                                        class="absolute w-full h-full">
+                                        <g id="_隐藏按钮" data-name="隐藏按钮"
+                                            class="cursor-pointer hover:brightness-110 transition-all"
+                                            @click="toggleRightSlide">
+                                            <rect x="120" y="145" width="15" height="15" fill="transparent" />
+                                            <path class="cls-4"
+                                                d="m384.84,629.08l2.74,58.01c-18.28-.06-36.55-.12-54.83-.18-8.11-13.83-8.27-30.67-.19-43.28,10.31-16.1,32.48-22.83,52.28-14.55Z" />
+                                        </g>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </transition>
+                    <transition name="slideOpen">
+                        <button v-show="!show.rightSlide"
+                            class="absolute z-0 cursor-pointer transform hover:brightness-110 transition-all toggle-button"
+                            @click="show.rightSlide = !show.rightSlide">
+                            <img src="/图例组件/唤出按钮.png" class="w-full h-full object-contain" />
+                        </button>
+                    </transition>
+                </div>
+                <!-- 图例侧边栏部分 -->
+
                 <div class="chart-leftTop select-none">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 437" class="cursor-pointer button"
                         @click="show.menu = true">
@@ -107,114 +166,26 @@
                     @closeTable="show.table = false" @deleteLocalData="deleteLocalData" />
             </transition>
             <transition name="bg">
-                <div v-if="show.loginModal || show.registerModal" class="fixed inset-0 z-40 select-none"
-                    @mousedown="show.loginModal = false; show.registerModal = false">
-                    <div class="absolute inset-0 bg-black/35"></div>
-                </div>
-            </transition>
-            <transition name="table">
-                <div v-show="show.loginModal" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] bg-base-100 rounded-box
-                border border-base-content/10 overflow-auto lg:w-2xl md:w-xl sm:w-md h-auto z-80">
-                    <form @submit.prevent="userLogin({ login: account, password: password })" v-if="!show.info">
-                        <fieldset class="fieldset w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl">
-                            <div class="fieldset-label cursor-default flex items-center justify-center">
-                                <span class="text-center text-2xl text-primary select-none">Login</span>
-                            </div>
-                            <div class="fieldset-label flex justify-between items-center">
-                                <span class="cursor-default select-none">账号</span>
-                                <button type="button" class="register-btn btn btn-soft btn-info btn-md w-[10em]
-                                    flex items-center justify-evenly p-0" @click="switchModal">
-                                    <span class="text-lg">注册账号</span>
-                                    <icon type="smile" />
-                                </button>
-                            </div>
-                            <input type="text" required class="input w-auto validator" placeholder="Account"
-                                v-model="account" title="请输入账号或邮箱" autocomplete="username" />
-                            <div class="fieldset-label cursor-default select-none">
-                                <span>密码</span>
-                            </div>
-                            <input type="password" required class="input w-auto validator" v-model="password"
-                                placeholder="Password" title="请输入密码" autocomplete="current-password" />
-                            <button type="submit" class="btn btn-success btn-soft mt-4">
-                                <div v-if="!loading.login" class="login-btn flex items-center gap-3">
-                                    <span class="text-xl">登录</span>
-                                    <icon type="login" />
-                                </div>
-                                <span v-else class="loading loading-spinner"></span>
-                            </button>
-                        </fieldset>
-                    </form>
-                    <div v-else class="user-info w-auto bg-base-200 border border-base-300 p-4 rounded-box text-xl
-                    flex flex-col justify-center space-y-3">
-                        <h1 class="text-3xl self-center">{{ greetingMessage + userInfo.nickname }}</h1>
-                        <div class="cursor-default flex items-center justify-between">
-                            <span>用户信息</span>
-                            <button type="button" class="btn btn-soft btn-error btn-md flex items-center justify-evenly"
-                                @click="logout">
-                                <span class="text-xl">退出登录</span>
-                                <icon type="logout" />
-                            </button>
-                        </div>
-                        <div class="cursor-default flex items-center space-x-1">
-                            <span class="whitespace-nowrap">昵称:</span>
-                            <input type="text" placeholder="昵称"
-                                class="input input-ghost text-xl rounded-sm pl-0.5 w-full"
-                                v-model="formData.nickname" />
-                        </div>
-                        <div class="cursor-default flex items-center space-x-1">
-                            <span class="whitespace-nowrap">邮箱:</span>
-                            <input type="text" placeholder="邮箱"
-                                class="input input-ghost text-xl rounded-sm pl-0.5 w-full" v-model="formData.email" />
-                        </div>
-                        <div class="cursor-default flex items-center space-x-1">
-                            <span class="whitespace-nowrap">账号:</span>
-                            <input type="text" placeholder="账号"
-                                class="input input-ghost text-xl rounded-sm pl-0.5 w-full"
-                                v-model="formData.username" />
-                        </div>
-                        <div class="flex flex-row items-center space-x-1">
-                            <fieldset class="fieldset">
-                                <label class="fieldset-label">上传文件需小于5MB</label>
-                                <input type="file" accept="image/*" class="file-input" @change="handleAvatarSelected" />
-                                <label class="fieldset-label">&nbsp;</label>
-                            </fieldset>
-                            <button type="button"
-                                class="btn btn-soft btn-success btn-md flex items-center justify-evenly"
-                                @click="getAvatarUrl">
-                                <span class="text-xl">上传头像</span>
-                                <icon type="image" />
-                            </button>
-                        </div>
-                        <button class="btn btn-block btn-lg btn-info btn-soft text-xl" @click="updateUserInfo">
-                            <span v-if="!loading.updateInfo">提交修改</span>
-                            <span v-else class="loading loading-spinner"></span>
-                        </button>
-                    </div>
-                </div>
-            </transition>
-            <transition name="table">
-                <register ref="register" v-show="show.registerModal" class="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] bg-base-100 rounded-box
-                    border border-base-content/10 overflow-auto h-auto z-80" @switchModal="switchModal"
-                    @login="userLogin" @message="toast" />
-            </transition>
-            <transition name="bg">
                 <div v-if="show.adjustWindow" class="fixed inset-0 z-40 select-none"
                     @mousedown="show.adjustWindow = false">
                     <div class="absolute inset-0 bg-black/35"></div>
                 </div>
             </transition>
             <transition name="table">
-                <adjustWindow v-if="show.adjustWindow" @close="show.adjustWindow = false" @update-all-samples="updateAllFunctionSamplePoints" />
+                <adjustWindow v-if="show.adjustWindow" @close="show.adjustWindow = false"
+                    @update-all-samples="updateAllFunctionSamplePoints" />
             </transition>
             <transition name="bg">
-                <div v-if="show.avatarPreview" class="fixed inset-0 z-40 select-none"
+                <div v-if="show.avatarPreview" class="fixed inset-0 z-[100] select-none"
                     @mousedown="show.avatarPreview = false">
                     <div class="fixed inset-0 bg-black/35"></div>
-                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 select-none"
-                        @mousedown.stop>
-                        <img :src="userInfo.avatarUrl" class="max-h-[50dvh] max-w-[50dvw] rounded-lg shadow-lg"
-                            alt="用户头像" />
-                    </div>
+                </div>
+            </transition>
+            <transition name="avatarPreview">
+                <div v-if="show.avatarPreview" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[10000] select-none"
+                    @mousedown.stop>
+                    <img :src="userInfo.avatarUrl"
+                        class="max-h-[50dvh] max-w-[50dvw] rounded-lg shadow-lg" alt="用户头像" />
                 </div>
             </transition>
             <transition name="table">
@@ -280,43 +251,16 @@
                     <div class="fixed inset-0"></div>
                 </div>
             </transition>
-            <!-- 临时的右侧小侧边栏（可以考虑以此为原型完成图例以及单一函数的采样点数和图表类型更新） -->
-            <transition name="rightSlide">
-                <div v-if="show.rightSlide"
-                    class="rightSlide fixed top-1/3 right-0 bg-base-100 rounded-l-box shadow-lg border-l border-t border-b border-base-content/10 z-40 select-none">
-                    <div class="p-3 flex flex-col gap-3">
-                        <div class="flex justify-between items-center mb-2">
-                            <button class="btn btn-xs btn-circle" @click="show.rightSlide = false"> DONGMING</button>
-                        </div>
-                        <div class="max-h-[50vh] overflow-y-auto pr-1">
-                            <div v-for="(item, index) in currentData" :key="index"
-                                class="flex flex-col gap-2 py-2 border-b border-base-content/10 last:border-0">
-                                <!-- 函数基本信息 -->
-                                <div class="flex items-center gap-2">
-                                    <div class="w-3 h-3 rounded-full" :style="{ backgroundColor: item.color }"></div>
-                                    <div class="truncate max-w-[120px]" :title="item.fn">{{ item.fn }}</div>
-                                </div>
-                                <!-- 采样点设置 -->
-                                <div class="flex items-center gap-2">
-                                    <span class="text-xs">采样点:</span>
-                                    <input type="number" :value="item.nSamples" min="500" max="5000" step="1"
-                                        class="input input-xs w-20 text-center ml-auto"
-                                        @change="updateFunctionSamplePoints($event.target.value, index)" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <toast ref="toast" />
+            <transition name="phone">
+                <phone v-if="show.phone" @message="toast" @close="show.phone = false" @logout="logout"
+                    @login="userLogin" @showAvatar="show.avatarPreview = true" />
+            </transition>
+            <transition name="bg">
+                <div v-if="show.phone" class="fixed inset-0 z-40 select-none" @mousedown="show.phone = false">
+                    <div class="absolute inset-0 bg-black/35"></div>
                 </div>
             </transition>
-            <!-- 小侧边栏的唤出按钮 -->
-            <button
-                class="rightSlide-trigger fixed right-0 top-1/3 bg-base-100 rounded-l-box shadow-md border-l border-t border-b border-base-content/10 z-50 p-2 flex items-center justify-center cursor-pointer transform -translate-x-0 hover:brightness-105"
-                @click="show.rightSlide = !show.rightSlide">
-                <div class="flex flex-col items-center">
-                    <icon type="settings" class="text-base-content mb-1" />
-                </div>
-            </button>
-            <toast ref="toast" />
         </div>
     </div>
 </template>
@@ -332,12 +276,12 @@ import * as utils from '../assets/utils/componentUtils';
 import { parse } from 'mathjs';
 import * as service from '../services/userService';
 import hisDataTable from '../components/hisDataTable.vue';
-import register from '../components/register.vue';
 import adjustButtons from '../components/adjustButtons.vue';
 import adjustWindow from '../components/adjustWindow.vue';
 import menuButtons from '../components/menuButtons.vue';
 import toast from '../components/toast.vue'
 import switchComponent from '../components/switchComponent.vue';
+import phone from '../components/phone.vue'
 
 
 
@@ -349,12 +293,12 @@ export default {
         ThreeDPlotCom,
         icon,
         hisDataTable,
-        register,
         adjustButtons,
         adjustWindow,
         menuButtons,
         toast,
-        switchComponent
+        switchComponent,
+        phone
     },
     data() {
         return {
@@ -365,8 +309,7 @@ export default {
             },
             show: {
                 table: false,
-                loginModal: false,
-                registerModal: false,
+                phone: false,
                 info: false,
                 list: false,
                 render2D: true,
@@ -374,7 +317,6 @@ export default {
                 menu: true,
                 avatarPreview: false,
                 rightSlide: false, // 右侧侧边栏的显示/隐藏
-                colorPicker: true,
                 switchComponent: false,
             },
             account: "",
@@ -705,7 +647,6 @@ export default {
             const needNewData = this.localFnData.length === 0 && this.currentData.length === 0;
             const { success, messages } = await service.login(data, needNewData);
             if (success) {
-                this.firework();
                 if (needNewData) {
                     this.fuckRender();
                 }
@@ -718,12 +659,12 @@ export default {
                     await this.uploadUserData(this.local3DData, 3);
                     this.local3DData = [];
                 }
-                this.show.loginModal = false;
                 this.initFormData();
                 this.toast({
                     head: `${this.greetingMessage}${this.userInfo.nickname || this.userInfo.username}`,
                     messages: ['您的数据已恢复'],
-                    target: 'body'
+                    target: 'body',
+                    time: 4000,
                 });
                 setTimeout(() => {
                     this.show.info = true;
@@ -744,18 +685,19 @@ export default {
         },
 
         logout() {
-            this.show.loginModal = false;
-            const data_2D = utils.deepClone(this.functionData_2D)
-            const data_3D = utils.deepClone(this.functionData_3D)
+            const data_2D = utils.deepClone(this.functionData_2D);
+            const data_3D = utils.deepClone(this.functionData_3D);
             // const data_3D = [];
             this.local2DData = [...data_2D];
             this.local3DData = [...data_3D];
-            setTimeout(() => {
-                this.$store.commit('auth/cleanState');
-                this.formData = {};
-                this.show.info = false;
-                // console.log(this.userInfo);
-            }, 400);
+            this.$store.commit('auth/cleanState');
+            this.formData = {};
+            this.show.info = false;
+            this.toast({
+                head: 'DongMing洞明',
+                messages: ['您已退出登录']
+            });
+            // console.log(this.userInfo);
         },
 
         //单一函数采样点数更新
@@ -879,14 +821,6 @@ export default {
             }
         },
 
-        switchModal() {
-            this.show.loginModal = !this.show.loginModal;
-            this.show.registerModal = !this.show.registerModal;
-            if (this.show.registerModal) {
-                this.$refs.register.init();
-            }
-        },
-
         async uploadChangeData(data) {
             const { success, error } = await service.uploadChangeData(data);
             if (success) {
@@ -967,6 +901,7 @@ export default {
         async uploadAvatar(res, file) {
             const { success, error } = await service.uploadAvatar(res, file);
             if (success) {
+                this.selectedAvatarFile = null;
                 this.toast({
                     head: '上传头像成功',
                     target: 'body'
@@ -1012,34 +947,12 @@ export default {
             }
         },
 
-        firework() {
-            const origin = { y: 0.65, x: 0.5 };
-            utils.fire(0.25, {
-                spread: 66,
-                startVelocity: 75,
-                scalar: 0.8
-            }, origin);
-            utils.fire(0.2, {
-                spread: 60
-            }, origin);
-            utils.fire(0.35, {
-                spread: 100,
-                decay: 0.91
-            }, origin);
-            utils.fire(0.3, {
-                spread: 130,
-                startVelocity: 66,
-                decay: 0.92,
-                scalar: 1.2
-            }, origin);
-            utils.fire(0.4, {
-                spread: 120,
-                startVelocity: 45
-            }, origin);
-        },
-
         toast(message) {
             this.$refs.toast.addMessage(message);
+        },
+
+        toggleRightSlide() {
+            this.show.rightSlide = !this.show.rightSlide;
         }
     }
 };
