@@ -135,7 +135,6 @@
                     </transition>
                 </div>
                 <!-- 图例侧边栏部分 -->
-
                 <div class="chart-leftTop select-none">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 437" class="cursor-pointer button"
                         @click="show.menu = true">
@@ -182,10 +181,11 @@
                 </div>
             </transition>
             <transition name="avatarPreview">
-                <div v-if="show.avatarPreview" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[10000] select-none"
+                <div v-if="show.avatarPreview"
+                    class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[10000] select-none"
                     @mousedown.stop>
-                    <img :src="userInfo.avatarUrl"
-                        class="max-h-[50dvh] max-w-[50dvw] rounded-lg shadow-lg" alt="用户头像" />
+                    <img :src="userInfo.avatarUrl" class="max-h-[50dvh] max-w-[50dvw] rounded-lg shadow-lg"
+                        alt="用户头像" />
                 </div>
             </transition>
             <transition name="table">

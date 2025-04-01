@@ -62,6 +62,7 @@ export default {
         },
 
         async handleInput(input, index) {
+            if (!input.fn) return;
             this.delectObject(index);
             const uuid = await this.functionRenderer.renderFunction(input);
             const payload = {
@@ -73,6 +74,10 @@ export default {
 
         async handleArrayInput(inputs, index = 0) {
             for (const input of inputs) {
+                if (!input.fn) {
+                    index++;
+                    continue
+                };
                 const uuid = await this.functionRenderer.renderFunction(input);
                 const payload = {
                     uuid,
