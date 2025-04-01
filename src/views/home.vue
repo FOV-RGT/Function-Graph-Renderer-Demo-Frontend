@@ -126,13 +126,16 @@
                             </div>
                         </div>
                     </transition>
-                    <button
-                        class="absolute z-0 cursor-pointer transform hover:brightness-110 transition-all toggle-button"
-                        @click="show.rightSlide = !show.rightSlide">
-                        <img src="/图例组件/唤出按钮.png" class="w-full h-full object-contain" />
-                    </button>
+                    <transition name="slideOpen">
+                        <button v-show="!show.rightSlide"
+                            class="absolute z-0 cursor-pointer transform hover:brightness-110 transition-all toggle-button"
+                            @click="show.rightSlide = !show.rightSlide">
+                            <img src="/图例组件/唤出按钮.png" class="w-full h-full object-contain" />
+                        </button>
+                    </transition>
                 </div>
                 <!-- 图例侧边栏部分 -->
+
                 <div class="chart-leftTop select-none">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 437" class="cursor-pointer button"
                         @click="show.menu = true">
