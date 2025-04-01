@@ -384,7 +384,7 @@
 .rightSlide-enter-from,
 .rightSlide-leave-to {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateXY(30px);
 }
 
 .input[type="number"]:focus {
@@ -453,4 +453,14 @@
 .hide-scrollbar {
     scrollbar-width: none;
     -ms-overflow-style: none;
+}
+
+.slideOpen-enter-active,
+.slideOpen-leave-active {
+    transition: opacity 0.2s ease;
+}
+
+.slideOpen-enter-from,
+.slideOpen-leave-to {
+    opacity: 0;
 }

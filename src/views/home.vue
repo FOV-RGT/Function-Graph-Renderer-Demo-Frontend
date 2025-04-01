@@ -78,62 +78,64 @@
                     <ThreeDPlotCom ref="ThreeDPlotCom" />
                 </div>
 
-                    <!--图例侧边栏部分 -->
-                    <div class="absolute z-40 select-none sidebar-wrapper">
-                        <transition name="rightSlide">
-                            <div v-if="show.rightSlide" class="rightSlide relative">
-                                <div class="p-0 flex flex-col relative sidebar-container">
-                                    <div class="sticky w-full z-20 -ml-10 -mb-2 cat-top-image"></div>
-                                    <div class="relative z-10 flex flex-col overflow-hidden scroll-container">
-                                        <div class="overflow-y-auto hide-scrollbar w-full max-h-[40vh]">
-                                            <div class="flex flex-col-reverse w-full">
-                                                <div v-for="(item, index) in currentData" :key="index"
-                                                    class="flex flex-col w-full">
-                                                    <div
-                                                        class="flex items-center px-3 w-full mb-[-8px] text-white item-row-odd">
-                                                        <div class="w-3.5 h-3.5 rounded-full"
-                                                            :style="{ backgroundColor: item.color }">
-                                                        </div>
-                                                        <div class="truncate max-w-[70%] ml-1.5 text-white text-sm md:text-base"
-                                                            :title="item.fn">
-                                                            {{ item.fn || " " }}
-                                                        </div>
+                <!--图例侧边栏部分 -->
+                <div class="absolute z-40 select-none sidebar-wrapper">
+                    <transition name="rightSlide">
+                        <div v-if="show.rightSlide" class="rightSlide relative">
+                            <div class="p-0 flex flex-col relative sidebar-container">
+                                <div class="sticky w-full z-20 -ml-10 -mb-2 cat-top-image"></div>
+                                <div class="relative z-10 flex flex-col overflow-hidden scroll-container">
+                                    <div class="overflow-y-auto hide-scrollbar w-full max-h-[40vh]">
+                                        <div class="flex flex-col-reverse w-full">
+                                            <div v-for="(item, index) in currentData" :key="index"
+                                                class="flex flex-col w-full">
+                                                <div
+                                                    class="flex items-center px-3 w-full mb-[-8px] text-white item-row-odd">
+                                                    <div class="w-3.5 h-3.5 rounded-full"
+                                                        :style="{ backgroundColor: item.color }">
                                                     </div>
-                                                    <div
-                                                        class="flex items-center px-2 w-full mb-[-8px] text-white item-row-even">
-                                                        <span class="text-xs text-white whitespace-nowrap">采样点:</span>
-                                                        <input type="number" :value="item.nSamples" min="500" max="5000"
-                                                            step="1"
-                                                            class="input input-xs w-[70%] text-center -ml-4 text-white bg-transparent border-0 focus:outline-none"
-                                                            :style="{ WebkitAppearance: 'none', MozAppearance: 'textfield' }"
-                                                            @change="updateFunctionSamplePoints($event.target.value, index)" />
+                                                    <div class="truncate max-w-[70%] ml-1.5 text-white text-sm md:text-base"
+                                                        :title="item.fn">
+                                                        {{ item.fn || " " }}
                                                     </div>
+                                                </div>
+                                                <div
+                                                    class="flex items-center px-2 w-full mb-[-8px] text-white item-row-even">
+                                                    <span class="text-xs text-white whitespace-nowrap">采样点:</span>
+                                                    <input type="number" :value="item.nSamples" min="500" max="5000"
+                                                        step="1"
+                                                        class="input input-xs w-[70%] text-center -ml-4 text-white bg-transparent border-0 focus:outline-none"
+                                                        :style="{ WebkitAppearance: 'none', MozAppearance: 'textfield' }"
+                                                        @change="updateFunctionSamplePoints($event.target.value, index)" />
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flex items-center relative z-1 ml-2 -mb-2 entity-image-container">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 160"
-                                            class="absolute w-full h-full">
-                                            <g id="_隐藏按钮" data-name="隐藏按钮"
-                                                class="cursor-pointer hover:brightness-110 transition-all"
-                                                @click="toggleRightSlide">
-                                                <rect x="120" y="145" width="15" height="15" fill="transparent" />
-                                                <path class="cls-4"
-                                                    d="m384.84,629.08l2.74,58.01c-18.28-.06-36.55-.12-54.83-.18-8.11-13.83-8.27-30.67-.19-43.28,10.31-16.1,32.48-22.83,52.28-14.55Z" />
-                                            </g>
-                                        </svg>
-                                    </div>
+                                </div>
+                                <div class="flex items-center relative z-1 ml-2 -mb-2 entity-image-container">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 160"
+                                        class="absolute w-full h-full">
+                                        <g id="_隐藏按钮" data-name="隐藏按钮"
+                                            class="cursor-pointer hover:brightness-110 transition-all"
+                                            @click="toggleRightSlide">
+                                            <rect x="120" y="145" width="15" height="15" fill="transparent" />
+                                            <path class="cls-4"
+                                                d="m384.84,629.08l2.74,58.01c-18.28-.06-36.55-.12-54.83-.18-8.11-13.83-8.27-30.67-.19-43.28,10.31-16.1,32.48-22.83,52.28-14.55Z" />
+                                        </g>
+                                    </svg>
                                 </div>
                             </div>
-                        </transition>
-                        <button
+                        </div>
+                    </transition>
+                    <transition name="slideOpen">
+                        <button v-show="!show.rightSlide"
                             class="absolute z-0 cursor-pointer transform hover:brightness-110 transition-all toggle-button"
                             @click="show.rightSlide = !show.rightSlide">
                             <img src="/图例组件/唤出按钮.png" class="w-full h-full object-contain" />
                         </button>
-                    </div>
-                    <!-- 图例侧边栏部分 -->
+                    </transition>
+                </div>
+                <!-- 图例侧边栏部分 -->
 
                 <div class="chart-leftTop select-none">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 437" class="cursor-pointer button"
