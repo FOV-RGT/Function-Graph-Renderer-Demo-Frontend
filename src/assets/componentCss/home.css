@@ -407,7 +407,7 @@
 .rightSlide-enter-from,
 .rightSlide-leave-to {
     opacity: 0;
-    transform: translateXY(30px);
+    transform: translateY(30px);
 }
 
 .input[type="number"]:focus {
@@ -494,7 +494,7 @@
 }
 .slideOpen-enter-active,
 .slideOpen-leave-active {
-    transition: opacity 0.2s ease;
+    transition: opacity 0.1s ease;
 }
 
 .slideOpen-enter-from,
