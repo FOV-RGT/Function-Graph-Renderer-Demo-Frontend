@@ -47,7 +47,7 @@
                 </g>
             </svg>
             <div
-                class="group absolute top-1/2 left-1/2 w-full h-full transform -translate-x-1/2 -translate-y-1/2 overflow-visible">
+                class="group absolute top-1/2 left-1/2 w-full h-full transform -translate-x-1/2 -translate-y-1/2 overflow-visible whitespace-nowrap">
                 <div class="absolute flex flex-col items-center justify-center h-1/10 w-1/11">
                     <h1 class="text-2xl text-white">移动步长</h1>
                     <input type="number" v-model.number="userConfig.moveFactor" min="0.01" max="1.00" step="0.01"
