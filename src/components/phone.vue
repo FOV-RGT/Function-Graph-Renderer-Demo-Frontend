@@ -492,45 +492,48 @@
                         class="absolute top-[69.6%] left-[32.8%] w-[60%] h-[12%] outline-none pointer-events-auto">
                 </div>
                 <div v-if="show.login && !isAuthenticated">
-                    <div class="absolute top-[55%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-[40%]
+                    <form @submit.prevent="login" class="absolute top-[55%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-[40%]
                         text-gray-200 text-4xl">
-                        <input type="text" v-model="loginData.account"
+                        <input type="text" v-model="loginData.account" autocomplete="username" required
                             class="absolute top-[25.5%] left-[34%] w-[60%] h-[15%] transform rotate-2 outline-none pointer-events-auto">
-                        <input type="password" v-model="loginData.password"
+                        <input type="password" v-model="loginData.password" autocomplete="current-password" required
                             class="absolute bottom-[10.2%] left-[33.5%] w-[60%] h-[15%] transform rotate-2 outline-none pointer-events-auto">
-                    </div>
+                    </form>
                 </div>
-                <div v-if="show.register && !isAuthenticated"
-                    class="absolute w-full h-[65%] top-[15%] rotate-1 text-gray-200 text-4xl">
-                    <input type="text" required
-                        class="validator w-[60%] h-[7.5%] pointer-events-auto absolute top-[3%] left-[34.5%] rotate-1 outline-none"
-                        placeholder="Account" minlength="2" maxlength="45" title="账号长度至少两位"
-                        v-model="registerData.account" />
-                    <input type="text" required
-                        class="validator w-[60%] pointer-events-auto absolute top-[24%] left-[34.7%] rotate-1 outline-none"
-                        v-model="registerData.nickname" minlength="2" maxlength="45" placeholder="Nickname"
-                        title="昵称长度至少两位" />
-                    <input type="email" required
-                        class="validator w-[60%] pointer-events-auto absolute top-[45%] left-[34.9%] rotate-1 outline-none"
-                        v-model="registerData.email" placeholder="Email" title="请输入有效邮箱地址" autocomplete="new-email" />
-                    <input type="password" required
-                        class="validator w-[60%] pointer-events-auto absolute top-[67.5%] left-[35%] rotate-1 outline-none"
-                        v-model="registerData.password" placeholder="Password" minlength="6" maxlength="45"
-                        autocomplete="new-password" title="密码长度至少六位"
-                        :class="[{ '!input-error': registerData.confirmPassword && !passwordsMatch }]" />
-                    <p v-if="registerData.confirmPassword && !passwordsMatch"
-                        class="text-error text-[1.3rem] select-none absolute top-[76.5%] left-[35%]">
-                        两次输入的密码不一致
-                    </p>
-                    <input type="password" required
-                        class="validator w-[60%] pointer-events-auto absolute top-[88%] left-[35.2%] rotate-1 outline-none"
-                        v-model="registerData.confirmPassword" placeholder="ConfirmPassword" minlength="6"
-                        maxlength="45" autocomplete="new-password" title="密码长度至少六位"
-                        :class="[{ '!input-error': registerData.confirmPassword && !passwordsMatch }]" />
-                    <p v-if="registerData.confirmPassword && !passwordsMatch"
-                        class="text-error text-[1.3rem] select-none absolute top-[96.5%] left-[35%]">
-                        两次输入的密码不一致
-                    </p>
+                <div v-if="show.register && !isAuthenticated">
+                    <form @submit.prevent="register"
+                        class="absolute w-full h-[65%] top-[15%] rotate-1 text-gray-200 text-4xl">
+                        <input type="text" required
+                            class="validator w-[60%] h-[7.5%] pointer-events-auto absolute top-[3%] left-[34.5%] rotate-1 outline-none"
+                            placeholder="Account" minlength="2" maxlength="45" title="账号长度至少两位"
+                            v-model="registerData.account" />
+                        <input type="text" required
+                            class="validator w-[60%] pointer-events-auto absolute top-[24%] left-[34.7%] rotate-1 outline-none"
+                            v-model="registerData.nickname" minlength="2" maxlength="45" placeholder="Nickname"
+                            title="昵称长度至少两位" />
+                        <input type="email" required
+                            class="validator w-[60%] pointer-events-auto absolute top-[45%] left-[34.9%] rotate-1 outline-none"
+                            v-model="registerData.email" placeholder="Email" title="请输入有效邮箱地址"
+                            autocomplete="new-email" />
+                        <input type="password" required
+                            class="validator w-[60%] pointer-events-auto absolute top-[67.5%] left-[35%] rotate-1 outline-none"
+                            v-model="registerData.password" placeholder="Password" minlength="6" maxlength="45"
+                            autocomplete="new-password" title="密码长度至少六位"
+                            :class="[{ '!input-error': registerData.confirmPassword && !passwordsMatch }]" />
+                        <p v-if="registerData.confirmPassword && !passwordsMatch"
+                            class="text-error text-[1.3rem] select-none absolute top-[76.5%] left-[35%]">
+                            两次输入的密码不一致
+                        </p>
+                        <input type="password" required
+                            class="validator w-[60%] pointer-events-auto absolute top-[88%] left-[35.2%] rotate-1 outline-none"
+                            v-model="registerData.confirmPassword" placeholder="ConfirmPassword" minlength="6"
+                            maxlength="45" autocomplete="new-password" title="密码长度至少六位"
+                            :class="[{ '!input-error': registerData.confirmPassword && !passwordsMatch }]" />
+                        <p v-if="registerData.confirmPassword && !passwordsMatch"
+                            class="text-error text-[1.3rem] select-none absolute top-[96.5%] left-[35%]">
+                            两次输入的密码不一致
+                        </p>
+                    </form>
                 </div>
             </div>
         </div>
@@ -730,6 +733,14 @@ export default {
         },
 
         login() {
+            if (!this.loginData.account || !this.loginData.password) {
+                this.message({
+                    head: '登录失败',
+                    messages: ['请输入账号和密码'],
+                    target: 'body',
+                });
+                return;
+            }
             const data = {
                 login: this.loginData.account,
                 password: this.loginData.password
