@@ -477,7 +477,7 @@
                     </g>
                 </g>
             </svg>
-            <div class="absolute main-float w-[65%] h-full top-8 left-52 transform rotate-7 select-none">
+            <div class="absolute main-float w-[65%] h-full top-[54.5%] left-[57%] transform -translate-x-1/2 -translate-y-1/2 rotate-7 select-none">
                 <img :src="this.userInfo.avatarUrl" alt="用户头像" @click="handleAvatarClick" v-if="isAuthenticated"
                     class="absolute top-20 left-58 w-25 h-25 rounded-full select-none cursor-pointer pointer-events-auto">
                 <div v-if="show.info" class="absolute top-[55%] left-1/2
