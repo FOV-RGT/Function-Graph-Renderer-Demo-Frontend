@@ -477,14 +477,18 @@
                     </g>
                 </g>
             </svg>
-            <div class="absolute main-float w-[65%] h-full top-[54.5%] left-[57%] transform -translate-x-1/2 -translate-y-1/2 rotate-7 select-none">
+            <div
+                class="absolute main-float w-[65%] h-full top-[54.5%] left-[57%] transform -translate-x-1/2 -translate-y-1/2 rotate-7 select-none">
                 <img :src="this.userInfo.avatarUrl" alt="用户头像" @click="handleAvatarClick" v-if="isAuthenticated"
                     class="absolute top-[10%] left-[42%] w-[18%] rounded-full select-none cursor-pointer pointer-events-auto">
-                <h1 v-if="show.main && isAuthenticated" class="absolute text-3xl top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2
-                w-7/10 h-auto max-h-1/6 flex flex-wrap items-center justify-center text-zinc-300/90 break-words text-center pointer-events-auto overflow-wrap-anywhere">{{ userInfo.signature }}</h1>
+                <h1 v-if="show.main && isAuthenticated"
+                    class="absolute text-3xl top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2
+                w-7/10 h-auto max-h-1/6 flex flex-wrap items-center justify-center text-zinc-300/90 break-words text-center pointer-events-auto overflow-wrap-anywhere">
+                    {{ userInfo.signature }}</h1>
                 <div v-if="show.info" class="absolute top-[55%] left-1/2
                     transform -translate-x-1/2 -translate-y-1/2 w-full h-1/2 text-gray-200 text-2xl">
-                    <p v-text="formData.account" class="absolute top-[6.5%] left-[33%] w-[60%] h-[12%] pointer-events-auto flex items-center"/>
+                    <p v-text="formData.account"
+                        class="absolute top-[6.5%] left-[33%] w-[60%] h-[12%] pointer-events-auto flex items-center" />
                     <input type="text" v-model="formData.nickname" minlength="0" maxlength="18" title="昵称长度最小两位，最大十八位"
                         class="absolute top-[28.5%] left-[33%] w-[60%] h-[12%] outline-none pointer-events-auto">
                     <input type="text" v-model="formData.signature" minlength="0" maxlength="28" title="签名长度不能超过28位"
@@ -767,68 +771,67 @@ export default {
                     password: ''
                 }
             }
-            }
             this.$emit('login', data, callback);
-        },
-
-        async register() {
-            if (!this.isFormValid) {
-                return;
-            }
-            if (this.loading.tryRegister) {
-                return
-            };
-            this.loading.tryRegister = true;
-            const registerData = {
-                nickname: this.registerData.nickname,
-                email: this.registerData.email,
-                username: this.registerData.account,
-                password: this.registerData.password,
-            };
-            const { success, messages } = await service.register(registerData);
-            if (success) {
-                this.firework();
-                this.loginData.account = registerData.username || registerData.email;
-                this.loginData.password = registerData.password;
-                this.login();
-            } else {
-                const data = {
-                    head: '注册失败：',
-                    messages,
-                    target: 'body',
-                    time: 4000
-                }
-                this.$emit('message', data);
-            }
-            this.loading.tryRegister = false;
-        },
-
-        firework() {
-            const origin = { y: 1.05, x: 0.5 };
-            fire(0.25, {
-                spread: 66,
-                startVelocity: 75,
-                scalar: 0.8
-            }, origin);
-            fire(0.2, {
-                spread: 60
-            }, origin);
-            fire(0.35, {
-                spread: 100,
-                decay: 0.91
-            }, origin);
-            fire(0.3, {
-                spread: 130,
-                startVelocity: 66,
-                decay: 0.92,
-                scalar: 1.2
-            }, origin);
-            fire(0.4, {
-                spread: 120,
-                startVelocity: 45
-            }, origin);
-        },
     },
+
+    async register() {
+        if (!this.isFormValid) {
+            return;
+        }
+        if (this.loading.tryRegister) {
+            return
+        };
+        this.loading.tryRegister = true;
+        const registerData = {
+            nickname: this.registerData.nickname,
+            email: this.registerData.email,
+            username: this.registerData.account,
+            password: this.registerData.password,
+        };
+        const { success, messages } = await service.register(registerData);
+        if (success) {
+            this.firework();
+            this.loginData.account = registerData.username || registerData.email;
+            this.loginData.password = registerData.password;
+            this.login();
+        } else {
+            const data = {
+                head: '注册失败：',
+                messages,
+                target: 'body',
+                time: 4000
+            }
+            this.$emit('message', data);
+        }
+        this.loading.tryRegister = false;
+    },
+
+    firework() {
+        const origin = { y: 1.05, x: 0.5 };
+        fire(0.25, {
+            spread: 66,
+            startVelocity: 75,
+            scalar: 0.8
+        }, origin);
+        fire(0.2, {
+            spread: 60
+        }, origin);
+        fire(0.35, {
+            spread: 100,
+            decay: 0.91
+        }, origin);
+        fire(0.3, {
+            spread: 130,
+            startVelocity: 66,
+            decay: 0.92,
+            scalar: 1.2
+        }, origin);
+        fire(0.4, {
+            spread: 120,
+            startVelocity: 45
+        }, origin);
+    },
+},
 }
 </script>
 
