@@ -753,8 +753,7 @@ export default {
                 login: this.loginData.account,
                 password: this.loginData.password
             }
-            const callback = (success) => {
-            if (success) {
+            const callback = () => {
                 this.initFormData();
                 this.registerData = {
                     account: '',
