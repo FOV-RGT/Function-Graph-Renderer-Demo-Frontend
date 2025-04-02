@@ -767,6 +767,7 @@ export default {
                     password: ''
                 }
             }
+            }
             this.$emit('login', data, callback);
         },
 
