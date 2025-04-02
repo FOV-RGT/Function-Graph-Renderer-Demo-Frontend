@@ -42,41 +42,41 @@
 }
 
 .group div:nth-child(1) {
-    top: 38%;
-    left: 20%;
-}
-
-.group div:nth-child(2) {
-    top: 23%;
+    top: 24.5%;
     right: 18%;
 }
 
+.group div:nth-child(2) {
+    top: 38%;
+    left: 21%;
+}
+
 .group div:nth-child(3) {
-    bottom: 6%;
-    left: 5%;
+    bottom: 10.5%;
+    left: 5.5%;
 }
 
 .group div:nth-child(4) {
-    top: 45%;
+    top: 44.5%;
     right: 18%;
 }
 
 .group div:nth-child(5) {
-    bottom: 13%;
+    bottom: 17%;
     left: 16%;
 }
 
 .group div:nth-child(6) {
-    bottom: 28.5%;
+    bottom: 30.5%;
     right: 21%;
 }
 
 .group div:nth-child(7) {
-    bottom: 14.5%;
-    right: 28%;
+    bottom: 19.5%;
+    right: 29.5%;
 }
 
 .group div:nth-child(8) {
-    top: 58%;
+    top: 57%;
     left: 13%;
 }

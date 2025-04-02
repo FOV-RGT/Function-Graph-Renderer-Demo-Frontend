@@ -135,7 +135,6 @@
                     </transition>
                 </div>
                 <!-- 图例侧边栏部分 -->
-
                 <div class="chart-leftTop select-none">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.6 437" class="cursor-pointer button"
                         @click="show.menu = true">
@@ -182,14 +181,15 @@
                 </div>
             </transition>
             <transition name="avatarPreview">
-                <div v-if="show.avatarPreview" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[10000] select-none"
+                <div v-if="show.avatarPreview"
+                    class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[10000] select-none"
                     @mousedown.stop>
-                    <img :src="userInfo.avatarUrl"
-                        class="max-h-[50dvh] max-w-[50dvw] rounded-lg shadow-lg" alt="用户头像" />
+                    <img :src="userInfo.avatarUrl" class="max-h-[50dvh] max-w-[50dvw] rounded-lg shadow-lg"
+                        alt="用户头像" />
                 </div>
             </transition>
             <transition name="table">
-                <div v-if="show.list" class="fnList2 z-80 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
+                <div v-if="show.list" class="fnList2 z-80 absolute top-1/2 left-[55%] transform -translate-x-1/2 -translate-y-1/2
                     select-none pointer-events-none max-w-6/13 max-h-7/13">
                     <div class="relative w-full h-full !pointer-events-none">
                         <ul
@@ -310,7 +310,6 @@ export default {
             show: {
                 table: false,
                 phone: false,
-                info: false,
                 list: false,
                 render2D: true,
                 adjustWindow: false,
@@ -396,7 +395,6 @@ export default {
         const { success } = await service.initUserData();
         if (success) {
             this.fuckRender();
-            this.initFormData();
             this.show.info = true;
             this.toast({
                 head: `${this.greetingMessage}${this.userInfo.nickname || this.userInfo.username}`,
@@ -642,7 +640,6 @@ export default {
         },
 
         async userLogin(data, callback) {
-            this.loading.login = true;
             // console.log('登录数据:', data);
             const needNewData = this.localFnData.length === 0 && this.currentData.length === 0;
             const { success, messages } = await service.login(data, needNewData);
@@ -659,16 +656,12 @@ export default {
                     await this.uploadUserData(this.local3DData, 3);
                     this.local3DData = [];
                 }
-                this.initFormData();
                 this.toast({
                     head: `${this.greetingMessage}${this.userInfo.nickname || this.userInfo.username}`,
                     messages: ['您的数据已恢复'],
                     target: 'body',
                     time: 4000,
                 });
-                setTimeout(() => {
-                    this.show.info = true;
-                }, 400);
             } else {
                 const data = {
                     head: '登录失败：',
@@ -681,7 +674,6 @@ export default {
             if (typeof callback === 'function') {
                 callback(success);
             }
-            this.loading.login = false;
         },
 
         logout() {
@@ -754,14 +746,6 @@ export default {
                 // console.log('更新用户信息失败:', error);
             }
             this.loading.updateInfo = false;
-        },
-
-        initFormData() {
-            this.formData = {
-                email: this.userInfo.email || '',
-                nickname: this.userInfo.nickname || '',
-                username: this.userInfo.username || '',
-            }
         },
 
         renderFn(data) {
