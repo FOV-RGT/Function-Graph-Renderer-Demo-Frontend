@@ -1,5 +1,5 @@
 <template>
-    <div class="fixed w-full max-w-15/19 select-none ml-5 transform translate-y-[5%]">
+    <div class="fixed w-full max-w-15/19 select-none left-1/2 top-1/2 transform -translate-y-1/2 -translate-x-[60%]">
         <div class="select-none relative w-full">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 552.49 1054.37" class="menuButtons w-full">
                 <g id="_整体白底" data-name="整体白底">

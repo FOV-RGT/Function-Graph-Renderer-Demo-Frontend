@@ -69,7 +69,7 @@
             <div class="renderComponent h-12/13 w-full relative text-transparent">
                 <div
                     class="logo flex gap-4 absolute left-1/2 transform -translate-x-[50%] -translate-y-[12%] select-none">
-                    <h1>DongMing洞明 v{{ version }}</h1>
+                    <h1>DongMing洞明</h1>
                 </div>
                 <div v-show="show.render2D" class="h-full w-full pl-20 pb-4 pr-12 pt-10">
                     <TwoDPlotCom ref="TwoDPlotCom" />
@@ -302,7 +302,6 @@ export default {
     },
     data() {
         return {
-            version: packageJson.version,
             loading: {
                 login: false,
                 updateInfo: false
