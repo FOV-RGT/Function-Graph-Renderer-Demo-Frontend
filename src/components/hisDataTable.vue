@@ -360,7 +360,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="absolute pointer-events-auto bottom-[6%] left-[39.5%] w-1/8 h-1/20 transform -rotate-25
+            <div class="absolute pointer-events-auto bottom-[6.5%] left-[39.5%] w-[15%] h-1/20 transform -rotate-25
             flex justify-between items-center text-[#AEA181] text-xl">
                 <img src="/翻页箭头/翻页箭头（金）.svg" alt="左翻页箭头" class="h-1/2 cursor-pointer -rotate-90" :style="{
                     'opacity': currentPagination.currentPage > 1 ? '1' : '0.6',

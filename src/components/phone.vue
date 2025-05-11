@@ -63,7 +63,7 @@
                                 d="m548.57,430.15v-2.76h3.84v3.65l-1.18.89h2.21l7.39,4.97h-5.33l-5.62-3.96-5.3,3.96h-4.9l8.88-6.74Zm-8.06-6.6h7.87l.77-1.68h-9.31v-2.38h20.95v2.38h-8.16l-.77,1.68h5.62c.74,0,1.36.26,1.87.79.51.53.77,1.14.77,1.85v6.86h-3.34v-6.36c0-.22-.07-.41-.22-.55s-.32-.22-.53-.22h-12.19v7.13h-3.34v-9.5Z" />
                         </g>
                     </g>
-                    <g id="_关闭同步按钮" data-name="关闭同步按钮" class="button pointer-events-auto">
+                    <g id="_关闭同步按钮" data-name="关闭同步按钮" class="button pointer-events-auto" @click="handleSyncButtonClick(true)">
                         <path class="cls-2"
                             d="m299.4,484.75s-7-1-9,11-11,91-6,97,11,13.4,15,13.7,98,10.3,98,10.3c0,0,3-40,8-64s9-48,9-48l-6.98-5.84-108.02-14.16Z" />
                         <g id="_关闭同步字样" data-name="关闭同步字样">
@@ -480,7 +480,7 @@
             <div
                 class="absolute main-float w-[65%] h-full top-[54.5%] left-[57%] transform -translate-x-1/2 -translate-y-1/2 rotate-7 select-none">
                 <img :src="this.userInfo.avatarUrl" alt="用户头像" @click="handleAvatarClick" v-if="isAuthenticated"
-                    class="absolute top-[10%] left-[42%] w-[18%] rounded-full select-none cursor-pointer pointer-events-auto">
+                    class="absolute top-[10%] left-[42%] w-[18%] rounded-full select-none cursor-pointer pointer-events-auto shrink-0" />
                 <h1 v-if="show.main && isAuthenticated"
                     class="absolute text-3xl top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2
                 w-7/10 h-auto max-h-1/6 flex flex-wrap items-center justify-center text-zinc-300/90 break-words text-center pointer-events-auto overflow-wrap-anywhere">
@@ -649,12 +649,8 @@ export default {
                 this.initFormData();
                 this.message({
                     head: '账户信息更新成功',
-                    messages: ['「你是否想过，此刻的名字并非永恒？',
-                        '若在暮色将尽时改写墨迹未干的诗行，',
-                        '或许会有星子坠入你的眼眸',
-                        '——某个古老的机关，总偏爱被晚风掀动的灵魂。」'],
                     target: 'body',
-                    time: 20000,
+                    time: 5000,
                     allowWrap: false
                 });
             } else {
@@ -831,6 +827,10 @@ export default {
             startVelocity: 45
         }, origin);
     },
+    
+    handleSyncButtonClick(status) {
+        this.$store.commit('auth/setSyncButtonState', status);
+    }
 },
 }
 </script>

@@ -132,6 +132,7 @@ export default {
                 moveFactor: 0.2,
                 globalSamples: 2025,
                 lockCameraFocus: false,
+                syncFnData: true
             },
             minVal: '',
             maxVal: '',

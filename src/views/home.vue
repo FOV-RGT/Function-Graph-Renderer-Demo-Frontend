@@ -43,7 +43,7 @@
                         </g>
                     </svg>
                 </div>
-                <menuButtons class="mt-auto mb-auto ml-5" @list="show.list = true"
+                <menuButtons @list="show.list = true"
                     @adjustWindow="show.adjustWindow = true" @switchRenderer="show.switchComponent = true"
                     @table="show.table = true" @phone="show.phone = true" />
             </div>
@@ -418,7 +418,7 @@ export default {
     computed: {
         ...mapGetters(["functionData_2D", "functionData_3D", "is2D", "messagesData"]),
         ...mapGetters('auth', ['userInfo', 'displayName', 'isAuthenticated',
-            'chartType', 'closed', 'range', 'dash', 'grid', 'zoomFactor', 'moveFactor', 'globalSamples'
+            'chartType', 'closed', 'range', 'dash', 'grid', 'zoomFactor', 'moveFactor', 'globalSamples', 'syncFnData'
         ]),
         currentInputExample() {
             return this.show.render2D ? 'e.g. 8log(cos(sin(sqrt(x^3))))'
@@ -475,11 +475,13 @@ export default {
     watch: {
         functionData_2D: {
             handler(newVal) {
+                if (!this.syncFnData) return
                 this.throttleUploadUserData2D(newVal);
             },
         },
         functionData_3D: {
             handler(newVal) {
+                if (!this.syncFnData) return
                 this.throttleUploadUserData3D(newVal);
             },
         },

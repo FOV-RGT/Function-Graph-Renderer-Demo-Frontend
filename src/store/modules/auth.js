@@ -24,7 +24,8 @@ export default {
             zoomFactor: 0.5,
             moveFactor: 0.2,
             globalSamples: 2025,
-            lockCameraFocus: false
+            lockCameraFocus: false,
+            syncFnData: true
         }
     },
 
@@ -59,7 +60,8 @@ export default {
             moveFactor: state.userConfig.moveFactor,
             globalSamples: state.userConfig.globalSamples,
             lockCameraFocus: state.userConfig.lockCameraFocus
-        })
+        }),
+        syncFnData: state => state.userConfig.syncFnData
     },
 
     // 修改状态的方法
@@ -119,6 +121,10 @@ export default {
 
         updateGlobalSamples(state, samples) {
             state.userConfig.globalSamples = samples;
+        },
+
+        setSyncButtonState(state, status) {
+            state.userConfig.syncFnData = status;
         }
     },
     
