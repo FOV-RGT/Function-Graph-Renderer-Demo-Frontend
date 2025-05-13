@@ -636,10 +636,11 @@
 
 <script>
 import lottie from 'lottie-web';
+
 export default {
-     data() {
+    data() {
         return {
-            animationInstances: {} // 存储各个动画实例的引用
+            animationInstances: {}
         }
     },
     mounted() {
@@ -647,48 +648,44 @@ export default {
             {
                 id: "animation_function",
                 path: '/动画/输入函数/data.json',
-                button: "list"
+                button: "faction"
             },
             {
                 id: "animation_history",
                 path: '/动画/历史记录/data.json',
-                button: "table"
+                button: "history"
             },
             {
                 id: "animation_switch",
                 path: '/动画/切换按钮/data.json',
-                button: "switchRenderer"
+                button: "switch"
             },
             {
                 id: "animation_settings",
                 path: '/动画/设置按钮/data.json',
-                button: "adjustWindow"
+                button: "adjust"
             },
             {
                 id: "animation_account",
                 path: '/动画/账户按钮/data.json',
-                button: "phone"
+                button: "user"
             }
         ];
 
-        // 加载每个动画，但不自动播放
         animations.forEach(animConfig => {
             const container = document.getElementById(animConfig.id);
             if (!container) return;
-            
-            // 创建动画实例，注意设置 autoplay: false
+
             const animInstance = lottie.loadAnimation({
                 container: container,
                 renderer: 'svg',
                 loop: true,
-                autoplay: false, // 初始不自动播放
+                autoplay: false,
                 path: animConfig.path
             });
 
-            // 存储动画实例的引用
             this.animationInstances[animConfig.button] = animInstance;
-            
-            // 找到对应的按钮元素，添加鼠标事件
+
             const buttonElement = document.querySelector(`[data-name="${this.getButtonName(animConfig.button)}"]`);
             if (buttonElement) {
                 buttonElement.addEventListener('mouseenter', () => this.playAnimation(animConfig.button));
@@ -709,32 +706,31 @@ export default {
         click(evt) {
             this.$emit(`${evt}`);
         },
-        
-        // 获取按钮的 data-name 属性值
+
         getButtonName(id) {
             switch (id) {
-                case 'list': return '输入函数';
-                case 'adjustWindow': return '设置';
-                case 'switchRenderer': return '切换模式';
-                case 'table': return '历史记录';
-                case 'phone': return '账户';
+                case 'faction': return '输入函数';
+                case 'adjust': return '设置';
+                case 'switch': return '切换模式';
+                case 'history': return '历史记录';
+                case 'user': return '账户';
                 default: return '';
             }
         },
-        
+
         // 播放指定动画
         playAnimation(id) {
             const anim = this.animationInstances[id];
             if (anim) {
-                anim.goToAndPlay(0, true); // 从第一帧开始播放
+                anim.goToAndPlay(0, true);
             }
         },
-        
+
         // 停止动画并回到第一帧
         stopAnimation(id) {
             const anim = this.animationInstances[id];
             if (anim) {
-                anim.goToAndStop(0, true); // 停止在第一帧
+                anim.goToAndStop(0, true);
             }
         }
     },

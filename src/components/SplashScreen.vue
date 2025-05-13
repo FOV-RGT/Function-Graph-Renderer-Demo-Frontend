@@ -15,7 +15,7 @@ export default {
     },
     methods: {
         onEnd() {
-            this.isFading = true; // 开始淡出
+            this.isFading = true;
         },
         onTransitionEnd() {
             if (this.isFading) {
@@ -30,7 +30,7 @@ export default {
 <style scoped>
 .splash-mask {
     position: fixed;
-    z-index: 20;
+    z-index: 10;
     inset: 0;
     background: #000;
     display: flex;
