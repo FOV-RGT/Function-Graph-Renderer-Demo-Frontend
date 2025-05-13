@@ -2,10 +2,7 @@
     <div class="overflow-hidden h-full flex flex-row justify-end items-center gap-8 select-none pl-2">
         <div v-if="!is2D" class="h-2/3">
             <input type="file" ref="GLTFFileInput" accept=".glb" class="hidden" @change="handleFileSelected" />
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 318.58 184.13" class="import h-full cursor-pointer"
-                @click="triggerFileSelect"
-                @mouseenter="playAnimation('import')"
-                @mouseleave="pauseAnimation('import')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 318.58 184.13" class="import h-full cursor-pointer" @click="triggerFileSelect">
                 <path class="cls-5"
                     d="m92.92,180.94c52.39-6.4,104.78-12.79,157.17-19.19,22.83-35.6,45.66-71.2,68.49-106.8L204.74,2.75C139.54,24.76,74.35,46.77,9.15,68.78c27.92,37.39,55.85,74.77,83.77,112.16Z" />
                 <path class="cls-5"
@@ -114,7 +111,6 @@
                 </g>
             </g>
         </svg>
-        <div id="animation_import" class="animation-box"></div>
         <teleport to='body'>
             <div v-if="showProgress" class="fixed inset-0 z-40 select-none w-screen h-screen">
                 <div class="fixed inset-0 z-40 select-none">
@@ -130,7 +126,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import lottie from 'lottie-web';
 
 
 
@@ -139,30 +134,7 @@ export default {
         return {
             viewTimeOut: null,
             viewInterval: null,
-            animationInstances: {} // 存储动画实例
         }
-    },
-    mounted() {
-        // 初始化导入按钮的动画
-        const container = document.getElementById('animation_import');
-        if (container) {
-            const animInstance = lottie.loadAnimation({
-                container: container,
-                renderer: 'svg',
-                loop: true,
-                autoplay: false, // 初始不自动播放
-                path: '/动画/导入按钮/data.json' // 请确保这个路径正确
-            });
-            // 存储动画实例
-            this.animationInstances['import'] = animInstance;
-        }
-    },
-    beforeUnmount() {
-        // 清理动画资源
-        Object.values(this.animationInstances).forEach(anim => {
-            if (anim) anim.destroy();
-        });
-        this.animationInstances = {};
     },
     computed: {
         ...mapGetters(['is2D', 'GLTFLoadProgress', 'GLTFLoadStatus']),
@@ -235,34 +207,6 @@ export default {
             this.$store.commit('uploadGLTF', file);
             // 重置文件输入框，允许重复选择相同文件
             event.target.value = '';
-        },
-
-        // 播放指定动画
-        playAnimation(id) {
-            const anim = this.animationInstances[id];
-            if (anim) {
-                anim.loop = false;
-        
-        // 添加完成事件监听器，确保停在最后一帧
-        const onComplete = () => {
-            // 不做任何处理，动画会自然停在最后一帧
-            anim.removeEventListener('complete', onComplete);
-        };
-        
-        // 添加完成事件监听
-        anim.addEventListener('complete', onComplete);
-        
-        // 从第一帧开始播放
-        anim.goToAndPlay(0, true);
-            }
-        },
-
-        // 停止动画并回到第一帧
-        pauseAnimation(id) {
-            const anim = this.animationInstances[id];
-            if (anim) {
-                anim.goToAndStop(0, true); // 停止并回到第一帧
-            }
         }
     }
 }

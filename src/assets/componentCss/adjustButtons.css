@@ -129,27 +129,3 @@
 .button:active {
     transform: scale(0.98);
 }
-
-.animation-box {
-    position: fixed;
-    pointer-events: none !important;
-    z-index: 10000; /* 提高z-index确保在SVG上方 */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.animation-box * {
-    pointer-events: none !important;
-}
-
-#animation_import {
-    top: 82%;
-    left: 64%;
-    width: 10%;
-    height: auto;
-    transform-origin: center center;
-    z-index: 999999; /* 确保比其他元素的z-index更高 */
-}
-
