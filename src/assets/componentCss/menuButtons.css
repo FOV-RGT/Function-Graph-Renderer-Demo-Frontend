@@ -277,3 +277,49 @@
 .button:active {
     transform: scale(0.99);
 }
+
+.animation-box {
+    position: absolute;
+    pointer-events: none !important;
+    z-index: 2;
+    overflow: hidden;
+}
+
+.animation-box * {
+    pointer-events: none !important;
+}
+
+#animation_function {
+    top: -3%;
+    left: -18%;
+    width: 80%;
+    height: auto;
+}
+
+#animation_history {
+    top: 63%;
+    left: 8%;
+    width: 28%;
+    height: auto;
+}
+
+#animation_settings {
+    top: 19%;
+    left: 10%;
+    width: 35%;
+    height: auto;
+}
+
+#animation_switch {
+    top: 9%;
+    left: -28%;
+    width: 110%;
+    height: auto;
+}
+
+#animation_account {
+    top: 72%;
+    left: -10%;
+    width: 65%;
+    height: auto;
+}
