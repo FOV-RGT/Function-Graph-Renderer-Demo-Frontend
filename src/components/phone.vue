@@ -63,10 +63,11 @@
                                 d="m548.57,430.15v-2.76h3.84v3.65l-1.18.89h2.21l7.39,4.97h-5.33l-5.62-3.96-5.3,3.96h-4.9l8.88-6.74Zm-8.06-6.6h7.87l.77-1.68h-9.31v-2.38h20.95v2.38h-8.16l-.77,1.68h5.62c.74,0,1.36.26,1.87.79.51.53.77,1.14.77,1.85v6.86h-3.34v-6.36c0-.22-.07-.41-.22-.55s-.32-.22-.53-.22h-12.19v7.13h-3.34v-9.5Z" />
                         </g>
                     </g>
-                    <g id="_关闭同步按钮" data-name="关闭同步按钮" class="button pointer-events-auto" @click="handleSyncButtonClick(true)">
+                    <g id="_关闭同步按钮" data-name="关闭同步按钮" class="button pointer-events-auto"
+                        @click="handleSyncButtonClick()">
                         <path class="cls-2"
                             d="m299.4,484.75s-7-1-9,11-11,91-6,97,11,13.4,15,13.7,98,10.3,98,10.3c0,0,3-40,8-64s9-48,9-48l-6.98-5.84-108.02-14.16Z" />
-                        <g id="_关闭同步字样" data-name="关闭同步字样">
+                        <g id="_关闭同步字样" data-name="关闭同步字样" v-show="this.syncFnData">
                             <path class="cls-1"
                                 d="m330.97,538.64h-8.28v-2.38h8.88v-3.46h-8.09v-2.38h3.7l-1.27-2.86h3.48l1.27,2.86h5.16l1.27-2.86h3.48l-1.27,2.86h3.7v2.38h-7.58v3.46h8.38v2.38h-8.38v.43l-1.18.86h2.23l7.39,4.99h-5.35l-5.62-3.98-5.28,3.98h-4.92l8.28-6.29Z" />
                             <path class="cls-1"
@@ -75,6 +76,16 @@
                                 d="m322.74,556.4h18.46c.74,0,1.36.26,1.86.79.5.53.76,1.14.76,1.85v12.05c0,.74-.26,1.36-.78,1.87-.52.51-1.13.77-1.84.77h-2.71l.98-2.38h.5c.21,0,.38-.07.53-.22.14-.14.22-.32.22-.53v-11.06c0-.22-.07-.41-.22-.55-.14-.14-.32-.22-.53-.22h-14.14v14.95h-3.1v-17.33Zm4.39,3.38h12.31v2.38h-12.31v-2.38Zm0,3.58h12.31v4.78c0,.75-.26,1.38-.77,1.88-.51.5-1.14.76-1.87.76h-9.67v-7.42Zm8.23,5.04c.21,0,.38-.07.53-.22.14-.14.22-.33.22-.55v-1.9h-5.64v2.66h4.9Z" />
                             <path class="cls-1"
                                 d="m346.72,571.12l16.06-2.04v-3.5h3.31v5.66l-19.37,2.47v-2.59Zm8.93-6.62h-8.83v-2.14h2.18v-4.8h3.31v4.8h3.34v-5.95h3.31v1.73h7.56v2.11h-7.56v2.11h8.86v2.14h-8.86v4.37h-3.31v-4.37Zm-6.65.65h3.31l-1.49,4.46h-3.31l1.49-4.46Z" />
+                        </g>
+                        <g id="_开启同步字样" data-name="开启同步字样" v-show="!this.syncFnData">
+                            <path class="cls-1"
+                                d="m326.51,537.85h-3.5v-2.47h3.94l.94-5.28h-4.08v-2.47h19.42v2.47h-2.78v5.28h3.58v2.47h-3.58v7.03h-3.22v-7.03h-7.49l-1.22,7.03h-3.22l1.22-7.03Zm10.7-2.47v-5.28h-6.12l-.94,5.28h7.06Z" />
+                            <path class="cls-1"
+                                d="m348.06,542.92v-13.87h8.81l-.58-1.44h2.88l.58,1.44h8.3v4.7c0,.74-.26,1.36-.79,1.87-.53.51-1.14.77-1.85.77h-14.02v6.53l-1.1,2.02h-3.34l1.1-2.02Zm15.91-8.9c.21,0,.38-.07.53-.22.14-.14.22-.32.22-.53v-1.85h-13.13v2.59h12.38Zm-11.76,3.26h15.17v5.02c0,.74-.26,1.36-.78,1.87-.52.51-1.13.77-1.84.77h-12.55v-7.66Zm11.09,5.28c.22,0,.41-.07.55-.22s.22-.33.22-.55v-2.14h-8.52v2.9h7.75Z" />
+                            <path class="cls-1"
+                                d="m322.98,556.4h18.46c.74,0,1.36.26,1.86.79s.76,1.14.76,1.85v12.05c0,.74-.26,1.36-.78,1.87-.52.51-1.13.77-1.84.77h-2.71l.98-2.38h.5c.21,0,.38-.07.53-.22.14-.14.22-.32.22-.53v-11.06c0-.22-.07-.41-.22-.55s-.32-.22-.53-.22h-14.14v14.95h-3.1v-17.33Zm4.39,3.38h12.31v2.38h-12.31v-2.38Zm0,3.58h12.31v4.78c0,.75-.26,1.38-.77,1.88-.51.5-1.14.76-1.87.76h-9.67v-7.42Zm8.23,5.04c.21,0,.38-.07.53-.22.14-.14.22-.33.22-.55v-1.9h-5.64v2.66h4.9Z" />
+                            <path class="cls-1"
+                                d="m346.96,571.12l16.06-2.04v-3.5h3.31v5.66l-19.37,2.47v-2.59Zm8.93-6.62h-8.83v-2.14h2.18v-4.8h3.31v4.8h3.34v-5.95h3.31v1.73h7.56v2.11h-7.56v2.11h8.86v2.14h-8.86v4.37h-3.31v-4.37Zm-6.65.65h3.31l-1.49,4.46h-3.31l1.49-4.46Z" />
                         </g>
                     </g>
                     <g id="_退出登录按钮" data-name="退出登录按钮" class="button pointer-events-auto" @click="logout">
@@ -550,6 +561,7 @@
 import { mapGetters } from 'vuex';
 import * as service from '../services/userService.js';
 import { fire } from '../assets/utils/componentUtils';
+import { uploadUserConfig } from '../services/userService.js';
 
 
 
@@ -588,7 +600,7 @@ export default {
         };
     },
     computed: {
-        ...mapGetters('auth', ['userInfo', 'isAuthenticated']),
+        ...mapGetters('auth', ['userInfo', 'isAuthenticated', 'syncFnData']),
         passwordsMatch() {
             return !this.registerData.password || !this.registerData.confirmPassword ||
                 this.registerData.password === this.registerData.confirmPassword;
@@ -768,70 +780,77 @@ export default {
                 }
             }
             this.$emit('login', data, callback);
-    },
+        },
 
-    async register() {
-        if (!this.isFormValid) {
-            return;
-        }
-        if (this.loading.tryRegister) {
-            return
-        };
-        this.loading.tryRegister = true;
-        const registerData = {
-            nickname: this.registerData.nickname,
-            email: this.registerData.email,
-            username: this.registerData.account,
-            password: this.registerData.password,
-        };
-        const { success, messages } = await service.register(registerData);
-        if (success) {
-            this.firework();
-            this.loginData.account = registerData.username || registerData.email;
-            this.loginData.password = registerData.password;
-            this.login();
-        } else {
-            const data = {
-                head: '注册失败：',
-                messages,
-                target: 'body',
-                time: 4000
+        async register() {
+            if (!this.isFormValid) {
+                return;
             }
-            this.$emit('message', data);
-        }
-        this.loading.tryRegister = false;
-    },
+            if (this.loading.tryRegister) {
+                return
+            };
+            this.loading.tryRegister = true;
+            const registerData = {
+                nickname: this.registerData.nickname,
+                email: this.registerData.email,
+                username: this.registerData.account,
+                password: this.registerData.password,
+            };
+            const { success, messages } = await service.register(registerData);
+            if (success) {
+                this.firework();
+                this.loginData.account = registerData.username || registerData.email;
+                this.loginData.password = registerData.password;
+                this.login();
+            } else {
+                const data = {
+                    head: '注册失败：',
+                    messages,
+                    target: 'body',
+                    time: 4000
+                }
+                this.$emit('message', data);
+            }
+            this.loading.tryRegister = false;
+        },
 
-    firework() {
-        const origin = { y: 1.05, x: 0.5 };
-        fire(0.25, {
-            spread: 66,
-            startVelocity: 75,
-            scalar: 0.8
-        }, origin);
-        fire(0.2, {
-            spread: 60
-        }, origin);
-        fire(0.35, {
-            spread: 100,
-            decay: 0.91
-        }, origin);
-        fire(0.3, {
-            spread: 130,
-            startVelocity: 66,
-            decay: 0.92,
-            scalar: 1.2
-        }, origin);
-        fire(0.4, {
-            spread: 120,
-            startVelocity: 45
-        }, origin);
+        firework() {
+            const origin = { y: 1.05, x: 0.5 };
+            fire(0.25, {
+                spread: 66,
+                startVelocity: 75,
+                scalar: 0.8
+            }, origin);
+            fire(0.2, {
+                spread: 60
+            }, origin);
+            fire(0.35, {
+                spread: 100,
+                decay: 0.91
+            }, origin);
+            fire(0.3, {
+                spread: 130,
+                startVelocity: 66,
+                decay: 0.92,
+                scalar: 1.2
+            }, origin);
+            fire(0.4, {
+                spread: 120,
+                startVelocity: 45
+            }, origin);
+        },
+
+        async handleSyncButtonClick() {
+            const res = this.$store.commit('auth/setSyncButtonState');
+            if (!this.isAuthenticated) return;
+            const { success, error } = await uploadUserConfig(res);
+            if (success) {
+                // console.log('设置已保存');
+            } else {
+                console.log(error);
+            }
+        }
     },
-    
-    handleSyncButtonClick(status) {
-        this.$store.commit('auth/setSyncButtonState', status);
-    }
-},
 }
 </script>
 

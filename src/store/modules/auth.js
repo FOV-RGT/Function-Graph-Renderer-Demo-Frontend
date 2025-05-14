@@ -123,8 +123,9 @@ export default {
             state.userConfig.globalSamples = samples;
         },
 
-        setSyncButtonState(state, status) {
-            state.userConfig.syncFnData = status;
+        setSyncButtonState(state) {
+            state.userConfig.syncFnData = !state.userConfig.syncFnData;
+            return state.userConfig
         }
     },
     
